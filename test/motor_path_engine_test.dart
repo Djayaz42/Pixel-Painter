@@ -107,7 +107,7 @@ void main() {
     final first50Names = [
       "Yildiz", "Kalp", "Elma", "Muz", "Portakal", "Karpuz", "Cilek", "Ananas", "Havuc", "Mantar",
       "Kupkek", "Kurabiye", "Donat", "Dondurma", "Burger", "Pizzadilimi", "Kupa", "Anahtar", "Kilit", "Sandik",
-      "Kalkan", "Kilic", "Yuzuk", "Tac", "Elmas", "Para", "Kitap", "Kalem", "Palet", "Kamera",
+      "Kalkan", "Kilic", "Yuzuk", "Tac", "Elmas", "Kedi", "Kitap", "Kalem", "Palet", "Kamera",
       "Ampul", "Mum", "Hediye", "Balon", "Semsiye", "Capa", "Yelkenli", "Roket", "UFO", "Robot",
       "Konsol", "Zar", "Kupa 2", "Madalya", "Kum Saati", "Pusula", "Nota", "Zil", "Zarf", "Bayrak"
     ];

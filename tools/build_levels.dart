@@ -17,7 +17,7 @@ void main() {
   }
   for (int i = 0; i < objectTemplates.length; i++) {
     // Star is 25x25, Donut/IceCream/Cookie/Cupcake/Mushroom/Carrot/Pineapple/Burger are 48x48, others are 24x24 or 16x16
-    int expectedSize = (i == 0) ? 25 : (i == 7 || i == 8 || i == 9 || i == 10 || i == 11 || i == 12 || i == 13 || i == 14 || i == 15 || i == 16 || i == 17 || i == 18 || i == 19 || i == 20 || i == 21 || i == 22 || i == 23 || i == 24) ? 48 : (i == 2 || i == 3 || i == 4 || i == 5 || i == 6) ? 24 : 16;
+    int expectedSize = (i == 0) ? 25 : (i >= 7 && i <= 25) ? 48 : (i == 2 || i == 3 || i == 4 || i == 5 || i == 6) ? 24 : 16;
     if (objectTemplates[i].length != expectedSize) {
       print('Object ${i+51} (${objectNames[i]}) has ${objectTemplates[i].length} rows instead of $expectedSize!');
       hasErrors = true;
@@ -1318,7 +1318,7 @@ final List<List<String>> animalTemplates = [
 final List<String> objectNames = [
   "Yildiz", "Kalp", "Elma", "Muz", "Portakal", "Karpuz", "Cilek", "Ananas", "Havuc", "Mantar",
   "Kupkek", "Kurabiye", "Donat", "Dondurma", "Burger", "Pizzadilimi", "Kupa", "Anahtar", "Kilit", "Sandik",
-  "Kalkan", "Kilic", "Yuzuk", "Tac", "Elmas", "Para", "Kitap", "Kalem", "Palet", "Kamera",
+  "Kalkan", "Kilic", "Yuzuk", "Tac", "Elmas", "Kedi", "Kitap", "Kalem", "Palet", "Kamera",
   "Ampul", "Mum", "Hediye", "Balon", "Semsiye", "Capa", "Yelkenli", "Roket", "UFO", "Robot",
   "Konsol", "Zar", "Kupa 2", "Madalya", "Kum Saati", "Pusula", "Nota", "Zil", "Zarf", "Bayrak"
 ];
@@ -2424,24 +2424,56 @@ final List<List<String>> objectTemplates = [
     "................................................",
     "................................................",
   ],
-// 76. Coin (Para)
+// 76. Orange Cat (Kedi)
   [
-    "................",
-    "......DDDD......",
-    "    DDDDDDDD    ",
-    "  DDDDDDDDDDDD  ",
-    " DDDDDDDDDDDDDD ",
-    "DDDDDDDDDDDDDDDD",
-    "DDDDDDDDDDDDDDDD",
-    "DDDDDDDDDDDDDDDD",
-    "DDDDDDDDDDDDDDDD",
-    "DDDDDDDDDDDDDDDD",
-    " DDDDDDDDDDDDDD ",
-    "  DDDDDDDDDDDD  ",
-    "    DDDDDDDD    ",
-    "      DDDD      ",
-    "................",
-    "................"
+    "................................................",
+    "................................................",
+    "......bbbP.............................bbbbH....",
+    ".HHHHbcFafPbHHHHHHHHHHHHHHHHHHHHHHHHHbPdaFgbHHHH",
+    "HHHH.bcPcfabbH.HHHH.HHHH..HHHHHH..HHbbaFcbFbHHHH",
+    "HHHHHbddhbFabbHHHHHHHHHHHHHHHHHHHHHbbaFPhddbHHHH",
+    "HHHHHbdddhPFFaPHHHHHHHHHHHHHHHHHHHbaFFPhdddbHHHH",
+    "HHHHHbdddhhPFFdbHHHHHHHHHHHHHHHHHbdFFPhhdddbHHHH",
+    "HHHHHbddddhhfFFabHHHHHHHHHHHHHHHbaFFOdhddddbHHHH",
+    "HHHHHbddddhhPFFFabHHHHHHHHHHHHHbaFFcbhhddddbHHHH",
+    "HHHHHbdddddhhbFFaabbPbbbbbbbbbbaaFFbhhdddddbHHHH",
+    "HHHHHbdddddhhbbFFddbaaaaaaadakaaFFbbhhdddddbHHHH",
+    "HHHHHbdddddhbFFFFFdaFFFFFFFFFaaFFFFFPhdddddbHHHH",
+    "HHHHHbddddhfFFFFFFFFFFFFFFFFFFFFFFFFFfhdddcbHHHH",
+    "HHHHHPFddHFFFFFFFFFFFFFFFFFFFFFFFFFFFFFdddFbHHHH",
+    "HHHHHbFddFFFFFFFFFFFFKKFFFKKFFFFFFFFFFFFddgbHHHH",
+    "HHHHHMbdNFFFFFFFFFFFFKKFFFKKFFFFFFFFFFFFhdbMHHHH",
+    "dddddHbFFFFFFFFFFFFFfKKaFfKKfFFFFFFFFFFFFFbddddd",
+    "ddddddbaFFFFFFacFFFFKKKKFKKKKFFFFaaFFFFFFabddddd",
+    "dddddHbaFFFadabbaaFFKKKKcKKKKFFaabbadaFFFabHdddd",
+    "dddddbNaFFagbbbbbPaFKKKKKKKKKFaPbbbbbgaFFabPdddd",
+    "ddddgbdFFabbdPKKbbbdKKKKKKKKKdbKKbbbdbbaFFabdddd",
+    "dddddbaFFbbgbbKKObbbKKKKKKKKKbbKKbbbbgbbFFdPdddd",
+    "ddddPaFFFbbKbbbbbbbbKKKKKKKKKbbbbbbbbKbbFFFaPddd",
+    "hhhhbdFFFFbKbbbbbbbbgKKKKKKKpbbbbbbKbKbFFFFabhhh",
+    "hhhhPaFFFFbKbbbbbbKbOKKKKKKKObbbbbbKbKbFFFFaPhhh",
+    "hhhhbaFFFcPKPKbOOObbbKKKKKKKbbKbOOObbKPFFFFaPhhh",
+    "hhhhbaFFFFFbKbbOObbKbKKKKKKKbKbbOOPbKbFFFFFabhhh",
+    "hhhhPaFFFFcFbbKbbbKKKKddeHdKKKKbbbKbbFFFFFFaPhhh",
+    "hhhhbaFFFFcgedbbKKKKKKhdddhKKKKKKbbgegFFFFFabhhh",
+    "hhhhPfbbbKKKKKKKKKKKKKKhdhKKKKKKKKKKKKKKbbbfPhhh",
+    "hhhhbPfcKKKKbbPKKKKKKKKKhKKKKKKKKZbbOKKKKFfPbhhh",
+    "hhhhhbffKKKKKKKKKKKKKKKKbKKKKKKKKKKKKKKKKffPhhhh",
+    "hhhhhhPgiKKKPbPKKKKPKKKPKPKKKbKKKKbbPKKKi.bhhhhh",
+    "hhhhhhbbbgKKKKKKKKKKPbbOKObbbKKKKKKKKKKgPbbhhhhh",
+    "hhhhhhhPbiggKKKKKKKKKKKKKKKKKKKKKKKKKgdgbPhhhhhh",
+    "hhhhhhhhNb.dggKKKKKKKKKKKKKKKKKKKKKdgpiPNhhhhhhh",
+    "hhhhhhhhhhPbdgggdKKKKKKKKKKKKKKKdgggdbbhhhhhhhhh",
+    "hhhhhhhhhhhPbbpgggggdgggdggppggggggPbbhhhhhhhhhh",
+    "hhhhhhhhhhbbffbPbbgpdgddggggdgdbbPbffbbhhhhhhhhh",
+    "hhhhhhhhhhbaafiggbPbbbbbbbbbbbbPggifaaPhhhhhhhhh",
+    "hhhhhhhhNbbaccFgggggdgdggggggpggdpFcFabbhhhhhhhh",
+    "hhhhhhhhhbacFccKKgigdpgggggdgggiKKFccFabhhhhhhhh",
+    "hhhhhhhhbbaFFcFbKKKKKegdddpKKKKKKbFccFabbhhhhhhh",
+    "NNNNNNNNbaaccccbgKKKKKKKKKKKKKKKgPccccaabNNNNNNN",
+    "NNNNNNNNbdccccfbdKKKKKKKKKKKKKKKpPfccccdbNNNNNNN",
+    "NNNNNNNbbafcccfNbgKKKKKKKKKKKKKgOffcccfabbNNNNNN",
+    "NNNNNNNbaaffffffPgKKKKKKKKKKKKKgPffffffaabNNNNNN"
   ],
   // 77. Book (Kitap)
   [
