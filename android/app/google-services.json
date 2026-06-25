@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "310480166290",
+    "project_id": "pixel-painter-3dc0d",
+    "storage_bucket": "pixel-painter-3dc0d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310480166290:android:26cb8b9b04cd7031c4754b",
+        "android_client_info": {
+          "package_name": "com.vartix.pixelpainter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGxz8PKkDtSgJxsEy4-iefbF-QhLWmylY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

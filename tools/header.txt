@@ -1,0 +1,1496 @@
+import 'dart:collection';
+
+import 'package:flutter/material.dart';
+
+import 'paint_cartridge.dart';
+import 'pixel_cell.dart';
+
+class LevelDefinition {
+  const LevelDefinition({
+    required this.name,
+    required this.rows,
+    required this.colorRuns,
+    this.paintOrder = LevelPaintOrder.centerOut,
+    this.cellRows = const [],
+    this.gridRows = LevelData.rows,
+    this.gridCols = LevelData.cols,
+  });
+
+  final String name;
+  final List<String> rows;
+  final List<LevelColorRun> colorRuns;
+  final LevelPaintOrder paintOrder;
+  final List<String> cellRows;
+  final int gridRows;
+  final int gridCols;
+}
+
+class LevelColorRun {
+  const LevelColorRun(this.colorId, this.amount);
+
+  final int colorId;
+  final int amount;
+}
+
+enum LevelPaintOrder {
+  centerOut,
+  edgeIn,
+  rowSnake,
+  columnSnake,
+  diagonal,
+  antiDiagonal,
+}
+
+enum SilhouetteCellType { outside, outline, inside }
+
+class LevelData {
+  const LevelData._();
+
+  static const int rows = 24;
+  static const int cols = 24;
+
+  static const Map<int, Color> colorValues = {
+    1: Color(0xFFFF4D67),
+    2: Color(0xFF42A5FF),
+    3: Color(0xFF42E88A),
+    4: Color(0xFFFFD447),
+    5: Color(0xFFB06CFF),
+    6: Color(0xFFFF8A3D),
+    7: Color(0xFF38E8D4),
+    8: Color(0xFFFF7AC8),
+    9: Color(0xFFA8F04A),
+    10: Color(0xFF9AA7FF),
+    11: Color(0xFFF7F8FF),
+    12: Color(0xFF12131A),
+    13: Color(0xFF8D99AE),
+    14: Color(0xFF7A4E2D),
+    15: Color(0xFF3E465A),
+    16: Color(0xFF17213A),
+    17: Color(0xFF0A84FF),
+    18: Color(0xFF5E5CE6),
+    19: Color(0xFFD8D8DE),
+    20: Color(0xFFEAFBFC),
+    21: Color(0xFF0F6B7A),
+    22: Color(0xFF1496A8),
+    23: Color(0xFF1DB7C8),
+    24: Color(0xFF8FDCE8),
+    25: Color(0xFF79D7F2),
+    26: Color(0xFFA9C9B9),
+    27: Color(0xFFF6B66E),
+    28: Color(0xFF2D2925),
+    29: Color(0xFFFFB25F),
+    30: Color(0xFFF5A28F),
+    31: Color(0xFFF3E7D0),
+    32: Color(0xFFD78348),
+    33: Color(0xFFB9B1A3),
+    34: Color(0xFFD96A59),
+    35: Color(0xFFDCDFD8),
+    36: Color(0xFF0B1020),
+    37: Color(0xFF5A1E18),
+    38: Color(0xFF8F3312),
+    39: Color(0xFFB85A13),
+    40: Color(0xFFE47F12),
+    41: Color(0xFFF4A51E),
+    42: Color(0xFFFFE7B5),
+    43: Color(0xFF66BB6A),
+    44: Color(0xFF2E7D32),
+    45: Color(0xFF1B5E20),
+    46: Color(0xFF5D4037),
+    47: Color(0xFF3E2723),
+    48: Color(0xFFFFB347), // Ananas Govdesi (Canli Turuncu/Sari)
+    49: Color(0xFFE69138), // Govde Golgeleri (Daha Koyu Turuncu)
+    50: Color(0xFF57A733), // Yapraklar (Canli Yesil)
+    51: Color(0xFF3D8526), // Yaprak Golgeleri (Koyu Yesil)
+    52: Color(0xFF4A2C17), // Gozler/Konturlar (Koyu Kahverengi)
+    53: Color(0xFFFF9AA2), // Agiz Ici (Acik Pembe)
+    54: Color(0xFFFF9833), // Havuc Govdesi (Canli Turuncu)
+    55: Color(0xFFE67E22), // Havuc Golge/Cizgiler (Koyu Turuncu/Kahve)
+    56: Color(0xFF4CAF50), // Yapraklar (Canli Yesil)
+    57: Color(0xFFFFFFFF), // Eldivenler (Beyaz)
+    58: Color(0xFF9E9E9E), // Ayakkabilar (Acik Gri)
+    59: Color(0xFF2D2926), // Konturler (Cizgiler) (Koyu Kahve/Siyah)
+    60: Color(0xFFD32F2F), // Agiz Ici (Koyu Pembe/Kirmizi)
+    61: Color(0xFFEE4A44), // Mantar Sapka Kirmizisi
+    62: Color(0xFFF7E0D3), // Mantar Benekleri
+    63: Color(0xFFCC3A36), // Mantar Sapka Golgesi
+    64: Color(0xFFFF956C), // Mantar Lamelleri
+    65: Color(0xFFFCD8CD), // Mantar Sapi
+    66: Color(0xFFFFFFFF), // Mantar Parlamasi
+    67: Color(0xFF3F2B1F), // Mantar Konturu
+    68: Color(0xFFF8F4EF), // Krem Santi
+    69: Color(0xFF5D3A1A), // Cikolata Sos
+    70: Color(0xFFFFC0CB), // Acik Pembe Krema
+    71: Color(0xFFFF69B4), // Koyu Pembe Krema
+    72: Color(0xFFF0C098), // Acik Kap Kagit
+    73: Color(0xFFE09058), // Koyu Kap Kagit
+    74: Color(0xFFC58C5A), // Kurabiye Tabani
+    75: Color(0xFF6D4A32), // Cikolata Parcalari/Kontur
+    76: Color(0xFFFFFFFF), // Kurabiye Arka Plani (Beyaz)
+    77: Color(0xFFE8A359), // Donut Hamuru
+    78: Color(0xFFFF4D8C), // Pembe Krema
+    79: Color(0xFFE3C17B), // Arka Plan
+    80: Color(0xFFFDFBF7), // Drizzle (Cizgiler)
+    81: Color(0xFF2076FF), // Mavi Sprinkle
+    82: Color(0xFF2CCB4F), // Yesil Sprinkle
+    83: Color(0xFFF8E92B), // Sari Sprinkle
+    84: Color(0xFF2D2926), // Kontur (Cizgiler)
+    85: Color(0xFF4BD3EC), // Cyan Scoop Base
+    86: Color(0xFF1B9CB7), // Cyan Scoop Shadow
+    87: Color(0xFFFD9512), // Orange Scoop Base
+    88: Color(0xFFC75100), // Orange Scoop Shadow
+    89: Color(0xFFFF498C), // Pink Scoop Base
+    90: Color(0xFFC81D61), // Pink Scoop Shadow
+    91: Color(0xFFF5A158), // Burger Ekmegi Sol
+    92: Color(0xFFEE6A2C), // Burger Ekmegi Sag
+    93: Color(0xFFA03B31), // Kofte Sol
+    94: Color(0xFF7C241C), // Kofte Sag
+    95: Color(0xFF54B948), // Marul Sol
+    96: Color(0xFF3E8E34), // Marul Sag
+    97: Color(0xFFFCD73E), // Peynir Sol
+    98: Color(0xFFEAA61E), // Peynir Sag
+    99: Color(0xFFFFF3CC), // Susam
+    100: Color(0xFF4A2C17), // Burger Kontur
+    101: Color(0xFFFCD1AE), // Waffle Arka Plan
+    102: Color(0xFFE6AE7F), // Waffle Cizgi
+    103: Color(0xFFFFFDF0), // Fil Disi Arka Plan
+    104: Color(0xFFF5ECCF), // Fil Disi Deseni
+    105: Color(0xFFE9E3D7), // Kupa Krem
+    106: Color(0xFFDFD2C6), // Kupa Krem Golge
+    107: Color(0xFFB89A8F), // Kupa Kontur
+    108: Color(0xFF7E233C), // Kupa Bordo
+    109: Color(0xFFD0BBB3), // Kupa Alt Golge
+    110: Color(0xFFF6F4F0), // Kupa Buhar Acik
+    111: Color(0xFFEFEAE1), // Kupa Buhar Koyu
+    112: Color(0xFFF1E1B4), // Kilit Krem
+    113: Color(0xFFED9130), // Kilit Altin
+    114: Color(0xFFF5B551), // Kilit Sari
+    115: Color(0xFF710E21), // Kilit Bordo
+    116: Color(0xFF6A6A6C), // Kilit Koyu Gri
+    117: Color(0xFFA1A2A5), // Kilit Acik Gri
+    118: Color(0xFFA0501B), // Kilit Kahve Kontur
+    119: Color(0xFF1B1614), // Sandik Kontur
+    120: Color(0xFF532912), // Sandik Kahve Koyu
+    121: Color(0xFF8B5E3C), // Sandik Kahve Acik
+    122: Color(0xFFD67D22), // Sandik Metal Altin
+    123: Color(0xFFF1C40F), // Sandik Kilit Sari
+    124: Color(0xFF2C3E50), // Sandik Duvar Koyu
+    125: Color(0xFF4A6572), // Sandik Duvar Acik
+    126: Color(0xFFE5A93B), // Sandik Altin Yigini
+    127: Color(0xFF1E1F22), // Kalkan Kontur
+    128: Color(0xFF41424B), // Kalkan Metal Koyu
+    129: Color(0xFF646675), // Kalkan Metal Orta
+    130: Color(0xFF969CB2), // Kalkan Metal Acik
+    131: Color(0xFF0F5A84), // Kalkan Mavi Koyu
+    132: Color(0xFF128BB7), // Kalkan Mavi Orta
+    133: Color(0xFF23C1F5), // Kalkan Mavi Acik
+    134: Color(0xFF8BE7FF), // Kalkan Mavi Parlak
+    135: Color(0xFFAA7D1E), // Kilic Altin Koyu
+    136: Color(0xFFF4D03F), // Kilic Altin Acik
+    137: Color(0xFF5C3A21), // Kilic Kahve Koyu
+    138: Color(0xFF8B5E3C), // Kilic Kahve Acik
+    139: Color(0xFFC0392B), // Kilic Yakut Kirmizi
+    140: Color(0xFF646973), // Kilic Metal Koyu
+    141: Color(0xFFBDC3C7), // Kilic Metal Acik
+    142: Color(0xFF5D6D7E), // Kilic Tas Koyu
+    143: Color(0xFF85929E), // Kilic Tas Acik
+    144: Color(0xFF2C1E47), // Tac Arka Plan Koyu
+    145: Color(0xFF4C337D), // Tac Arka Plan Orta
+    146: Color(0xFF7A4FA5), // Tac Arka Plan Canli
+    147: Color(0xFFF9E79F), // Tac Altin Acik
+    148: Color(0xFFF4D03F), // Tac Altin Orta
+    149: Color(0xFFD4AC0D), // Tac Altin Koyu
+    150: Color(0xFF9A7D0A), // Tac Altin Golge
+    151: Color(0xFFE67E22), // Tac Turuncu
+    152: Color(0xFFEC7063), // Tac Kirmizi Tas Parlak
+    153: Color(0xFF7B241C), // Tac Kirmizi Tas Golge
+    154: Color(0xFF58D68D), // Tac Yesil Tas Parlak
+    155: Color(0xFF1E8449), // Tac Yesil Tas Golge
+  };
+
+  static const List<PaintCartridge> cartridges = [
+    PaintCartridge(
+      id: 1,
+      colorId: 1,
+      name: 'Kirmizi',
+      color: Color(0xFFFF4D67),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 2,
+      colorId: 2,
+      name: 'Mavi',
+      color: Color(0xFF42A5FF),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 3,
+      colorId: 3,
+      name: 'Yesil',
+      color: Color(0xFF42E88A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 4,
+      colorId: 4,
+      name: 'Sari',
+      color: Color(0xFFFFD447),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 5,
+      colorId: 5,
+      name: 'Mor',
+      color: Color(0xFFB06CFF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 6,
+      colorId: 6,
+      name: 'Turuncu',
+      color: Color(0xFFFF8A3D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 7,
+      colorId: 7,
+      name: 'Turkuaz',
+      color: Color(0xFF38E8D4),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 8,
+      colorId: 8,
+      name: 'Pem.e',
+      color: Color(0xFFFF7AC8),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 9,
+      colorId: 9,
+      name: 'Limon',
+      color: Color(0xFFA8F04A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 10,
+      colorId: 10,
+      name: 'Lavanta',
+      color: Color(0xFF9AA7FF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 11,
+      colorId: 11,
+      name: '.eyaz',
+      color: Color(0xFFF7F8FF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 12,
+      colorId: 12,
+      name: 'Siyah',
+      color: Color(0xFF12131A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 13,
+      colorId: 13,
+      name: 'Gri',
+      color: Color(0xFF8D99AE),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 14,
+      colorId: 14,
+      name: 'Kahve',
+      color: Color(0xFF7A4E2D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 15,
+      colorId: 15,
+      name: 'Slate',
+      color: Color(0xFF3E465A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 16,
+      colorId: 16,
+      name: 'Gece Laciverti',
+      color: Color(0xFF17213A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 17,
+      colorId: 17,
+      name: 'System .lue',
+      color: Color(0xFF0A84FF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 18,
+      colorId: 18,
+      name: 'System Indigo',
+      color: Color(0xFF5E5CE6),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 19,
+      colorId: 19,
+      name: 'System Gray',
+      color: Color(0xFFD8D8DE),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 20,
+      colorId: 20,
+      name: 'Soft Aqua',
+      color: Color(0xFFEAFBFC),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 21,
+      colorId: 21,
+      name: 'Koyu Teal',
+      color: Color(0xFF0F6B7A),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 22,
+      colorId: 22,
+      name: 'Orta Teal',
+      color: Color(0xFF1496A8),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 23,
+      colorId: 23,
+      name: 'Canli Teal',
+      color: Color(0xFF1DB7C8),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 24,
+      colorId: 24,
+      name: 'Acik Aqua',
+      color: Color(0xFF8FDCE8),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 25,
+      colorId: 25,
+      name: 'Cat Sky',
+      color: Color(0xFF79D7F2),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 26,
+      colorId: 26,
+      name: 'Cat Horizon',
+      color: Color(0xFFA9C9B9),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 27,
+      colorId: 27,
+      name: 'Cat Sand',
+      color: Color(0xFFF6B66E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 28,
+      colorId: 28,
+      name: 'Cat Dark',
+      color: Color(0xFF2D2925),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 29,
+      colorId: 29,
+      name: 'Cat Orange',
+      color: Color(0xFFFFB25F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 30,
+      colorId: 30,
+      name: 'Cat Pink',
+      color: Color(0xFFF5A28F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 31,
+      colorId: 31,
+      name: 'Cat Cream',
+      color: Color(0xFFF3E7D0),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 32,
+      colorId: 32,
+      name: 'Cat Shadow',
+      color: Color(0xFFD78348),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 33,
+      colorId: 33,
+      name: 'Cat Gray',
+      color: Color(0xFFB9B1A3),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 34,
+      colorId: 34,
+      name: 'Dog Tongue',
+      color: Color(0xFFD96A59),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 35,
+      colorId: 35,
+      name: 'Lion .ack',
+      color: Color(0xFFEFEFEA),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 36,
+      colorId: 36,
+      name: 'Lion Ink',
+      color: Color(0xFF0B1020),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 37,
+      colorId: 37,
+      name: 'Lion Deep .rown',
+      color: Color(0xFF5A1E18),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 38,
+      colorId: 38,
+      name: 'Lion .rown',
+      color: Color(0xFF8F3312),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 39,
+      colorId: 39,
+      name: 'Lion .urnt Orange',
+      color: Color(0xFFB85A13),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 40,
+      colorId: 40,
+      name: 'Lion Orange',
+      color: Color(0xFFE47F12),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 41,
+      colorId: 41,
+      name: 'Lion Gold',
+      color: Color(0xFFF4A51E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 42,
+      colorId: 42,
+      name: 'Lion Cream',
+      color: Color(0xFFFFE7B5),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 43,
+      colorId: 43,
+      name: 'Acik Cam Yesili',
+      color: Color(0xFF66BB6A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 44,
+      colorId: 44,
+      name: 'Cam Yesili',
+      color: Color(0xFF2E7D32),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 45,
+      colorId: 45,
+      name: 'Koyu Cam Yesili',
+      color: Color(0xFF1B5E20),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 46,
+      colorId: 46,
+      name: 'Govde Rengi',
+      color: Color(0xFF5D4037),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 47,
+      colorId: 47,
+      name: 'Koyu Govde Rengi',
+      color: Color(0xFF3E2723),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 48,
+      colorId: 48,
+      name: 'Ananas Govdesi',
+      color: Color(0xFFFFB347),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 49,
+      colorId: 49,
+      name: 'Govde Golgeleri',
+      color: Color(0xFFE69138),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 50,
+      colorId: 50,
+      name: 'Yapraklar',
+      color: Color(0xFF57A733),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 51,
+      colorId: 51,
+      name: 'Yaprak Golgeleri',
+      color: Color(0xFF3D8526),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 52,
+      colorId: 52,
+      name: 'Gozler/Konturlar',
+      color: Color(0xFF4A2C17),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 53,
+      colorId: 53,
+      name: 'Agiz Ici',
+      color: Color(0xFFFF9AA2),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 54,
+      colorId: 54,
+      name: 'Havuc Govdesi',
+      color: Color(0xFFFF9833),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 55,
+      colorId: 55,
+      name: 'Havuc Golge/Cizgiler',
+      color: Color(0xFFE67E22),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 56,
+      colorId: 56,
+      name: 'Yapraklar',
+      color: Color(0xFF4CAF50),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 57,
+      colorId: 57,
+      name: 'Eldivenler',
+      color: Color(0xFFFFFFFF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 58,
+      colorId: 58,
+      name: 'Ayakkabilar',
+      color: Color(0xFF9E9E9E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 59,
+      colorId: 59,
+      name: 'Konturler',
+      color: Color(0xFF2D2926),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 60,
+      colorId: 60,
+      name: 'Agiz Ici',
+      color: Color(0xFFD32F2F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 61,
+      colorId: 61,
+      name: 'Sapka Kirmizisi',
+      color: Color(0xFFEE4A44),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 62,
+      colorId: 62,
+      name: 'Mantar Benekleri',
+      color: Color(0xFFF7E0D3),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 63,
+      colorId: 63,
+      name: 'Sapka Golgesi',
+      color: Color(0xFFCC3A36),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 64,
+      colorId: 64,
+      name: 'Mantar Lamelleri',
+      color: Color(0xFFFF956C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 65,
+      colorId: 65,
+      name: 'Mantar Sapi',
+      color: Color(0xFFFCD8CD),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 66,
+      colorId: 66,
+      name: 'Mantar Parlamasi',
+      color: Color(0xFFFFFFFF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 67,
+      colorId: 67,
+      name: 'Mantar Konturu',
+      color: Color(0xFF3F2B1F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 68,
+      colorId: 68,
+      name: 'Krem Santi',
+      color: Color(0xFFF8F4EF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 69,
+      colorId: 69,
+      name: 'Cikolata Sos',
+      color: Color(0xFF5D3A1A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 70,
+      colorId: 70,
+      name: 'Acik Pembe Krema',
+      color: Color(0xFFFFC0CB),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 71,
+      colorId: 71,
+      name: 'Koyu Pembe Krema',
+      color: Color(0xFFFF69B4),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 72,
+      colorId: 72,
+      name: 'Acik Kap Kagit',
+      color: Color(0xFFF0C098),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 73,
+      colorId: 73,
+      name: 'Koyu Kap Kagit',
+      color: Color(0xFFE09058),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 74,
+      colorId: 74,
+      name: 'Kurabiye Tabani',
+      color: Color(0xFFC58C5A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 75,
+      colorId: 75,
+      name: 'Cikolata Parcalari',
+      color: Color(0xFF6D4A32),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 76,
+      colorId: 76,
+      name: 'Kurabiye Arka Plani',
+      color: Color(0xFFFFFFFF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 77,
+      colorId: 77,
+      name: 'Donat Hamuru',
+      color: Color(0xFFE8A359),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 78,
+      colorId: 78,
+      name: 'Pembe Krema',
+      color: Color(0xFFFF4D8C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 79,
+      colorId: 79,
+      name: 'Donat Arka Plan',
+      color: Color(0xFFE3C17B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 80,
+      colorId: 80,
+      name: 'Drizzle',
+      color: Color(0xFFFDFBF7),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 81,
+      colorId: 81,
+      name: 'Mavi Sus',
+      color: Color(0xFF2076FF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 82,
+      colorId: 82,
+      name: 'Yesil Sus',
+      color: Color(0xFF2CCB4F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 83,
+      colorId: 83,
+      name: 'Sari Sus',
+      color: Color(0xFFF8E92B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 84,
+      colorId: 84,
+      name: 'Donat Konturu',
+      color: Color(0xFF2D2926),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 85,
+      colorId: 85,
+      name: 'Cyan Scoop Base',
+      color: Color(0xFF4BD3EC),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 86,
+      colorId: 86,
+      name: 'Cyan Scoop Shadow',
+      color: Color(0xFF1B9CB7),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 87,
+      colorId: 87,
+      name: 'Orange Scoop Base',
+      color: Color(0xFFFD9512),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 88,
+      colorId: 88,
+      name: 'Orange Scoop Shadow',
+      color: Color(0xFFC75100),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 89,
+      colorId: 89,
+      name: 'Pink Scoop Base',
+      color: Color(0xFFFF498C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 90,
+      colorId: 90,
+      name: 'Pink Scoop Shadow',
+      color: Color(0xFFC81D61),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 91,
+      colorId: 91,
+      name: 'Burger Ekmegi Sol',
+      color: Color(0xFFF5A158),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 92,
+      colorId: 92,
+      name: 'Burger Ekmegi Sag',
+      color: Color(0xFFEE6A2C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 93,
+      colorId: 93,
+      name: 'Kofte Sol',
+      color: Color(0xFFA03B31),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 94,
+      colorId: 94,
+      name: 'Kofte Sag',
+      color: Color(0xFF7C241C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 95,
+      colorId: 95,
+      name: 'Marul Sol',
+      color: Color(0xFF54B948),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 96,
+      colorId: 96,
+      name: 'Marul Sag',
+      color: Color(0xFF3E8E34),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 97,
+      colorId: 97,
+      name: 'Peynir Sol',
+      color: Color(0xFFFCD73E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 98,
+      colorId: 98,
+      name: 'Peynir Sag',
+      color: Color(0xFFEAA61E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 99,
+      colorId: 99,
+      name: 'Susam',
+      color: Color(0xFFFFF3CC),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 100,
+      colorId: 100,
+      name: 'Burger Kontur',
+      color: Color(0xFF4A2C17),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 101,
+      colorId: 101,
+      name: 'Waffle Arka Plan',
+      color: Color(0xFFFCD1AE),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 102,
+      colorId: 102,
+      name: 'Waffle Cizgi',
+      color: Color(0xFFE6AE7F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 103,
+      colorId: 103,
+      name: 'Fil Disi Arka Plan',
+      color: Color(0xFFFFFDF0),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 104,
+      colorId: 104,
+      name: 'Fil Disi Deseni',
+      color: Color(0xFFF5ECCF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 105,
+      colorId: 105,
+      name: 'Kupa Krem',
+      color: Color(0xFFE9E3D7),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 106,
+      colorId: 106,
+      name: 'Kupa Krem Golge',
+      color: Color(0xFFDFD2C6),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 107,
+      colorId: 107,
+      name: 'Kupa Kontur',
+      color: Color(0xFFB89A8F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 108,
+      colorId: 108,
+      name: 'Kupa Bordo',
+      color: Color(0xFF7E233C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 109,
+      colorId: 109,
+      name: 'Kupa Alt Golge',
+      color: Color(0xFFD0BBB3),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 110,
+      colorId: 110,
+      name: 'Kupa Buhar Acik',
+      color: Color(0xFFF6F4F0),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 111,
+      colorId: 111,
+      name: 'Kupa Buhar Koyu',
+      color: Color(0xFFEFEAE1),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 112,
+      colorId: 112,
+      name: 'Kilit Krem',
+      color: Color(0xFFF1E1B4),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 113,
+      colorId: 113,
+      name: 'Kilit Altin',
+      color: Color(0xFFED9130),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 114,
+      colorId: 114,
+      name: 'Kilit Sari',
+      color: Color(0xFFF5B551),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 115,
+      colorId: 115,
+      name: 'Kilit Bordo',
+      color: Color(0xFF710E21),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 116,
+      colorId: 116,
+      name: 'Kilit Koyu Gri',
+      color: Color(0xFF6A6A6C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 117,
+      colorId: 117,
+      name: 'Kilit Acik Gri',
+      color: Color(0xFFA1A2A5),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 118,
+      colorId: 118,
+      name: 'Kilit Kahve Kontur',
+      color: Color(0xFFA0501B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 119,
+      colorId: 119,
+      name: 'Sandik Kontur',
+      color: Color(0xFF1B1614),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 120,
+      colorId: 120,
+      name: 'Sandik Kahve Koyu',
+      color: Color(0xFF532912),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 121,
+      colorId: 121,
+      name: 'Sandik Kahve Acik',
+      color: Color(0xFF8B5E3C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 122,
+      colorId: 122,
+      name: 'Sandik Metal Altin',
+      color: Color(0xFFD67D22),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 123,
+      colorId: 123,
+      name: 'Sandik Kilit Sari',
+      color: Color(0xFFF1C40F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 124,
+      colorId: 124,
+      name: 'Sandik Duvar Koyu',
+      color: Color(0xFF2C3E50),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 125,
+      colorId: 125,
+      name: 'Sandik Duvar Acik',
+      color: Color(0xFF4A6572),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 126,
+      colorId: 126,
+      name: 'Sandik Altin Yigini',
+      color: Color(0xFFE5A93B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 127,
+      colorId: 127,
+      name: 'Kalkan Kontur',
+      color: Color(0xFF1E1F22),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 128,
+      colorId: 128,
+      name: 'Kalkan Metal Koyu',
+      color: Color(0xFF41424B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 129,
+      colorId: 129,
+      name: 'Kalkan Metal Orta',
+      color: Color(0xFF646675),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 130,
+      colorId: 130,
+      name: 'Kalkan Metal Acik',
+      color: Color(0xFF969CB2),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 131,
+      colorId: 131,
+      name: 'Kalkan Mavi Koyu',
+      color: Color(0xFF0F5A84),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 132,
+      colorId: 132,
+      name: 'Kalkan Mavi Orta',
+      color: Color(0xFF128BB7),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 133,
+      colorId: 133,
+      name: 'Kalkan Mavi Acik',
+      color: Color(0xFF23C1F5),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 134,
+      colorId: 134,
+      name: 'Kalkan Mavi Parlak',
+      color: Color(0xFF8BE7FF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 135,
+      colorId: 135,
+      name: 'Kilic Altin Koyu',
+      color: Color(0xFFAA7D1E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 136,
+      colorId: 136,
+      name: 'Kilic Altin Acik',
+      color: Color(0xFFF4D03F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 137,
+      colorId: 137,
+      name: 'Kilic Kahve Koyu',
+      color: Color(0xFF5C3A21),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 138,
+      colorId: 138,
+      name: 'Kilic Kahve Acik',
+      color: Color(0xFF8B5E3C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 139,
+      colorId: 139,
+      name: 'Kilic Yakut Kirmizi',
+      color: Color(0xFFC0392B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 140,
+      colorId: 140,
+      name: 'Kilic Metal Koyu',
+      color: Color(0xFF646973),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 141,
+      colorId: 141,
+      name: 'Kilic Metal Acik',
+      color: Color(0xFFBDC3C7),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 142,
+      colorId: 142,
+      name: 'Kilic Tas Koyu',
+      color: Color(0xFF5D6D7E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 143,
+      colorId: 143,
+      name: 'Kilic Tas Acik',
+      color: Color(0xFF85929E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 144,
+      colorId: 144,
+      name: 'Tac Arka Plan Koyu',
+      color: Color(0xFF2C1E47),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 145,
+      colorId: 145,
+      name: 'Tac Arka Plan Orta',
+      color: Color(0xFF4C337D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 146,
+      colorId: 146,
+      name: 'Tac Arka Plan Canli',
+      color: Color(0xFF7A4FA5),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 147,
+      colorId: 147,
+      name: 'Tac Altin Acik',
+      color: Color(0xFFF9E79F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 148,
+      colorId: 148,
+      name: 'Tac Altin Orta',
+      color: Color(0xFFF4D03F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 149,
+      colorId: 149,
+      name: 'Tac Altin Koyu',
+      color: Color(0xFFD4AC0D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 150,
+      colorId: 150,
+      name: 'Tac Altin Golge',
+      color: Color(0xFF9A7D0A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 151,
+      colorId: 151,
+      name: 'Tac Turuncu',
+      color: Color(0xFFE67E22),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 152,
+      colorId: 152,
+      name: 'Tac Kirmizi Tas Parlak',
+      color: Color(0xFFEC7063),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 153,
+      colorId: 153,
+      name: 'Tac Kirmizi Tas Golge',
+      color: Color(0xFF7B241C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 154,
+      colorId: 154,
+      name: 'Tac Yesil Tas Parlak',
+      color: Color(0xFF58D68D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 155,
+      colorId: 155,
+      name: 'Tac Yesil Tas Golge',
+      color: Color(0xFF1E8449),
+      amount: 20,
+    ),
+  ];
+
+  static final Map<String, int> _charToColor = {
+    'A': 1,
+    'B': 2,
+    'C': 3,
+    'D': 4,
+    'E': 5,
+    'F': 6,
+    'G': 7,
+    'H': 8,
+    'I': 9,
+    'J': 10,
+    'K': 11,
+    'L': 12,
+    'M': 13,
+    'N': 14,
+    'O': 15,
+    'P': 16,
+    'Q': 17,
+    'R': 18,
+    'S': 19,
+    'T': 20,
+    'U': 21,
+    'V': 22,
+    'W': 23,
+    'X': 24,
+    'Y': 25,
+    'Z': 26,
+    'a': 27,
+    'b': 28,
+    'c': 29,
+    'd': 30,
+    'e': 31,
+    'f': 32,
+    'g': 33,
+    'h': 34,
+    'i': 35,
+    'j': 36,
+    'k': 37,
+    'l': 38,
+    'm': 39,
+    'n': 40,
+    'o': 41,
+    'p': 42,
+    'q': 43,
+    'r': 44,
+    's': 45,
+    't': 46,
+    'u': 47,
+    'v': 48,
+    'w': 49,
+    'x': 50,
+    'y': 51,
+    'z': 52,
+    '0': 53,
+    '1': 54,
+    '2': 55,
+    '3': 56,
+    '4': 57,
+    '5': 58,
+    '6': 59,
+    '7': 60,
+    '8': 61,
+    '9': 62,
+    '-': 63,
+    '+': 64,
+    '=': 65,
+    '*': 66,
+    '#': 67,
+    '{': 68,
+    '}': 69,
+    '[': 70,
+    ']': 71,
+    '<': 72,
+    '>': 73,
+    '(': 74,
+    ')': 75,
+    '_': 76,
+    '?': 77,
+    '!': 78,
+    '&': 79,
+    '^': 80,
+    '%': 81,
+    '\$': 82,
+    '@': 83,
+    '~': 84,
+    '|': 85,
+    '/': 86,
+    ':': 87,
+    ';': 88,
+    ',': 89,
+    '`': 90,
+    '\\': 91,
+    '"': 92,
+    '\'': 93,
+    '§': 94,
+    '°': 95,
+    '©': 96,
+    '®': 97,
+    'µ': 98,
+    '¶': 99,
+    '¿': 100,
+    'Ç': 101,
+    'É': 102,
+    'Í': 103,
+    'Î': 104,
+    'á': 105,
+    'à': 106,
+    'â': 107,
+    'ä': 108,
+    'ã': 109,
+    'å': 110,
+    'æ': 111,
+    'ç': 112,
+    'è': 113,
+    'é': 114,
+    'ê': 115,
+    'ë': 116,
+    'ì': 117,
+    'í': 118,
+    'ò': 119,
+    'ó': 120,
+    'ô': 121,
+    'õ': 122,
+    'ö': 123,
+    'ø': 124,
+    'ù': 125,
+    'ú': 126,
+    'û': 127,
+    'ü': 128,
+    'ý': 129,
+    'þ': 130,
+    'ÿ': 131,
+    'ć': 132,
+    'ĉ': 133,
+    'ċ': 134,
+    '£': 135,
+    '¥': 136,
+    '¢': 137,
+    '¤': 138,
+    'ª': 139,
+    'º': 140,
+    '«': 141,
+    '»': 142,
+    '±': 143,
+    '²': 144,
+    '³': 145,
+    '¼': 146,
+    '½': 147,
+    '¾': 148,
+    '×': 149,
+    '÷': 150,
+    'Ø': 151,
+    'Þ': 152,
+    'Ý': 153,
+    'ß': 154,
+    'Đ': 155,
+  };
+
+  static List<PixelCell> createCells({
+    int? levelIndex,
+    LevelDefinition? level,
+  }) {
+    final lvl = level ?? levelAt(levelIndex ?? 0);
+    List<PixelCell> cells = [];
+    final rows = lvl.cellRows;
+    if (rows.isEmpty) return [];
+    for (int r = 0; r < rows.length; r++) {
+      for (int c = 0; c < rows[r].length; c++) {
+        final char = rows[r][c];
+        if (_charToColor.containsKey(char)) {
+          cells.add(
+            PixelCell(row: r, col: c, targetColorId: _charToColor[char]!),
+          );
+        } else {
+          cells.add(PixelCell(row: r, col: c, targetColorId: 0));
+        }
+      }
+    }
+    return cells;
+  }
+
+  static List<List<SilhouetteCellType>> generateSilhouetteGridFromMask(
+    List<String> mask,
+  ) {
+    return List.generate(mask.length, (r) {
+      final row = mask[r];
+      return List.generate(row.length, (c) {
+        final char = row[c];
+        if (char == '.') {
+          return SilhouetteCellType.outside;
+        } else if (char == '#') {
+          return SilhouetteCellType.outline;
+        } else {
+          return SilhouetteCellType.inside;
+        }
+      });
+    });
+  }
+
