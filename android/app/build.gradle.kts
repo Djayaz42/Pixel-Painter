@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.pixel_painter"
+    namespace = "com.vartix.pixelpainter"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
