@@ -16,6 +16,8 @@ import '../widgets/game_board_panel.dart';
 import '../widgets/progress_header.dart';
 import '../widgets/waiting_slot_bar.dart';
 
+int level34Seed = 1801;
+
 class CartridgeBatchPlanner {
   static const List<int> allowedAmounts = [10, 15, 20];
   static const List<int> _preferredAmounts = [20, 15, 10];
@@ -647,6 +649,17 @@ class _GameScreenState extends State<GameScreen>
     if (_levelIndex == 23) {
       return colorId == 144 || colorId == 145 || colorId == 146;
     }
+    if (_levelIndex == 27) {
+      return colorId == 32;
+    }
+    if (_levelIndex == 33) {
+      // Level 34 Yengec backgrounds
+      return colorId == 25 || colorId == 20 || colorId == 16;
+    }
+    if (_levelIndex == 34) {
+      // Level 35 Yunus backgrounds
+      return colorId == 10 || colorId == 31 || colorId == 30 || colorId == 25 || colorId == 2 || colorId == 22;
+    }
     return false;
   }
 
@@ -830,6 +843,23 @@ class _GameScreenState extends State<GameScreen>
       averageRowByColor[colorId] = sumRowByColor[colorId]! / countByColor[colorId]!;
     }
 
+    final averageDistByColor = <int, double>{};
+    if (_levelIndex == 29 || _levelIndex == 30) {
+      final S = LevelData.levelAt(_levelIndex).gridRows;
+      final sumDistByColor = <int, double>{};
+      final countByColorDist = <int, int>{};
+      for (final cell in _cells) {
+        if (cell.isTarget) {
+          final dist = math.min(math.min(cell.row, S - 1 - cell.row), math.min(cell.col, S - 1 - cell.col)).toDouble();
+          sumDistByColor[cell.targetColorId] = (sumDistByColor[cell.targetColorId] ?? 0.0) + dist;
+          countByColorDist[cell.targetColorId] = (countByColorDist[cell.targetColorId] ?? 0) + 1;
+        }
+      }
+      for (final colorId in sumDistByColor.keys) {
+        averageDistByColor[colorId] = sumDistByColor[colorId]! / countByColorDist[colorId]!;
+      }
+    }
+
     final queue = <PaintCartridge>[];
 
     final cartridgeProgress = <PaintCartridge, double>{};
@@ -846,7 +876,31 @@ class _GameScreenState extends State<GameScreen>
       for (int i = 0; i < n; i++) {
         double progress = (i + 0.5) / n;
         
-        if ((_levelIndex == 13 || _levelIndex == 14 || _levelIndex == 15) && isBg) {
+        if (_levelIndex == 31 && cId == 1) {
+          progress = 0.85 + (progress * 0.15);
+        } else if (_levelIndex == 31 && cId == 12) {
+          progress = progress * 0.65;
+        } else if (_levelIndex == 29 || _levelIndex == 30) {
+          final avgDist = averageDistByColor[cId] ?? 0.0;
+          final normDist = math.min(1.0, math.max(0.0, avgDist / 24.0));
+          progress = (normDist * 0.5) + ((i + 0.5) / n) * 0.5;
+        } else if (_levelIndex == 26) {
+          final isLateColor = cId == 14 || cId == 34 || cId == 4 || cId == 13 || cId == 6 || cId == 1 || cId == 36 || cId == 28;
+          final isMiddleColor = cId == 25 || cId == 21 || cId == 15;
+          if (isLateColor) {
+            progress = 0.75 + (progress * 0.25);
+          } else if (isMiddleColor) {
+            progress = 0.4 + (progress * 0.3);
+          } else if (cId == 16) {
+            // Let the edge blue (color 16) be spread out across the entire level timeline (0.0 to 1.0)
+            progress = progress;
+          } else {
+            progress = progress * 0.4;
+          }
+        } else if (_levelIndex == 27) {
+          // Keep progress exactly as is (0.0 to 1.0) so colors interleave/mix naturally
+          progress = progress;
+        } else if ((_levelIndex == 13 || _levelIndex == 14 || _levelIndex == 15) && isBg) {
           progress = progress * 0.8;
         } else if (_levelIndex == 21 && isBg) {
           progress = progress * 0.6;
@@ -886,6 +940,74 @@ class _GameScreenState extends State<GameScreen>
       }
     }
     queue.sort((a, b) => cartridgeProgress[a]!.compareTo(cartridgeProgress[b]!));
+
+    if (_levelIndex == 26) {
+      final List<PaintCartridge> selectedMavis = [];
+      final List<PaintCartridge> selectedKrems = [];
+      final List<PaintCartridge> selectedPembes = [];
+      final List<PaintCartridge> selectedKahves = [];
+      final List<PaintCartridge> selectedGris = [];
+      final List<PaintCartridge> selectedSiyahs = [];
+
+      for (final cartridge in queue) {
+        if (cartridge.colorId == 16 && selectedMavis.length < 6) {
+          selectedMavis.add(cartridge);
+        } else if (cartridge.colorId == 31 && selectedKrems.length < 2) {
+          selectedKrems.add(cartridge);
+        } else if (cartridge.colorId == 34 && selectedPembes.length < 3) {
+          selectedPembes.add(cartridge);
+        } else if (cartridge.colorId == 14 && selectedKahves.length < 2) {
+          selectedKahves.add(cartridge);
+        } else if (cartridge.colorId == 15 && selectedGris.length < 1) {
+          selectedGris.add(cartridge);
+        } else if ((cartridge.colorId == 12 || cartridge.colorId == 36 || cartridge.colorId == 28) && selectedSiyahs.length < 1) {
+          selectedSiyahs.add(cartridge);
+        }
+      }
+
+      if (selectedMavis.length == 6 &&
+          selectedKrems.length == 2 &&
+          selectedPembes.length == 3 &&
+          selectedKahves.length == 2 &&
+          selectedGris.length == 1 &&
+          selectedSiyahs.length == 1) {
+        
+        final selectedSet = <PaintCartridge>{
+          ...selectedMavis,
+          ...selectedKrems,
+          ...selectedPembes,
+          ...selectedKahves,
+          ...selectedGris,
+          ...selectedSiyahs,
+        };
+        queue.removeWhere((c) => selectedSet.contains(c));
+
+        final prefix = <PaintCartridge>[
+          // Row 1: mavi, krem, mavi
+          selectedMavis[0],
+          selectedKrems[0],
+          selectedMavis[1],
+          // Row 2: pembe, kahverengi, gri
+          selectedPembes[0],
+          selectedKahves[0],
+          selectedGris[0],
+          // Row 3: mavi, kahverengi, mavi
+          selectedMavis[2],
+          selectedKahves[1],
+          selectedMavis[3],
+          // Row 4: pembe, siyah, pembe
+          selectedPembes[1],
+          selectedSiyahs[0],
+          selectedPembes[2],
+          // Row 5: mavi, krem, mavi
+          selectedMavis[4],
+          selectedKrems[1],
+          selectedMavis[5],
+        ];
+
+        queue.insertAll(0, prefix);
+      }
+    }
 
     if (_levelIndex == 23) {
       final purples = queue.where((c) => c.colorId == 144 || c.colorId == 145 || c.colorId == 146).toList();
@@ -954,6 +1076,166 @@ class _GameScreenState extends State<GameScreen>
       queue.addAll(interleaved);
     }
 
+    if (_levelIndex >= 32) {
+      final colorGroups = <int, List<PaintCartridge>>{};
+      for (final c in queue) {
+        colorGroups.putIfAbsent(c.colorId, () => []).add(c);
+      }
+      
+      final rand = _levelIndex == 33 ? math.Random(level34Seed) : math.Random();
+      for (final group in colorGroups.values) {
+        group.shuffle(rand);
+      }
+      
+      final interleaved = <PaintCartridge>[];
+      int? lastColorId;
+      int? secondLastColorId;
+      int? thirdLastColorId;
+      int? lastAmount;
+      
+      while (colorGroups.values.any((list) => list.isNotEmpty)) {
+        int bestColorId = -1;
+        double bestScore = -double.infinity;
+        
+        for (final entry in colorGroups.entries) {
+          final colorId = entry.key;
+          final list = entry.value;
+          if (list.isEmpty) continue;
+          
+          final nextCartridge = list.first;
+          double score = list.length.toDouble();
+          
+          if (colorId == lastColorId) {
+            score -= 100.0;
+          } else if (colorId == secondLastColorId) {
+            score -= 50.0;
+          } else if (colorId == thirdLastColorId) {
+            score -= 30.0;
+          }
+          
+          if (nextCartridge.amount == lastAmount) {
+            score -= 5.0;
+          }
+          
+          score += rand.nextDouble() * 2.0;
+          
+          if (score > bestScore) {
+            bestScore = score;
+            bestColorId = colorId;
+          }
+        }
+        
+        if (bestColorId == -1) {
+          bestColorId = colorGroups.entries.firstWhere((e) => e.value.isNotEmpty).key;
+        }
+        
+        final selectedCartridge = colorGroups[bestColorId]!.removeAt(0);
+        interleaved.add(selectedCartridge);
+        
+        thirdLastColorId = secondLastColorId;
+        secondLastColorId = lastColorId;
+        lastColorId = selectedCartridge.colorId;
+        lastAmount = selectedCartridge.amount;
+      }
+      
+      queue.clear();
+      queue.addAll(interleaved);
+    }
+
+    if (_levelIndex == 33) {
+      final selectedPembes = queue.where((c) => c.colorId == 30).toList();
+      final selectedKrems = queue.where((c) => c.colorId == 42).toList();
+      final others = queue.where((c) => c.colorId != 30 && c.colorId != 42).toList();
+
+      if (selectedPembes.isNotEmpty && selectedKrems.isNotEmpty && others.length >= 7) {
+        final prefixPink = selectedPembes.first;
+        final prefixCream = selectedKrems.first;
+
+        // Remove these prefix elements from the main queue
+        queue.remove(prefixCream);
+        queue.remove(prefixPink);
+
+        // Get the first 7 other cartridges from the remaining queue
+        // We prioritize blue, teal, white, indigo: {25, 20, 23, 11, 16}
+        final prefixOthers = <PaintCartridge>[];
+        final tempOthers = queue.where((c) => c.colorId != 30 && c.colorId != 42).toList();
+        
+        final priorityColors = {25, 20, 23, 11, 16};
+        tempOthers.sort((a, b) {
+          final aVal = priorityColors.contains(a.colorId) ? 0 : 1;
+          final bVal = priorityColors.contains(b.colorId) ? 0 : 1;
+          return aVal.compareTo(bVal);
+        });
+
+        int lastColorId = -1;
+        for (int i = 0; i < 7; i++) {
+          if (tempOthers.isEmpty) break;
+          final choice = tempOthers.firstWhere(
+            (c) => c.colorId != lastColorId,
+            orElse: () => tempOthers.first,
+          );
+          prefixOthers.add(choice);
+          lastColorId = choice.colorId;
+          tempOthers.remove(choice);
+          queue.remove(choice);
+        }
+
+        // Apply 40-round enforcement for background colors in prefixOthers
+        for (int i = 0; i < prefixOthers.length; i++) {
+          final c = prefixOthers[i];
+          final isBgColor = c.colorId == 25 || c.colorId == 20 || c.colorId == 16;
+          if (isBgColor && c.amount != 40) {
+            final fortyCart = queue.firstWhere(
+              (x) => x.colorId == c.colorId && x.amount == 40,
+              orElse: () => c,
+            );
+            if (fortyCart != c) {
+              prefixOthers[i] = fortyCart;
+              queue.remove(fortyCart);
+              queue.add(c);
+            }
+          }
+        }
+
+        // Place them in slots 0 to 8:
+        final prefix = <PaintCartridge>[
+          prefixOthers[0],
+          prefixOthers[1],
+          prefixCream,
+          prefixOthers[2],
+          prefixOthers[3],
+          prefixPink,
+          prefixOthers[4],
+          prefixOthers[5],
+          prefixOthers[6],
+        ];
+
+        queue.insertAll(0, prefix);
+
+        // Fix any consecutive same-color cartridges in the queue (from index 8 onwards)
+        for (int i = 8; i < queue.length - 1; i++) {
+          if (queue[i].colorId == queue[i + 1].colorId) {
+            int swapIndex = -1;
+            for (int j = i + 2; j < queue.length; j++) {
+              final differentFromCurrent = queue[j].colorId != queue[i].colorId;
+              final differentFromNext = (i + 2 < queue.length)
+                  ? queue[j].colorId != queue[i + 2].colorId
+                  : true;
+              if (differentFromCurrent && differentFromNext) {
+                swapIndex = j;
+                break;
+              }
+            }
+            if (swapIndex != -1) {
+              final temp = queue[i + 1];
+              queue[i + 1] = queue[swapIndex];
+              queue[swapIndex] = temp;
+            }
+          }
+        }
+      }
+    }
+
     if (_levelIndex == 15) {
       queue.insertAll(0, initialPizzaCartridges);
     }
@@ -988,19 +1270,126 @@ class _GameScreenState extends State<GameScreen>
       }
     }
 
-    for (int i = (_levelIndex == 15 ? 9 : 0); i < queue.length - 3; i++) {
-      if (queue[i].colorId == queue[i + 3].colorId) {
-        if (i + 4 < queue.length && queue[i].colorId != queue[i + 4].colorId && queue[i + 3].colorId != queue[i + 4].colorId) {
-          final temp = queue[i + 3];
-          queue[i + 3] = queue[i + 4];
-          queue[i + 4] = temp;
-        } else if (queue[i].colorId != queue[i + 2].colorId && queue[i + 3].colorId != queue[i + 2].colorId) {
-          final temp = queue[i + 3];
-          queue[i + 3] = queue[i + 2];
-          queue[i + 2] = temp;
+    if (_levelIndex < 32) {
+      for (int i = (_levelIndex == 15 ? 9 : (_levelIndex == 26 ? 15 : 0)); i < queue.length - 3; i++) {
+        if (queue[i].colorId == queue[i + 3].colorId) {
+          if (i + 4 < queue.length && queue[i].colorId != queue[i + 4].colorId && queue[i + 3].colorId != queue[i + 4].colorId) {
+            final temp = queue[i + 3];
+            queue[i + 3] = queue[i + 4];
+            queue[i + 4] = temp;
+          } else if (queue[i].colorId != queue[i + 2].colorId && queue[i + 3].colorId != queue[i + 2].colorId) {
+            final temp = queue[i + 3];
+            queue[i + 3] = queue[i + 2];
+            queue[i + 2] = temp;
+          }
         }
       }
     }
+
+    if (_levelIndex == 33) {
+      print('=== DEBUG LEVEL 34 QUEUE GENERATION ===');
+      print('Before swaps:');
+      print('3. (index 2): ${queue[2].colorId} (${queue[2].amount})');
+      print('35. (index 34): ${queue[34].colorId} (${queue[34].amount})');
+      print('13. (index 12): ${queue[12].colorId} (${queue[12].amount})');
+      print('15. (index 14): ${queue[14].colorId} (${queue[14].amount})');
+      print('18. (index 17): ${queue[17].colorId} (${queue[17].amount})');
+      print('19. (index 18): ${queue[18].colorId} (${queue[18].amount})');
+      print('23. (index 22): ${queue[22].colorId} (${queue[22].amount})');
+      print('56. (index 55): ${queue[55].colorId} (${queue[55].amount})');
+      print('58. (index 57): ${queue[57].colorId} (${queue[57].amount})');
+      print('61. (index 60): ${queue[60].colorId} (${queue[60].amount})');
+      print('68. (index 67): ${queue[67].colorId} (${queue[67].amount})');
+      print('72. (index 71): ${queue[71].colorId} (${queue[71].amount})');
+
+      void swap(int idxA, int idxB) {
+        if (idxA >= 0 && idxA < queue.length && idxB >= 0 && idxB < queue.length) {
+          final temp = queue[idxA];
+          queue[idxA] = queue[idxB];
+          queue[idxB] = temp;
+        }
+      }
+      
+      // User requested swaps (1-indexed converted to 0-indexed):
+      // 1. 35. sıradaki maviyi 3. sırayla yer değiştir.
+      swap(34, 2);
+      // 2. 58. sıradaki maviyle 15. sıradaki rengi yer değiştir.
+      swap(57, 14);
+      // 3. 56. sıradaki rengi 13. sıradaki renkle yer değiştir.
+      swap(55, 12);
+      // 4. 68. sıradaki rengi 18. sıra ile yer değiştir.
+      swap(67, 17);
+      // 5. 23. sıra ile 72 sıra yer değiştir.
+      swap(22, 71);
+      // 6. 19. sıra ile 61. sıra yer değiştir.
+      swap(18, 60);
+
+      print('After swaps (before duplicate resolver):');
+      print('3. (index 2): ${queue[2].colorId} (${queue[2].amount})');
+      print('35. (index 34): ${queue[34].colorId} (${queue[34].amount})');
+      print('13. (index 12): ${queue[12].colorId} (${queue[12].amount})');
+      print('15. (index 14): ${queue[14].colorId} (${queue[14].amount})');
+      print('18. (index 17): ${queue[17].colorId} (${queue[17].amount})');
+      print('19. (index 18): ${queue[18].colorId} (${queue[18].amount})');
+      print('23. (index 22): ${queue[22].colorId} (${queue[22].amount})');
+      print('56. (index 55): ${queue[55].colorId} (${queue[55].amount})');
+      print('58. (index 57): ${queue[57].colorId} (${queue[57].amount})');
+      print('61. (index 60): ${queue[60].colorId} (${queue[60].amount})');
+      print('68. (index 67): ${queue[67].colorId} (${queue[67].amount})');
+      print('72. (index 71): ${queue[71].colorId} (${queue[71].amount})');
+
+
+      // Resolve any consecutive same-color duplicates in the queue caused by swaps:
+      final targetIndices = {2, 12, 14, 17, 18, 22, 34, 55, 57, 60, 67, 71};
+      for (int i = 0; i < queue.length - 1; i++) {
+        if (queue[i].colorId == queue[i + 1].colorId) {
+          int idxToSwap = i + 1;
+          if (targetIndices.contains(i + 1) && !targetIndices.contains(i)) {
+            idxToSwap = i;
+          }
+
+          int swapIdx = -1;
+          for (int j = 0; j < queue.length; j++) {
+            if (targetIndices.contains(j)) continue;
+            if (j == i || j == i + 1) continue;
+
+            final proposedColorId = queue[j].colorId;
+            final otherIdx = (idxToSwap == i) ? i + 1 : i;
+            if (proposedColorId == queue[otherIdx].colorId) continue;
+
+            if (j > 0 && queue[j - 1].colorId == queue[idxToSwap].colorId) continue;
+            if (j < queue.length - 1 && queue[j + 1].colorId == queue[idxToSwap].colorId) continue;
+
+            if (idxToSwap > 0 && idxToSwap - 1 != j && queue[idxToSwap - 1].colorId == proposedColorId) continue;
+            if (idxToSwap < queue.length - 1 && idxToSwap + 1 != j && queue[idxToSwap + 1].colorId == proposedColorId) continue;
+
+            swapIdx = j;
+            break;
+          }
+
+          if (swapIdx != -1) {
+            final temp = queue[idxToSwap];
+            queue[idxToSwap] = queue[swapIdx];
+            queue[swapIdx] = temp;
+          }
+        }
+      }
+
+      print('After duplicate resolver (final):');
+      print('3. (index 2): ${queue[2].colorId} (${queue[2].amount})');
+      print('35. (index 34): ${queue[34].colorId} (${queue[34].amount})');
+      print('13. (index 12): ${queue[12].colorId} (${queue[12].amount})');
+      print('15. (index 14): ${queue[14].colorId} (${queue[14].amount})');
+      print('18. (index 17): ${queue[17].colorId} (${queue[17].amount})');
+      print('19. (index 18): ${queue[18].colorId} (${queue[18].amount})');
+      print('23. (index 22): ${queue[22].colorId} (${queue[22].amount})');
+      print('56. (index 55): ${queue[55].colorId} (${queue[55].amount})');
+      print('58. (index 57): ${queue[57].colorId} (${queue[57].amount})');
+      print('61. (index 60): ${queue[60].colorId} (${queue[60].amount})');
+      print('68. (index 67): ${queue[67].colorId} (${queue[67].amount})');
+      print('72. (index 71): ${queue[71].colorId} (${queue[71].amount})');
+    }
+
 
     _generatedFortyCount = queue
         .where((cartridge) => cartridge.amount == 40)
@@ -1240,6 +1629,332 @@ class _GameScreenState extends State<GameScreen>
               }
             }
             return result;
+        }
+      }
+    }
+    if (_levelIndex == 26) {
+      if (deficit <= 0) return const [];
+      if (colorId == 16) {
+        return CartridgeBatchPlanner.plan(
+          deficit: deficit,
+          fortyBudget: fortyBudget,
+          allowLarge: true,
+          forceFirstThreeAsTen: false,
+        );
+      }
+    }
+    if (_levelIndex == 27) {
+      if (deficit <= 0) return const [];
+      if (colorId == 32) {
+        // Whichever color has the most pixels (32), make it 30-round cartridges.
+        return List.filled(deficit ~/ 30, 30);
+      } else {
+        // Make the others 10-15-20 (no 40s or 30s)
+        return CartridgeBatchPlanner.plan(
+          deficit: deficit,
+          fortyBudget: 0,
+          allowLarge: false,
+          forceFirstThreeAsTen: colorId != 11,
+        );
+      }
+    }
+    if (_levelIndex == 29) {
+      if (deficit <= 0) return const [];
+      final rand = math.Random();
+      while (true) {
+        final result = <int>[];
+        int remaining = deficit;
+        while (remaining > 0) {
+          if (remaining == 5) {
+            break; // Failed to partition exactly with {10,15,20}, retry
+          }
+          final options = <int>[];
+          if (remaining >= 10) options.add(10);
+          if (remaining >= 15) options.add(15);
+          if (remaining >= 20) options.add(20);
+          
+          if (options.isEmpty) {
+            result.add(remaining);
+            remaining = 0;
+            break;
+          }
+          
+          int choice = 10;
+          final roll = rand.nextDouble();
+          if (options.contains(15) && options.contains(20)) {
+            if (roll < 0.45) {
+              choice = 10;
+            } else if (roll < 0.90) {
+              choice = 15;
+            } else {
+              choice = 20;
+            }
+          } else if (options.contains(15)) {
+            if (roll < 0.5) {
+              choice = 10;
+            } else {
+              choice = 15;
+            }
+          } else {
+            choice = 10;
+          }
+          
+          result.add(choice);
+          remaining -= choice;
+        }
+        if (remaining == 0) {
+          result.shuffle(rand);
+          return result;
+        }
+      }
+    }
+    if (_levelIndex == 30) {
+      if (deficit <= 0) return const [];
+      final rand = math.Random();
+      while (true) {
+        final result = <int>[];
+        int remaining = deficit;
+        while (remaining > 0) {
+          if (remaining == 5) {
+            break; // Failed to partition, retry
+          }
+          if (remaining == 15) {
+            result.add(15);
+            remaining = 0;
+            break;
+          }
+          if (remaining == 25) {
+            result.add(25);
+            remaining = 0;
+            break;
+          }
+          if (remaining == 10) {
+            result.add(10);
+            remaining = 0;
+            break;
+          }
+          final options = <int>[];
+          if (remaining >= 20) options.add(20);
+          if (remaining >= 30) options.add(30);
+          
+          if (options.isEmpty) {
+            result.add(remaining);
+            remaining = 0;
+            break;
+          }
+          
+          int choice = 20;
+          final roll = rand.nextDouble();
+          if (options.contains(20) && options.contains(30)) {
+            choice = roll < 0.5 ? 20 : 30;
+          } else if (options.contains(20)) {
+            choice = 20;
+          } else {
+            choice = 30;
+          }
+          
+          result.add(choice);
+          remaining -= choice;
+        }
+        if (remaining == 0) {
+          result.shuffle(rand);
+          return result;
+        }
+      }
+    }
+    if (_levelIndex == 31) {
+      if (deficit <= 0) return const [];
+      if (colorId == 1) {
+        return const [15, 40];
+      }
+      if (colorId == 12) {
+        final rand = math.Random();
+        while (true) {
+          final result = <int>[];
+          int remaining = deficit;
+          while (remaining > 0) {
+            final options = <int>[];
+            if (remaining >= 20) options.add(20);
+            if (remaining >= 30) options.add(30);
+            if (options.isEmpty) {
+              result.add(remaining);
+              remaining = 0;
+              break;
+            }
+            final choice = rand.nextDouble() < 0.6 ? 20 : 30;
+            result.add(choice);
+            remaining -= choice;
+          }
+          if (remaining == 0) {
+            result.shuffle(rand);
+            return result;
+          }
+        }
+      }
+    }
+    if (_levelIndex >= 32) {
+      if (deficit <= 0) return const [];
+
+      // If it is a background color, partition it safely maximizing 40s
+      if (isBackground) {
+        int target = deficit;
+        if (target < 10) target = 10;
+        if (target % 5 != 0) target = ((target + 4) ~/ 5) * 5;
+
+        final list = <int>[];
+        int k = target ~/ 40;
+        int rem = target % 40;
+
+        if (rem == 0) {
+          list.addAll(List<int>.filled(k, 40));
+        } else if (rem == 10 || rem == 15 || rem == 20 || rem == 30) {
+          list.addAll(List<int>.filled(k, 40));
+          list.add(rem);
+        } else if (rem == 5) {
+          if (k > 0) {
+            list.addAll(List<int>.filled(k - 1, 40));
+            list.add(30);
+            list.add(15);
+          } else {
+            list.add(10); // fallback if k == 0 (should not happen since target >= 10)
+          }
+        } else if (rem == 25) {
+          if (k > 0) {
+            list.addAll(List<int>.filled(k, 40));
+            list.add(15);
+            list.add(10);
+          } else {
+            list.addAll([15, 10]);
+          }
+        } else if (rem == 35) {
+          if (k > 0) {
+            list.addAll(List<int>.filled(k, 40));
+            list.add(20);
+            list.add(15);
+          } else {
+            list.addAll([20, 15]);
+          }
+        }
+        list.sort((a, b) => b.compareTo(a));
+        return list;
+      }
+
+      if (_levelIndex == 36) {
+        if (colorId == 12) {
+          final list = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 10];
+          list.shuffle();
+          return list;
+        }
+      }
+
+      if (_levelIndex == 37) {
+        if (colorId == 12) {
+          final list = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+          list.shuffle();
+          return list;
+        }
+        if (colorId == 13) {
+          final list = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+          list.shuffle();
+          return list;
+        }
+        if (colorId == 14) {
+          final list = [20, 20, 20, 20, 20, 20, 20, 15, 10];
+          list.shuffle();
+          return list;
+        }
+        if (colorId == 31) {
+          final list = [20, 20, 20, 20, 15];
+          list.shuffle();
+          return list;
+        }
+        if (colorId == 15) {
+          final list = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 10];
+          list.shuffle();
+          return list;
+        }
+        if (colorId == 19) {
+          final list = [15, 10];
+          list.shuffle();
+          return list;
+        }
+      }
+
+      if (_levelIndex == 33) {
+        if (colorId == 30) {
+          int target = deficit;
+          if (target < 10) target = 10;
+          if (target % 5 != 0) target = ((target + 4) ~/ 5) * 5;
+          if (target == 45) {
+            return [10, 10, 10, 15];
+          } else if (target == 30) {
+            return [10, 10, 10];
+          } else {
+            final list = <int>[];
+            int rem = target;
+            while (rem >= 40) { list.add(40); rem -= 40; }
+            if (rem == 35) { list.addAll([20, 15]); rem = 0; }
+            else if (rem == 30) { list.add(30); rem = 0; }
+            else if (rem == 25) { list.addAll([15, 10]); rem = 0; }
+            else if (rem == 20) { list.add(20); rem = 0; }
+            else if (rem == 15) { list.add(15); rem = 0; }
+            else if (rem == 10) { list.add(10); rem = 0; }
+            else if (rem > 0) { list.add(10); } // fallback
+            return list;
+          }
+        }
+        if (colorId == 42) {
+          int target = deficit;
+          if (target < 10) target = 10;
+          if (target % 5 != 0) target = ((target + 4) ~/ 5) * 5;
+          final result = <int>[15];
+          int remaining = target - 15;
+          final sizes = [40, 30, 20, 15, 10];
+          final rand = _levelIndex == 33 ? math.Random(level34Seed) : math.Random();
+          while (remaining > 0) {
+            final options = sizes.where((s) => remaining - s == 0 || remaining - s >= 10).toList();
+            if (options.isEmpty) {
+              result.add(remaining);
+              break;
+            }
+            final choice = options[rand.nextInt(options.length)];
+            result.add(choice);
+            remaining -= choice;
+          }
+          return result;
+        }
+      }
+      final rand = _levelIndex == 33 ? math.Random(level34Seed) : math.Random();
+      final allowedSizes = [40, 30, 20, 15, 10];
+      int target = deficit;
+      if (target < 10) target = 10;
+      if (target % 5 != 0) {
+        target = ((target + 4) ~/ 5) * 5;
+      }
+      while (true) {
+        final result = <int>[];
+        int remaining = target;
+        while (remaining > 0) {
+          final options = allowedSizes.where((s) {
+            final left = remaining - s;
+            return left == 0 || left >= 10;
+          }).toList();
+          if (options.isEmpty) {
+            if (remaining >= 10 && remaining % 5 == 0) {
+              result.add(remaining);
+            } else {
+              result.add(10);
+            }
+            remaining = 0;
+            break;
+          }
+          final choice = options[rand.nextInt(options.length)];
+          result.add(choice);
+          remaining -= choice;
+        }
+        if (remaining == 0) {
+          result.shuffle(rand);
+          return result;
         }
       }
     }
@@ -1610,7 +2325,28 @@ class _GameScreenState extends State<GameScreen>
                                 cartridges: _cartridges,
                                 onCartridgeTap: _selectCartridge,
                                 isCompact: isCompact,
+                                columnCount: _levelIndex == 29 ? 4 : 3,
+                                hideSecondRow: _levelIndex >= 31,
                               ),
+                              if (_levelIndex == 33 || _levelIndex >= 35) ...[
+                                SizedBox(height: isCompact ? 4 : 6),
+                                _PremiumBeveledButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => _CartridgesPreviewDialog(
+                                        cartridges: _cartridges,
+                                      ),
+                                    );
+                                  },
+                                  label: 'TÜM KARTUŞLARI GÖSTER',
+                                  icon: Icons.visibility,
+                                  gradientColors: const [
+                                    Color(0xFF5C3D24),
+                                    Color(0xFF352010),
+                                  ],
+                                ),
+                              ],
                               SizedBox(height: isCompact ? 8 : 12),
                               _BoosterDock(isCompact: isCompact),
                             ],
@@ -2593,6 +3329,199 @@ class _CornerGem extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white.withAlpha(200),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CartridgesPreviewDialog extends StatelessWidget {
+  const _CartridgesPreviewDialog({required this.cartridges});
+
+  final List<PaintCartridge> cartridges;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 24),
+      child: Container(
+        width: 380,
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: const Color(0xFFCE9E4F), width: 3.5), // Brushed gold frame
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF422C1A), // Luxury dark wood/bronze background
+              Color(0xFF23140A),
+            ],
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0xFF160D06),
+              offset: Offset(0, 12),
+              blurRadius: 16,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              const Text(
+                'SLOT KUYRUKLARI',
+                style: TextStyle(
+                  color: Color(0xFFFBE49E),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Toplam: ${cartridges.length} kartuş',
+                style: const TextStyle(
+                  color: Color(0xFFCE9E4F),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              
+              // Divider line
+              Container(
+                height: 1,
+                color: const Color(0xFFCE9E4F).withAlpha(100),
+              ),
+              const SizedBox(height: 12),
+              
+              // Column Headers: SOL SLOT, ORTA SLOT, SAĞ SLOT
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+                child: Row(
+                  children: [
+                    for (final title in ['SOL SLOT', 'ORTA SLOT', 'SAĞ SLOT'])
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          padding: const EdgeInsets.symmetric(vertical: 6.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0x33CE9E4F),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFFCE9E4F), width: 1),
+                          ),
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFFFBE49E),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Scrollable Grid View
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1.1,
+                  ),
+                  itemCount: cartridges.length,
+                  itemBuilder: (context, index) {
+                    final c = cartridges[index];
+                    final isUsed = c.amount <= 0;
+                    final displayColor = isUsed ? const Color(0xFF5F6988).withAlpha(120) : c.color;
+
+                    return Opacity(
+                      opacity: isUsed ? 0.35 : 1.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: displayColor.withAlpha(220),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isUsed ? const Color(0xFF8A93A6) : const Color(0xFFCE9E4F),
+                            width: isUsed ? 1.0 : 1.8,
+                          ),
+                          boxShadow: [
+                            if (!isUsed)
+                              BoxShadow(
+                                color: c.color.withAlpha(80),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${index + 1}. sıra',
+                                  style: TextStyle(
+                                    color: isUsed ? Colors.white.withAlpha(120) : Colors.white.withAlpha(200),
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                if (isUsed)
+                                  const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.white70,
+                                    size: 16,
+                                  )
+                                else
+                                  Text(
+                                    '${c.amount}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.black,
+                                          offset: Offset(1, 1),
+                                          blurRadius: 1,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Close button
+              _PremiumBeveledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                label: 'KAPAT',
+                icon: Icons.close,
+              ),
+            ],
           ),
         ),
       ),

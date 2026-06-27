@@ -73,7 +73,7 @@ class _PixelGridPainter extends CustomPainter {
     final gridRect = frameOrigin & Size(frameSize, frameSize);
     final artRect = origin & Size(artWidth, artHeight);
     final paint = Paint()..style = PaintingStyle.fill;
-    final gap = cellSize * 0.09;
+    final gap = cellSize * 0.04;
 
     // 1. Draw main frame container
     canvas.drawRRect(
@@ -189,51 +189,51 @@ class _PixelGridPainter extends CustomPainter {
       canvas.drawPath(path, chevronPaint);
     }
 
-    // 4. Draw custom roller conveyor tiled border around the grid
-    final rollerWidth = 8.0;
-    final rollerPaintLight = Paint()..color = const Color(0xFFE5E9F0);
-    final rollerPaintDark = Paint()..color = const Color(0xFFD8DEE9);
-    final rollerSeparatorPaint = Paint()
-      ..color = const Color(0xFF1A1D24)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-   
-    // Top Edge Rollers
-    for (double x = origin.dx - 12; x < origin.dx + artWidth + 12; x += rollerWidth) {
-      final rect = Rect.fromLTWH(x, origin.dy - 12, rollerWidth - 1, 12);
-      canvas.drawRect(rect, (x ~/ rollerWidth) % 2 == 0 ? rollerPaintLight : rollerPaintDark);
-      canvas.drawRect(rect, rollerSeparatorPaint);
-    }
-   
-    // Bottom Edge Rollers
-    for (double x = origin.dx - 12; x < origin.dx + artWidth + 12; x += rollerWidth) {
-      final rect = Rect.fromLTWH(x, origin.dy + artHeight, rollerWidth - 1, 12);
-      canvas.drawRect(rect, (x ~/ rollerWidth) % 2 == 0 ? rollerPaintLight : rollerPaintDark);
-      canvas.drawRect(rect, rollerSeparatorPaint);
-    }
-
-    // Left Edge Rollers
-    for (double y = origin.dy; y < origin.dy + artHeight; y += rollerWidth) {
-      final rect = Rect.fromLTWH(origin.dx - 12, y, 12, rollerWidth - 1);
-      canvas.drawRect(rect, (y ~/ rollerWidth) % 2 == 0 ? rollerPaintLight : rollerPaintDark);
-      canvas.drawRect(rect, rollerSeparatorPaint);
-    }
-
-    // Right Edge Rollers
-    for (double y = origin.dy; y < origin.dy + artHeight; y += rollerWidth) {
-      final rect = Rect.fromLTWH(origin.dx + artWidth, y, 12, rollerWidth - 1);
-      canvas.drawRect(rect, (y ~/ rollerWidth) % 2 == 0 ? rollerPaintLight : rollerPaintDark);
-      canvas.drawRect(rect, rollerSeparatorPaint);
-    }
-
-    // Draw dark frames around the rollers
-    canvas.drawRect(
-      Rect.fromLTRB(origin.dx - 12, origin.dy - 12, origin.dx + artWidth + 12, origin.dy + artHeight + 12),
-      Paint()..style = PaintingStyle.stroke..strokeWidth = 2.0..color = const Color(0xFF1A1D24),
+    // 4. Draw sleek, premium metallic frame around the grid (replacing the rollers)
+    final frameOuterRect = Rect.fromLTRB(
+      origin.dx - 10,
+      origin.dy - 10,
+      origin.dx + artWidth + 10,
+      origin.dy + artHeight + 10,
     );
+    final frameInnerRect = Rect.fromLTRB(
+      origin.dx,
+      origin.dy,
+      origin.dx + artWidth,
+      origin.dy + artHeight,
+    );
+
+    // Draw the dark metallic frame background
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(frameOuterRect, const Radius.circular(8)),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF3B4252), // Nord dark gray highlight
+            Color(0xFF2E3440), // Polar night dark
+            Color(0xFF1E222A), // Extra dark slate
+          ],
+        ).createShader(frameOuterRect),
+    );
+
+    // Draw a premium gold/bronze trim outline around the frame
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(frameOuterRect, const Radius.circular(8)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = const Color(0xFFCE9E4F), // Gold highlight matching UI and motors
+    );
+
+    // Draw a dark inner outline right against the grid
     canvas.drawRect(
-      Rect.fromLTRB(origin.dx, origin.dy, origin.dx + artWidth, origin.dy + artHeight),
-      Paint()..style = PaintingStyle.stroke..strokeWidth = 2.0..color = const Color(0xFF1A1D24),
+      frameInnerRect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..color = const Color(0xFF1A1D24),
     );
 
     // 5. Draw dark grid canvas background

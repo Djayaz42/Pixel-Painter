@@ -126,18 +126,39 @@ void main() {
     if (fortyBudget < 1) fortyBudget = 1;
 
     for (final run in lvl.colorRuns) {
-      final isBackground = run.colorId == backgroundId ||
+      final isBackground = (run.colorId == backgroundId && i != 26 && i != 36 && i != 37) ||
           (i == 13 && (run.colorId == 3 || run.colorId == 5 || run.colorId == 76)) ||
           (i == 14 && (run.colorId == 101 || run.colorId == 102)) ||
           (i == 15 && (run.colorId == 103 || run.colorId == 104));
-      final allowLarge = isBackground;
+      final allowLarge = isBackground || (i == 26 && run.colorId == 16);
       final onlyThirtyAndForty = isBackground;
       
-      final batches = planCartridges(
-        deficit: run.amount,
-        allowLarge: allowLarge,
-        onlyThirtyAndForty: onlyThirtyAndForty,
-      );
+      List<int> batches;
+      if (i == 36 && run.colorId == 12) {
+        batches = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 10];
+      } else if (i == 37) {
+        if (run.colorId == 12) {
+          batches = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+        } else if (run.colorId == 13) {
+          batches = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+        } else if (run.colorId == 14) {
+          batches = [20, 20, 20, 20, 20, 20, 20, 15, 10];
+        } else if (run.colorId == 31) {
+          batches = [20, 20, 20, 20, 15];
+        } else if (run.colorId == 15) {
+          batches = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 15, 10];
+        } else if (run.colorId == 19) {
+          batches = [15, 10];
+        } else {
+          batches = [];
+        }
+      } else {
+        batches = planCartridges(
+          deficit: run.amount,
+          allowLarge: allowLarge,
+          onlyThirtyAndForty: onlyThirtyAndForty,
+        );
+      }
       batchesByColor[run.colorId] = batches;
     }
 

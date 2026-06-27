@@ -9,15 +9,19 @@ class CartridgeBar extends StatelessWidget {
     required this.cartridges,
     required this.onCartridgeTap,
     this.isCompact = false,
+    this.columnCount = 3,
+    this.hideSecondRow = false,
   });
 
   final List<PaintCartridge> cartridges;
   final ValueChanged<PaintCartridge> onCartridgeTap;
   final bool isCompact;
+  final int columnCount;
+  final bool hideSecondRow;
 
   @override
   Widget build(BuildContext context) {
-    final visibleRows = _visibleColumnRows(cartridges);
+    final visibleRows = _visibleColumnRows(cartridges, columnCount);
 
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -31,14 +35,18 @@ class CartridgeBar extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                for (var column = 0; column < 3; column++)
+                for (var column = 0; column < columnCount; column++)
                   SizedBox(
-                    width: isCompact ? 72 : 112,
+                    width: isCompact
+                        ? (columnCount == 4 ? 54 : 72)
+                        : (columnCount == 4 ? 84 : 112),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isCompact ? 7 : 9,
+                        horizontal: isCompact
+                            ? (columnCount == 4 ? 3 : 7)
+                            : (columnCount == 4 ? 4 : 9),
                       ),
-                      child: visibleRows[row][column] != null
+                      child: (visibleRows[row][column] != null && !(row == 1 && hideSecondRow))
                           ? CartridgeWidget(
                               key: ValueKey(
                                 'active:${visibleRows[row][column]!.id}',
@@ -65,12 +73,13 @@ class CartridgeBar extends StatelessWidget {
 
   List<List<PaintCartridge?>> _visibleColumnRows(
     List<PaintCartridge> cartridges,
+    int columnCount,
   ) {
-    final rows = List.generate(2, (_) => List<PaintCartridge?>.filled(3, null));
+    final rows = List.generate(2, (_) => List<PaintCartridge?>.filled(columnCount, null));
 
-    for (var column = 0; column < 3; column++) {
+    for (var column = 0; column < columnCount; column++) {
       var row = 0;
-      for (var index = column; index < cartridges.length; index += 3) {
+      for (var index = column; index < cartridges.length; index += columnCount) {
         final cartridge = cartridges[index];
         if (cartridge.amount > 0) {
           rows[row][column] = cartridge;
