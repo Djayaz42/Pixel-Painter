@@ -147,6 +147,7 @@ class _GameScreenState extends State<GameScreen>
   bool _isGameOver = false;
   bool _isMagnetModeActive = false;
   bool _isHookModeActive = false;
+  bool _isCycloneModeActive = false;
   bool _showCompletionOverlay = false;
   DateTime? _completedAt;
   DateTime? _nextLifeAt;
@@ -214,7 +215,8 @@ class _GameScreenState extends State<GameScreen>
     ];
   }
 
-  int get _activeOrbitCount => _movingMotors.length + _firingMotors.length;
+  int get _activeOrbitCount =>
+      _movingMotors.where((m) => !m.isGhost).length + _firingMotors.length;
 
   String get _lifeStatusText {
     if (_lives >= _maxLives || _nextLifeAt == null) {
@@ -240,19 +242,26 @@ class _GameScreenState extends State<GameScreen>
       (item) => item.id == cartridge.id,
       orElse: () => cartridge,
     );
+    final bypassLimit = _isCycloneModeActive;
     if (_isGameOver ||
         currentCartridge.amount <= 0 ||
-        _activeOrbitCount >= _orbitPullCount) {
+        (!bypassLimit && _activeOrbitCount >= _orbitPullCount)) {
       return;
     }
 
     setState(() {
+      final isGhost = _isCycloneModeActive;
+      if (_isCycloneModeActive) {
+        _isCycloneModeActive = false;
+      }
+      
       _movingMotors.add(
         _MovingMotor(
           runId: _nextRunId++,
           cartridge: currentCartridge.copyWith(isSelected: false),
           startedAt: DateTime.now(),
           processedLineKeys: <String>{},
+          isGhost: isGhost,
         ),
       );
       _cartridges = [
@@ -262,6 +271,19 @@ class _GameScreenState extends State<GameScreen>
           else
             item.copyWith(isSelected: false),
       ];
+
+      if (isGhost) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${currentCartridge.name} Kasırga Motoru fırlatıldı! Slota yerleşmeyecek.',
+              style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: const Color(0xFF42E88A),
+          ),
+        );
+      }
     });
     _ensureTicker();
   }
@@ -272,6 +294,7 @@ class _GameScreenState extends State<GameScreen>
       _isMagnetModeActive = !_isMagnetModeActive;
       if (_isMagnetModeActive) {
         _isHookModeActive = false;
+        _isCycloneModeActive = false;
       }
     });
     if (_isMagnetModeActive) {
@@ -295,6 +318,7 @@ class _GameScreenState extends State<GameScreen>
       _isHookModeActive = !_isHookModeActive;
       if (_isHookModeActive) {
         _isMagnetModeActive = false;
+        _isCycloneModeActive = false;
       }
     });
     if (_isHookModeActive) {
@@ -303,6 +327,30 @@ class _GameScreenState extends State<GameScreen>
         const SnackBar(
           content: Text(
             'Kartuş Kancası Aktif! En öne getirmek istediğiniz renge ait bir piksele dokunun.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          duration: Duration(seconds: 4),
+          backgroundColor: Color(0xFF1E4C80),
+        ),
+      );
+    }
+  }
+
+  void _useCycloneBooster() {
+    if (_isGameOver) return;
+    setState(() {
+      _isCycloneModeActive = !_isCycloneModeActive;
+      if (_isCycloneModeActive) {
+        _isMagnetModeActive = false;
+        _isHookModeActive = false;
+      }
+    });
+    if (_isCycloneModeActive) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Kasırga Motoru Aktif! Ücretsiz (slota yerleşmeyen) fırlatmak istediğiniz kartuşa tıklayın.',
             style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
           ),
           duration: Duration(seconds: 4),
@@ -459,7 +507,16 @@ class _GameScreenState extends State<GameScreen>
 
       final liveMotor = _movingMotors[index];
       if (now.difference(liveMotor.startedAt) >= _currentLapDuration) {
-        if (liveMotor.cartridge.amount > 0 && _shouldKeepLastWeaponMoving()) {
+        if (liveMotor.isGhost) {
+          if (liveMotor.cartridge.amount > 0) {
+            _movingMotors[index] = liveMotor.copyWith(
+              startedAt: now,
+              processedLineKeys: <String>{},
+            );
+          } else {
+            _movingMotors.removeAt(index);
+          }
+        } else if (liveMotor.cartridge.amount > 0 && _shouldKeepLastWeaponMoving()) {
           _movingMotors[index] = liveMotor.copyWith(
             startedAt: now,
             processedLineKeys: <String>{},
@@ -2299,6 +2356,7 @@ class _GameScreenState extends State<GameScreen>
     _isGameOver = false;
     _isMagnetModeActive = false;
     _isHookModeActive = false;
+    _isCycloneModeActive = false;
     _showCompletionOverlay = false;
     _completedAt = null;
     _nextRunId = 1;
@@ -2547,6 +2605,8 @@ class _GameScreenState extends State<GameScreen>
                                 isMagnetActive: _isMagnetModeActive,
                                 onHookPressed: _levelIndex == 49 ? _useHookBooster : null,
                                 isHookActive: _isHookModeActive,
+                                onCyclonePressed: _levelIndex == 49 ? _useCycloneBooster : null,
+                                isCycloneActive: _isCycloneModeActive,
                               ),
                             ],
                           ),
@@ -2950,6 +3010,8 @@ class _BoosterDock extends StatelessWidget {
     this.isMagnetActive = false,
     this.onHookPressed,
     this.isHookActive = false,
+    this.onCyclonePressed,
+    this.isCycloneActive = false,
   });
 
   final bool isCompact;
@@ -2957,6 +3019,8 @@ class _BoosterDock extends StatelessWidget {
   final bool isMagnetActive;
   final VoidCallback? onHookPressed;
   final bool isHookActive;
+  final VoidCallback? onCyclonePressed;
+  final bool isCycloneActive;
 
   @override
   Widget build(BuildContext context) {
@@ -2990,10 +3054,15 @@ class _BoosterDock extends StatelessWidget {
             cushionColors: const [Color(0xFFB32828), Color(0xFF801A1A)],
           ),
           _BoosterButton(
-            icon: Icons.auto_fix_high_rounded,
-            badgeCount: 1,
+            icon: Icons.cyclone_rounded,
             isCompact: isCompact,
-            cushionColors: const [Color(0xFFB32828), Color(0xFF801A1A)],
+            isLocked: onCyclonePressed == null,
+            cushionColors: onCyclonePressed == null
+                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                : (isCycloneActive
+                    ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
+                    : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
+            onPressed: onCyclonePressed,
           ),
           _BoosterButton(
             icon: Icons.explore_rounded,
@@ -3186,23 +3255,27 @@ class _MovingMotor {
     required this.cartridge,
     required this.startedAt,
     required this.processedLineKeys,
+    this.isGhost = false,
   });
 
   final int runId;
   final PaintCartridge cartridge;
   final DateTime startedAt;
   final Set<String> processedLineKeys;
+  final bool isGhost;
 
   _MovingMotor copyWith({
     PaintCartridge? cartridge,
     DateTime? startedAt,
     Set<String>? processedLineKeys,
+    bool? isGhost,
   }) {
     return _MovingMotor(
       runId: runId,
       cartridge: cartridge ?? this.cartridge,
       startedAt: startedAt ?? this.startedAt,
       processedLineKeys: processedLineKeys ?? this.processedLineKeys,
+      isGhost: isGhost ?? this.isGhost,
     );
   }
 }
