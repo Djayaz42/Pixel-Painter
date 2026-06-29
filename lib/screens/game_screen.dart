@@ -2276,6 +2276,37 @@ class _GameScreenState extends State<GameScreen>
     setState(_resetPrototype);
   }
 
+  void _continueWithPay() {
+    setState(() {
+      for (final slot in _slots) {
+        if (slot.cartridge != null && slot.cartridge!.amount > 0) {
+          final cartridgeInSlot = slot.cartridge!;
+          _cartridges = [
+            for (final c in _cartridges)
+              if (c.id == cartridgeInSlot.id)
+                c.copyWith(amount: c.amount + cartridgeInSlot.amount)
+              else
+                c
+          ];
+        }
+      }
+      _slots = List.generate(5, (index) => WaitingSlot(index: index));
+      _isGameOver = false;
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            '1 \$ ödenerek oyuna devam ediliyor! Slotlar temizlendi ve kartuşlar geri yüklendi.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color(0xFFCE9E4F),
+        ),
+      );
+    });
+    _ensureTicker();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2550,6 +2581,13 @@ class _GameScreenState extends State<GameScreen>
                           ),
                         ),
                         const SizedBox(height: 24),
+                        _PremiumBeveledButton(
+                          onPressed: _continueWithPay,
+                          label: 'DEVAM ET (1 \$)',
+                          icon: Icons.monetization_on_rounded,
+                          gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
+                        ),
+                        const SizedBox(height: 12),
                         _PremiumBeveledButton(
                           onPressed: _lives > 0 ? _restartAfterGameOver : () {},
                           label: _lives > 0 ? 'Restart' : 'Can Bekle',
