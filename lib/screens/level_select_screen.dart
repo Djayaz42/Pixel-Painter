@@ -325,7 +325,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
                       ),
                       child: const Center(
                         child: Text(
-                          'Enter',
+                          'Oyna',
                           style: TextStyle(
                             color: Color(0xFFFBE49E),
                             fontSize: 24,
