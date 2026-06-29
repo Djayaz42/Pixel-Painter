@@ -149,6 +149,8 @@ class _GameScreenState extends State<GameScreen>
   bool _isMagnetModeActive = false;
   bool _isHookModeActive = false;
   bool _isCycloneModeActive = false;
+  bool _isChainWeaponActive = false;
+  final List<int> _brokenLinks = [];
   bool _showCompletionOverlay = false;
   DateTime? _completedAt;
   DateTime? get _nextLifeAt => GameStats.nextLifeAt;
@@ -409,6 +411,7 @@ class _GameScreenState extends State<GameScreen>
       _isMagnetModeActive = false;
       _isHookModeActive = false;
       _isCycloneModeActive = false;
+      _isChainWeaponActive = false;
     });
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -422,8 +425,54 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
+  void _useChainWeapon() {
+    if (_isGameOver) return;
+    setState(() {
+      _isChainWeaponActive = !_isChainWeaponActive;
+      if (_isChainWeaponActive) {
+        _isMagnetModeActive = false;
+        _isHookModeActive = false;
+        _isCycloneModeActive = false;
+      }
+    });
+    if (_isChainWeaponActive) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Zincir Kırıcı Aktif! Kırmak istediğiniz zincir halkasına dokunun.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          duration: Duration(seconds: 4),
+          backgroundColor: Color(0xFF801A1A),
+        ),
+      );
+    }
+  }
+
   void _onBoardCellTapped(int row, int col) {
-    if (!_isMagnetModeActive && !_isHookModeActive) return;
+    if (!_isMagnetModeActive && !_isHookModeActive && !_isChainWeaponActive) return;
+
+    if (_isChainWeaponActive) {
+      if (row >= 44 && row <= 46) {
+        final linkIndex = (col / 4).floor().clamp(0, 11);
+        setState(() {
+          if (!_brokenLinks.contains(linkIndex)) {
+            _brokenLinks.add(linkIndex);
+            _shotEvents.add(
+              ShotEvent(
+                row: row,
+                col: col,
+                color: const Color(0xFFCE9E4F),
+                createdAt: DateTime.now(),
+              ),
+            );
+          }
+          _isChainWeaponActive = false;
+        });
+      }
+      return;
+    }
 
     final tappedCell = _cells.firstWhere(
       (cell) => cell.row == row && cell.col == col,
@@ -2451,6 +2500,8 @@ class _GameScreenState extends State<GameScreen>
     _isMagnetModeActive = false;
     _isHookModeActive = false;
     _isCycloneModeActive = false;
+    _isChainWeaponActive = false;
+    _brokenLinks.clear();
     _showCompletionOverlay = false;
     _completedAt = null;
     _continueCount = 0;
@@ -2627,10 +2678,11 @@ class _GameScreenState extends State<GameScreen>
                                 maxSide: boardSide,
                                 isCompact: isCompact,
                                 backgroundColors: _backgroundColors,
-                                onCellTap: (_isMagnetModeActive || _isHookModeActive)
+                                onCellTap: (_isMagnetModeActive || _isHookModeActive || _isChainWeaponActive)
                                     ? _onBoardCellTapped
                                     : null,
                                 hasChainDecoration: _level.hasChainDecoration,
+                                brokenLinks: _brokenLinks,
                               ),
                               SizedBox(height: isCompact ? 6 : 8),
                               Align(
@@ -2722,6 +2774,9 @@ class _GameScreenState extends State<GameScreen>
                                 onCyclonePressed: _useCycloneBooster,
                                 isCycloneActive: _isCycloneModeActive,
                                 onShufflePressed: _useShuffleBooster,
+                                hasChain: _level.hasChainDecoration,
+                                onChainPressed: _useChainWeapon,
+                                isChainActive: _isChainWeaponActive,
                               ),
                             ],
                           ),
@@ -3221,6 +3276,9 @@ class _BoosterDock extends StatelessWidget {
     this.onCyclonePressed,
     this.isCycloneActive = false,
     this.onShufflePressed,
+    this.onChainPressed,
+    this.isChainActive = false,
+    this.hasChain = false,
   });
 
   final bool isCompact;
@@ -3231,6 +3289,9 @@ class _BoosterDock extends StatelessWidget {
   final VoidCallback? onCyclonePressed;
   final bool isCycloneActive;
   final VoidCallback? onShufflePressed;
+  final VoidCallback? onChainPressed;
+  final bool isChainActive;
+  final bool hasChain;
 
   @override
   Widget build(BuildContext context) {
@@ -3299,6 +3360,18 @@ class _BoosterDock extends StatelessWidget {
                     : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
             onPressed: onMagnetPressed,
           ),
+          if (hasChain)
+            _BoosterButton(
+              icon: Icons.link_off_rounded,
+              isCompact: isCompact,
+              isLocked: onChainPressed == null,
+              cushionColors: onChainPressed == null
+                  ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                  : (isChainActive
+                      ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
+                      : const [Color(0xFF801A1A), Color(0xFF530F0F)]),
+              onPressed: onChainPressed,
+            ),
         ],
       ),
     );

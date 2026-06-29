@@ -13,6 +13,7 @@ class PixelGridView extends StatelessWidget {
     this.backgroundColors = const <int>{},
     this.activeMotorsCount = 0,
     this.hasChainDecoration = false,
+    this.brokenLinks = const [],
   });
 
   final List<PixelCell> cells;
@@ -23,6 +24,7 @@ class PixelGridView extends StatelessWidget {
   final Set<int> backgroundColors;
   final int activeMotorsCount;
   final bool hasChainDecoration;
+  final List<int> brokenLinks;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,7 @@ class PixelGridView extends StatelessWidget {
         backgroundColors: backgroundColors,
         activeMotorsCount: activeMotorsCount,
         hasChainDecoration: hasChainDecoration,
+        brokenLinks: brokenLinks,
       ),
     );
   }
@@ -51,6 +54,7 @@ class _PixelGridPainter extends CustomPainter {
     required this.backgroundColors,
     required this.activeMotorsCount,
     this.hasChainDecoration = false,
+    this.brokenLinks = const [],
   });
 
   final List<PixelCell> cells;
@@ -61,6 +65,7 @@ class _PixelGridPainter extends CustomPainter {
   final Set<int> backgroundColors;
   final int activeMotorsCount;
   final bool hasChainDecoration;
+  final List<int> brokenLinks;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -260,6 +265,7 @@ class _PixelGridPainter extends CustomPainter {
 
       for (int i = 0; i < 12; i++) {
         final x = origin.dx + (i * 4 + 2) * cellSize;
+        final isBroken = brokenLinks.contains(i);
         
         canvas.save();
         canvas.translate(x, yCenter);
@@ -273,23 +279,30 @@ class _PixelGridPainter extends CustomPainter {
 
         // Draw shadow under the ring
         final shadowPaint = Paint()
-          ..color = Colors.black.withOpacity(0.3)
+          ..color = isBroken ? Colors.transparent : Colors.black.withOpacity(0.3)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3.0;
         canvas.drawRRect(rrectOuter.shift(const Offset(0.0, 2.0)), shadowPaint);
 
-        // Draw shiny silver metal gradient at full opacity
+        // Draw shiny silver metal or charred red gradient
         final ringPaint = Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFFFFFFF), // White shiny highlights
-              Color(0xFFD1D5DB), // Silver grey
-              Color(0xFF9CA3AF), // Medium metal
-              Color(0xFF4B5563), // Shadow steel
-            ],
-            stops: [0.0, 0.3, 0.65, 1.0],
+            colors: isBroken
+                ? const [
+                    Color(0xFF5C2C2C), // Charred red
+                    Color(0xFF3C1F1F), // Deeper red-brown
+                    Color(0xFF241414), // Dark charcoal
+                    Color(0xFF140A0A), // Black
+                  ]
+                : const [
+                    Color(0xFFFFFFFF), // White shiny highlights
+                    Color(0xFFD1D5DB), // Silver grey
+                    Color(0xFF9CA3AF), // Medium metal
+                    Color(0xFF4B5563), // Shadow steel
+                  ],
+            stops: const [0.0, 0.3, 0.65, 1.0],
           ).createShader(outerRect)
           ..style = PaintingStyle.fill;
 
@@ -300,9 +313,26 @@ class _PixelGridPainter extends CustomPainter {
           ..style = PaintingStyle.fill;
         canvas.drawRRect(rrectInner, holePaint);
 
-        // Draw outlines
+        // Draw outlines (lowered opacity for broken links)
+        paintStroke.color = isBroken
+            ? const Color(0xFFE74C3C).withOpacity(0.5)
+            : const Color(0xFF1E222A);
         canvas.drawRRect(rrectOuter, paintStroke);
         canvas.drawRRect(rrectInner, paintStroke);
+
+        if (isBroken) {
+          // Draw a glowing orange/red crack line across the link
+          final crackPaint = Paint()
+            ..color = const Color(0xFFFF6B6B)
+            ..style = PaintingStyle.stroke
+            ..strokeCap = StrokeCap.round
+            ..strokeWidth = 2.0;
+          canvas.drawLine(
+            Offset(-linkWidth * 0.45, -linkHeight * 0.25),
+            Offset(linkWidth * 0.45, linkHeight * 0.25),
+            crackPaint,
+          );
+        }
 
         canvas.restore();
       }
@@ -396,6 +426,8 @@ class _PixelGridPainter extends CustomPainter {
         oldDelegate.cols != cols ||
         oldDelegate.artScale != artScale ||
         oldDelegate.activeMotorsCount != activeMotorsCount ||
-        oldDelegate.hasChainDecoration != hasChainDecoration;
+        oldDelegate.hasChainDecoration != hasChainDecoration ||
+        oldDelegate.brokenLinks != brokenLinks ||
+        oldDelegate.brokenLinks.length != brokenLinks.length;
   }
 }
