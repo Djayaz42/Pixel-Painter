@@ -119,7 +119,7 @@ class GameBoardPanel extends StatelessWidget {
                           cols: cols,
                           artScale: gridScale,
                           backgroundColors: backgroundColors,
-                          activeMotorsCount: activeMotors.length,
+                          activeMotorsCount: activeMotors.where((m) => !m.isGhost).length,
                         ),
                       ),
                       for (final shotEvent in shotEvents)

@@ -14,6 +14,7 @@ class MotorPathEngine {
     required double progress,
     int rows = LevelData.rows,
     int cols = LevelData.cols,
+    bool isGhost = false,
   }) {
     final p = progress.clamp(0.0, 1.0);
     final segment = p * 4;
@@ -28,6 +29,7 @@ class MotorPathEngine {
         position: Offset(segment, 1),
         side: MotorSide.bottom,
         lineIndex: columnIndex,
+        isGhost: isGhost,
       );
     }
 
@@ -38,6 +40,7 @@ class MotorPathEngine {
         position: Offset(1, 2 - segment),
         side: MotorSide.right,
         lineIndex: rows - 1 - rowIndex,
+        isGhost: isGhost,
       );
     }
 
@@ -48,6 +51,7 @@ class MotorPathEngine {
         position: Offset(3 - segment, 0),
         side: MotorSide.top,
         lineIndex: cols - 1 - columnIndex,
+        isGhost: isGhost,
       );
     }
 
@@ -57,6 +61,7 @@ class MotorPathEngine {
       position: Offset(0, segment - 3),
       side: MotorSide.left,
       lineIndex: rowIndex,
+      isGhost: isGhost,
     );
   }
 

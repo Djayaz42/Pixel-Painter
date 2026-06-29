@@ -204,6 +204,7 @@ class _GameScreenState extends State<GameScreen>
           progress: _progressFor(motor.startedAt, now),
           rows: _gridRows,
           cols: _gridCols,
+          isGhost: motor.isGhost,
         ),
       for (final motor in _firingMotors)
         MotorPathEngine.activeMotorAt(

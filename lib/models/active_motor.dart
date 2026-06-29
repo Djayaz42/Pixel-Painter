@@ -11,6 +11,7 @@ class ActiveMotor {
     required this.position,
     required this.side,
     required this.lineIndex,
+    this.isGhost = false,
   });
 
   final PaintCartridge cartridge;
@@ -18,4 +19,5 @@ class ActiveMotor {
   final Offset position;
   final MotorSide side;
   final int lineIndex;
+  final bool isGhost;
 }
