@@ -19,6 +19,7 @@ class GameBoardPanel extends StatelessWidget {
     this.maxSide,
     this.isCompact = false,
     this.backgroundColors = const <int>{},
+    this.onCellTap,
   });
 
   final List<PixelCell> cells;
@@ -30,6 +31,7 @@ class GameBoardPanel extends StatelessWidget {
   final double? maxSide;
   final bool isCompact;
   final Set<int> backgroundColors;
+  final Function(int row, int col)? onCellTap;
 
   @override
   Widget build(BuildContext context) {
@@ -78,36 +80,67 @@ class GameBoardPanel extends StatelessWidget {
           ),
           child: AspectRatio(
             aspectRatio: 1,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned.fill(
-                  child: PixelGridView(
-                    cells: cells,
-                    colorValues: colorValues,
-                    rows: rows,
-                    cols: cols,
-                    artScale: gridScale,
-                    backgroundColors: backgroundColors,
-                    activeMotorsCount: activeMotors.length,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final size = Size(constraints.maxWidth, constraints.maxHeight);
+                return GestureDetector(
+                  onTapUp: (details) {
+                    if (onCellTap == null) return;
+                    final frameSize = size.shortestSide;
+                    final frameOrigin = Offset(
+                      (size.width - frameSize) / 2,
+                      (size.height - frameSize) / 2,
+                    );
+                    final cellSize = frameSize * gridScale / rows;
+                    final artWidth = cellSize * cols;
+                    final artHeight = cellSize * rows;
+                    final origin =
+                        frameOrigin +
+                        Offset((frameSize - artWidth) / 2, (frameSize - artHeight) / 2);
+
+                    final pos = details.localPosition;
+                    final dx = pos.dx - origin.dx;
+                    final dy = pos.dy - origin.dy;
+
+                    if (dx >= 0 && dx < artWidth && dy >= 0 && dy < artHeight) {
+                      final col = (dx / cellSize).floor();
+                      final row = (dy / cellSize).floor();
+                      onCellTap!(row, col);
+                    }
+                  },
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: PixelGridView(
+                          cells: cells,
+                          colorValues: colorValues,
+                          rows: rows,
+                          cols: cols,
+                          artScale: gridScale,
+                          backgroundColors: backgroundColors,
+                          activeMotorsCount: activeMotors.length,
+                        ),
+                      ),
+                      for (final shotEvent in shotEvents)
+                        Positioned.fill(
+                          child: ShotOverlay(
+                            shot: shotEvent,
+                            artScale: gridScale,
+                            trackScale: motorTrackScale,
+                          ),
+                        ),
+                      for (final activeMotor in activeMotors)
+                        Positioned.fill(
+                          child: MotorOverlay(
+                            motor: activeMotor,
+                            trackScale: motorTrackScale,
+                          ),
+                        ),
+                    ],
                   ),
-                ),
-                for (final shotEvent in shotEvents)
-                  Positioned.fill(
-                    child: ShotOverlay(
-                      shot: shotEvent,
-                      artScale: gridScale,
-                      trackScale: motorTrackScale,
-                    ),
-                  ),
-                for (final activeMotor in activeMotors)
-                  Positioned.fill(
-                    child: MotorOverlay(
-                      motor: activeMotor,
-                      trackScale: motorTrackScale,
-                    ),
-                  ),
-              ],
+                );
+              },
             ),
           ),
         ),

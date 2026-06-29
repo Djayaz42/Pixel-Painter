@@ -145,6 +145,7 @@ class _GameScreenState extends State<GameScreen>
   final List<ShotEvent> _shotEvents = [];
   final Set<int> _burnedColorIds = {};
   bool _isGameOver = false;
+  bool _isMagnetModeActive = false;
   bool _showCompletionOverlay = false;
   DateTime? _completedAt;
   DateTime? _nextLifeAt;
@@ -264,33 +265,40 @@ class _GameScreenState extends State<GameScreen>
     _ensureTicker();
   }
 
-  void _useMagnetBooster() async {
+  void _useMagnetBooster() {
     if (_isGameOver) return;
-
-    final targetsByColor = _remainingTargetsByColor();
-    final options = <MagnetColorOption>[];
-
-    for (final baseCartridge in LevelData.cartridgesForLevel(_levelIndex)) {
-      final colorId = baseCartridge.colorId;
-      final remaining = targetsByColor[colorId] ?? 0;
-      if (remaining > 0) {
-        options.add(MagnetColorOption(
-          colorId: colorId,
-          color: baseCartridge.color,
-          name: baseCartridge.name,
-          remainingCells: remaining,
-        ));
-      }
+    setState(() {
+      _isMagnetModeActive = !_isMagnetModeActive;
+    });
+    if (_isMagnetModeActive) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Mıknatıs Aktif! Silmek istediğiniz renge ait bir piksele dokunun.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          duration: Duration(seconds: 4),
+          backgroundColor: Color(0xFF1E4C80),
+        ),
+      );
     }
+  }
 
-    final selectedColorId = await showDialog<int>(
-      context: context,
-      builder: (context) => _MagnetBoosterDialog(options: options),
+  void _onBoardCellTapped(int row, int col) {
+    if (!_isMagnetModeActive) return;
+
+    final tappedCell = _cells.firstWhere(
+      (cell) => cell.row == row && cell.col == col,
+      orElse: () => const PixelCell(row: -1, col: -1, targetColorId: -1),
     );
 
-    if (selectedColorId != null) {
+    if (tappedCell.row != -1 && tappedCell.isTarget) {
+      final selectedColorId = tappedCell.targetColorId;
+      
       setState(() {
-        // 1. Paint all target cells of this color
+        _isMagnetModeActive = false;
+        
         _cells = [
           for (final cell in _cells)
             if (cell.isTarget && cell.targetColorId == selectedColorId)
@@ -299,7 +307,6 @@ class _GameScreenState extends State<GameScreen>
               cell
         ];
 
-        // 2. Clear all bullets/cartridges of this color from all collections
         _cartridges.removeWhere((c) => c.colorId == selectedColorId);
         _slots = [
           for (final slot in _slots)
@@ -311,7 +318,22 @@ class _GameScreenState extends State<GameScreen>
         _movingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
         _firingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
 
-        // 3. Trigger completion check if level is won
+        final cartridge = LevelData.cartridges.firstWhere(
+          (c) => c.colorId == selectedColorId,
+          orElse: () => PaintCartridge(id: -1, colorId: selectedColorId, name: 'Bilinmeyen', color: Colors.transparent, amount: 0),
+        );
+        
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${cartridge.name} rengi mıknatısla çekildi ve temizlendi!',
+              style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: const Color(0xFF42E88A),
+          ),
+        );
+
         final win = _cells.where((cell) => cell.isTarget).every((cell) => cell.isPainted);
         if (win) {
           _handleLevelComplete(DateTime.now());
@@ -2214,6 +2236,7 @@ class _GameScreenState extends State<GameScreen>
     _shotEvents.clear();
     _burnedColorIds.clear();
     _isGameOver = false;
+    _isMagnetModeActive = false;
     _showCompletionOverlay = false;
     _completedAt = null;
     _nextRunId = 1;
@@ -2321,6 +2344,9 @@ class _GameScreenState extends State<GameScreen>
                                 maxSide: boardSide,
                                 isCompact: isCompact,
                                 backgroundColors: _backgroundColors,
+                                onCellTap: _levelIndex == 49 && _isMagnetModeActive
+                                    ? _onBoardCellTapped
+                                    : null,
                               ),
                               SizedBox(height: isCompact ? 6 : 8),
                               Align(
@@ -2406,6 +2432,7 @@ class _GameScreenState extends State<GameScreen>
                               _BoosterDock(
                                 isCompact: isCompact,
                                 onMagnetPressed: _levelIndex == 49 ? _useMagnetBooster : null,
+                                isMagnetActive: _isMagnetModeActive,
                               ),
                             ],
                           ),
@@ -2799,10 +2826,12 @@ class _BoosterDock extends StatelessWidget {
   const _BoosterDock({
     required this.isCompact,
     this.onMagnetPressed,
+    this.isMagnetActive = false,
   });
 
   final bool isCompact;
   final VoidCallback? onMagnetPressed;
+  final bool isMagnetActive;
 
   @override
   Widget build(BuildContext context) {
@@ -2847,7 +2876,9 @@ class _BoosterDock extends StatelessWidget {
             isLocked: onMagnetPressed == null,
             cushionColors: onMagnetPressed == null
                 ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
-                : const [Color(0xFF1E4C80), Color(0xFF102D59)],
+                : (isMagnetActive
+                    ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
+                    : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
             onPressed: onMagnetPressed,
           ),
           _BoosterButton(
@@ -3600,181 +3631,4 @@ class _CartridgesPreviewDialog extends StatelessWidget {
   }
 }
 
-class MagnetColorOption {
-  final int colorId;
-  final Color color;
-  final String name;
-  final int remainingCells;
 
-  MagnetColorOption({
-    required this.colorId,
-    required this.color,
-    required this.name,
-    required this.remainingCells,
-  });
-}
-
-class _MagnetBoosterDialog extends StatelessWidget {
-  const _MagnetBoosterDialog({required this.options});
-
-  final List<MagnetColorOption> options;
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      child: Container(
-        width: 380,
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: const Color(0xFFCE9E4F), width: 3.5),
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF422C1A),
-              Color(0xFF23140A),
-            ],
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0xFF160D06),
-              offset: Offset(0, 12),
-              blurRadius: 16,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'MIKNATIS JOKERİ',
-                style: TextStyle(
-                  color: Color(0xFFFBE49E),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Ekrandan çekmek ve tüm kartuşlarını silmek istediğiniz rengi seçin:',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFFCE9E4F),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                height: 1,
-                color: const Color(0xFFCE9E4F).withAlpha(100),
-              ),
-              const SizedBox(height: 16),
-              if (options.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.0),
-                  child: Text(
-                    'Kalan hedef renk bulunmuyor!',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                )
-              else
-                Flexible(
-                  child: SingleChildScrollView(
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        for (final option in options)
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).pop(option.colorId),
-                            child: Container(
-                              width: 140,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: option.color,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: const Color(0xFFCE9E4F),
-                                  width: 2.0,
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Colors.black45,
-                                    offset: Offset(0, 3),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    option.name,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: ThemeData.estimateBrightnessForColor(option.color) == Brightness.dark
-                                          ? Colors.white
-                                          : Colors.black87,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        if (ThemeData.estimateBrightnessForColor(option.color) == Brightness.dark)
-                                          const Shadow(
-                                            color: Colors.black,
-                                            offset: Offset(1, 1),
-                                            blurRadius: 2,
-                                          )
-                                        else
-                                          const Shadow(
-                                            color: Colors.white70,
-                                            offset: Offset(1, 1),
-                                            blurRadius: 2,
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withAlpha(120),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      '${option.remainingCells} Hücre',
-                                      style: const TextStyle(
-                                        color: Color(0xFFFBE49E),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 20),
-              _PremiumBeveledButton(
-                onPressed: () => Navigator.of(context).pop(),
-                label: 'İPTAL',
-                icon: Icons.close,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
