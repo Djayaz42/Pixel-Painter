@@ -80,15 +80,15 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF1E2630), // Deep Charcoal Slate
-              Color(0xFF0D1017), // Rich Midnight Black
+              Color(0xFFD85D2A), // Rust / Copper Orange
+              Color(0xFF6B1D2F), // Deep Wine Red / Burgundy
             ],
           ),
         ),
         child: SafeArea(
           child: Stack(
             children: [
-              // Background Grid and decorative floating shapes
+              // Background mechanical gear wheels and astronomy grids
               const Positioned.fill(
                 child: CustomPaint(
                   painter: _LevelSelectAtmospherePainter(),
@@ -99,135 +99,150 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Top Stats Bar
+                  // Top Stats Bar (Wooden / Steampunk style capsules)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Avatar (Yellow cute snout/pig face shape)
-                        Container(
-                          width: 46,
-                          height: 46,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFD447),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: Colors.white, width: 2.2),
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black26, offset: Offset(0, 3), blurRadius: 4),
-                            ],
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.pets_rounded, color: Color(0xFF2C1908), size: 24),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-
-                        // Lives Pill
+                        // Left Capsule: Bronze Nut (Coins)
                         Expanded(
                           child: Container(
                             height: 38,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF161B29).withOpacity(0.85),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF8A5A36), Color(0xFF633D20)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
                               borderRadius: BorderRadius.circular(19),
-                              border: Border.all(color: const Color(0xFFFF6A7C), width: 2.0),
+                              border: Border.all(color: const Color(0xFFD4C29D), width: 1.8),
                               boxShadow: const [
-                                BoxShadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4),
+                                BoxShadow(color: Colors.black38, offset: Offset(0, 2), blurRadius: 4),
                               ],
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.favorite_rounded, color: Color(0xFFFF6A7C), size: 18),
+                                const _BronzeNutIcon(size: 20),
                                 const SizedBox(width: 6),
-                                Text(
-                                  GameStats.lives >= GameStats.maxLives ? 'MAKS' : '${GameStats.lives}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w900,
+                                Expanded(
+                                  child: Text(
+                                    '${GameStats.gold}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
                                 ),
+                                const Icon(Icons.add_circle_rounded, color: Color(0xFFFBE49E), size: 14),
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
 
-                        // Coins Pill
+                        // Middle Capsule: Blue Gem (Gems/Points)
                         Expanded(
                           child: Container(
                             height: 38,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF161B29).withOpacity(0.85),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF8A5A36), Color(0xFF633D20)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
                               borderRadius: BorderRadius.circular(19),
-                              border: Border.all(color: const Color(0xFFFFD447), width: 2.0),
+                              border: Border.all(color: const Color(0xFFD4C29D), width: 1.8),
                               boxShadow: const [
-                                BoxShadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4),
+                                BoxShadow(color: Colors.black38, offset: Offset(0, 2), blurRadius: 4),
                               ],
                             ),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const _GoldCoinIcon(size: 18),
+                                const _BlueGemIcon(size: 20),
                                 const SizedBox(width: 6),
-                                Text(
-                                  '${GameStats.gold}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w900,
+                                const Expanded(
+                                  child: Text(
+                                    '65', // Decorative Gem Count
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                const Icon(Icons.add_circle_rounded, color: Color(0xFF42E88A), size: 14),
+                                const Icon(Icons.add_circle_rounded, color: Color(0xFFFBE49E), size: 14),
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
 
-                        // Settings Icon
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF161B29).withOpacity(0.85),
-                            border: Border.all(color: Colors.white54, width: 1.5),
-                          ),
-                          child: const Center(
-                            child: Icon(Icons.settings_rounded, color: Colors.white, size: 20),
+                        // Right Capsule: Flame (Lives Timer)
+                        Expanded(
+                          child: Container(
+                            height: 38,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF8A5A36), Color(0xFF633D20)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(19),
+                              border: Border.all(color: const Color(0xFFD4C29D), width: 1.8),
+                              boxShadow: const [
+                                BoxShadow(color: Colors.black38, offset: Offset(0, 2), blurRadius: 4),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                const _BlueFlameIcon(size: 20),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    GameStats.lives >= GameStats.maxLives ? '00:00' : '04:59', // Decorative Timer
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(Icons.add_circle_rounded, color: Color(0xFFFBE49E), size: 14),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  // Category Selector (TabBar)
+                  // Category Selector (Steampunk TabBar)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     child: Container(
                       height: 48,
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF161B29).withOpacity(0.8),
+                        color: const Color(0xFF53381B).withAlpha(200),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white38, width: 1.5),
+                        border: Border.all(color: const Color(0xFFD4C29D), width: 1.8),
                       ),
                       child: TabBar(
                         controller: _tabController,
                         indicatorSize: TabBarIndicatorSize.tab,
                         dividerColor: Colors.transparent,
                         indicator: BoxDecoration(
-                          color: const Color(0xFFFFD447),
+                          color: const Color(0xFFD4C29D),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: const Color(0xFF53381B), width: 1.5),
                         ),
                         labelColor: const Color(0xFF2C1908),
-                        unselectedLabelColor: Colors.white70,
+                        unselectedLabelColor: const Color(0xFFFBE49E),
                         tabs: [
                           for (final category in LevelSelectScreen._categories)
                             Tab(icon: Icon(category.icon, size: 20)),
@@ -237,7 +252,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
                   ),
                   const SizedBox(height: 6),
 
-                  // Main List View containing level path
+                  // Main List View containing level path (metallic chains)
                   Expanded(
                     child: TabBarView(
                       controller: _tabController,
@@ -254,64 +269,30 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
                 ],
               ),
 
-              // HUD Side Buttons - Left Side
+              // HUD Side Buttons - Left Side (Decorative stars and chest)
               Positioned(
                 left: 12,
                 top: 130,
                 bottom: 100,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    _HUDIconButton(
-                      icon: Icons.shield_rounded,
-                      label: '17s 47d',
-                      color: Color(0xFFFFD447),
-                    ),
-                    _HUDIconButton(
-                      icon: Icons.card_giftcard_rounded,
-                      label: 'BAŞLA',
-                      badgeText: '!',
-                      color: Color(0xFFFF4264),
-                    ),
-                    _HUDIconButton(
-                      icon: Icons.sports_motorsports_rounded,
-                      label: 'BAŞLA',
-                      badgeText: '!',
-                      color: Color(0xFF42A5FF),
-                    ),
-                  ],
-                ),
-              ),
-
-              // HUD Side Buttons - Right Side
-              Positioned(
-                right: 12,
-                top: 130,
-                bottom: 100,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    _HUDIconButton(
-                      icon: Icons.key_rounded,
-                      label: '1g 17s',
-                      color: Color(0xFF42A5FF),
-                    ),
                     _HUDIconButton(
                       icon: Icons.star_rounded,
-                      label: 'BONUS',
-                      badgeText: '!',
+                      label: '30/50',
                       color: Color(0xFFFFD447),
                     ),
+                    SizedBox(height: 24),
                     _HUDIconButton(
-                      icon: Icons.block_rounded,
-                      label: 'REKLAMSIZ',
-                      color: Color(0xFFFF4242),
+                      icon: Icons.card_giftcard_rounded,
+                      label: 'GO',
+                      color: Color(0xFF9B51E0),
                     ),
                   ],
                 ),
               ),
 
-              // Floating Oyna Button at the bottom center
+              // Floating Enter Button at the bottom center (Carved wooden plaque style)
               Positioned(
                 bottom: 16,
                 left: 0,
@@ -320,38 +301,39 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
                   child: GestureDetector(
                     onTap: () {
                       _openLevel(context, levelIndex: _selectedLevelIndex).then((_) {
-                        // Refresh state when returning to level select
                         setState(() {});
                       });
                     },
                     child: Container(
-                      height: 56,
-                      width: 200,
+                      height: 58,
+                      width: 190,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: const Color(0xFF2C1908), width: 3),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFF53381B), width: 3),
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFFD447), Color(0xFFFFB300)],
+                          colors: [Color(0xFFAB7B56), Color(0xFF6B3B1D)],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
                         boxShadow: const [
                           BoxShadow(
-                            color: Colors.black38,
+                            color: Colors.black45,
                             offset: Offset(0, 4),
-                            blurRadius: 6,
+                            blurRadius: 5,
                           ),
                         ],
                       ),
                       child: const Center(
                         child: Text(
-                          'Oyna',
+                          'Enter',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFFFBE49E),
                             fontSize: 24,
+                            fontFamily: 'Serif',
                             fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
                             shadows: [
-                              Shadow(color: Color(0xFF2C1908), offset: Offset(0, 2), blurRadius: 3),
+                              Shadow(color: Colors.black87, offset: Offset(0, 1.5), blurRadius: 3.0),
                             ],
                           ),
                         ),
@@ -372,13 +354,11 @@ class _HUDIconButton extends StatelessWidget {
   const _HUDIconButton({
     required this.icon,
     required this.label,
-    this.badgeText,
     required this.color,
   });
 
   final IconData icon;
   final String label;
-  final String? badgeText;
   final Color color;
 
   @override
@@ -386,48 +366,32 @@ class _HUDIconButton extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF161B29).withOpacity(0.9),
-                border: Border.all(color: color, width: 2.5),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black26, offset: Offset(0, 2), blurRadius: 4),
-                ],
-              ),
-              child: Center(
-                child: Icon(icon, color: Colors.white, size: 22),
-              ),
-            ),
-            if (badgeText != null)
-              Positioned(
-                top: -2,
-                right: -2,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFF3B30),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    badgeText!,
-                    style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 3),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          width: 50,
+          height: 50,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.95),
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF8A5A36), Color(0xFF633D20)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            border: Border.all(color: const Color(0xFFD4C29D), width: 2.2),
+            boxShadow: const [
+              BoxShadow(color: Colors.black38, offset: Offset(0, 2), blurRadius: 4),
+            ],
+          ),
+          child: Center(
+            child: Icon(icon, color: color, size: 26),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFF53381B).withOpacity(0.9),
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xFFD4C29D), width: 1.0),
           ),
           child: Text(
             label,
@@ -439,8 +403,39 @@ class _HUDIconButton extends StatelessWidget {
   }
 }
 
-class _GoldCoinIcon extends StatelessWidget {
-  const _GoldCoinIcon({required this.size});
+class _BronzeNutIcon extends StatelessWidget {
+  const _BronzeNutIcon({required this.size});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFCD7F32),
+        border: Border.all(color: const Color(0xFFE5C158), width: 1.8),
+        boxShadow: const [
+          BoxShadow(color: Colors.black26, offset: Offset(0, 1), blurRadius: 1),
+        ],
+      ),
+      child: Center(
+        child: Container(
+          width: size * 0.4,
+          height: size * 0.4,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFF633D20),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BlueGemIcon extends StatelessWidget {
+  const _BlueGemIcon({required this.size});
   final double size;
 
   @override
@@ -451,22 +446,43 @@ class _GoldCoinIcon extends StatelessWidget {
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [Color(0xFFFFE082), Color(0xFFFFB300)],
+          colors: [Color(0xFF2FA5F8), Color(0xFF0F5AA6)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x33000000),
-            offset: Offset(0, 1),
-            blurRadius: 1.5,
-          ),
-        ],
       ),
       child: Center(
         child: Icon(
-          Icons.star_rounded,
-          color: const Color(0xFFFFFFFF),
+          Icons.diamond_rounded,
+          color: Colors.white.withOpacity(0.9),
+          size: size * 0.7,
+        ),
+      ),
+    );
+  }
+}
+
+class _BlueFlameIcon extends StatelessWidget {
+  const _BlueFlameIcon({required this.size});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [Color(0xFF2FA5F8), Color(0xFF0B3B70)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.local_fire_department_rounded,
+          color: Colors.white.withOpacity(0.95),
           size: size * 0.7,
         ),
       ),
@@ -494,8 +510,35 @@ class HexagonClipper extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
-class _HexagonNode extends StatelessWidget {
-  const _HexagonNode({
+class _StarClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    final double w = size.width;
+    final double h = size.height;
+    final double cx = w / 2;
+    final double cy = h / 2;
+    final int points = 5;
+    final double outerRadius = w / 2;
+    final double innerRadius = w / 4.5;
+    
+    final double angle = math.pi / points;
+    path.moveTo(cx, cy - outerRadius);
+    for (int i = 1; i < points * 2; i++) {
+      final double r = i.isOdd ? innerRadius : outerRadius;
+      final double a = i * angle - math.pi / 2;
+      path.lineTo(cx + math.cos(a) * r, cy + math.sin(a) * r);
+    }
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class _LevelPathNode extends StatelessWidget {
+  const _LevelPathNode({
     required this.levelNumber,
     required this.title,
     required this.color,
@@ -514,6 +557,10 @@ class _HexagonNode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayColor = isLocked ? Colors.grey : color;
+    
+    // Determine tiered design
+    final int designType = levelNumber % 4; // 0: Star, 1: Golden Hexagon, 2: Green Hexagon, 3: Mystic Hexagon
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -523,6 +570,7 @@ class _HexagonNode extends StatelessWidget {
             width: 82,
             height: 82,
             child: Stack(
+              clipBehavior: Clip.none,
               children: [
                 // Glowing background ring if selected
                 if (isSelected)
@@ -541,6 +589,14 @@ class _HexagonNode extends StatelessWidget {
                     ),
                   ),
 
+                // Mystic Orbiting Rings (for design type 3)
+                if (designType == 3)
+                  const Positioned.fill(
+                    child: CustomPaint(
+                      painter: _OrbitingRingsPainter(color: Color(0xFF42E88A)),
+                    ),
+                  ),
+
                 // 3D Shadow Layer (moved down)
                 Positioned(
                   top: 5,
@@ -548,16 +604,16 @@ class _HexagonNode extends StatelessWidget {
                   right: 0,
                   bottom: -5,
                   child: ClipPath(
-                    clipper: HexagonClipper(),
+                    clipper: designType == 0 ? _StarClipper() : HexagonClipper(),
                     child: Container(
                       color: isLocked ? Colors.black45 : Color.lerp(displayColor, Colors.black, 0.45),
                     ),
                   ),
                 ),
 
-                // Main Hexagon with Gold/Silver Rim
+                // Main Node shape
                 ClipPath(
-                  clipper: HexagonClipper(),
+                  clipper: designType == 0 ? _StarClipper() : HexagonClipper(),
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -565,26 +621,23 @@ class _HexagonNode extends StatelessWidget {
                             ? [const Color(0xFFFFD447), const Color(0xFFE29B3C)]
                             : (isLocked
                                 ? [const Color(0xFF9E9E9E), const Color(0xFF757575)]
-                                : [
-                                    Color.lerp(displayColor, Colors.white, 0.35)!,
-                                    Color.lerp(displayColor, Colors.black, 0.25)!,
-                                  ]),
+                                : _getTierColors(designType, displayColor)),
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(3.5), // Hexagon border thickness
+                      padding: const EdgeInsets.all(3.5), // border thickness
                       child: ClipPath(
-                        clipper: HexagonClipper(),
+                        clipper: designType == 0 ? _StarClipper() : HexagonClipper(),
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: isLocked
                                   ? [const Color(0xFF666666), const Color(0xFF444444)]
                                   : [
-                                      Color.lerp(displayColor, Colors.black, 0.15)!,
-                                      Color.lerp(displayColor, Colors.black, 0.35)!,
+                                      Color.lerp(_getTierMainColor(designType, displayColor), Colors.black, 0.15)!,
+                                      Color.lerp(_getTierMainColor(designType, displayColor), Colors.black, 0.35)!,
                                     ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -595,7 +648,7 @@ class _HexagonNode extends StatelessWidget {
                               '$levelNumber',
                               style: TextStyle(
                                 color: isLocked ? Colors.white54 : Colors.white,
-                                fontSize: 20,
+                                fontSize: designType == 0 ? 17 : 20, // slightly smaller text for star shape
                                 fontWeight: FontWeight.w900,
                                 shadows: const [
                                   Shadow(
@@ -635,7 +688,7 @@ class _HexagonNode extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: isLocked ? Colors.grey.shade800 : Color.lerp(displayColor, Colors.black, 0.3),
+              color: isLocked ? Colors.grey.shade800 : Color.lerp(displayColor, Colors.black, 0.35),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
@@ -657,6 +710,65 @@ class _HexagonNode extends StatelessWidget {
       ),
     );
   }
+
+  List<Color> _getTierColors(int designType, Color baseColor) {
+    if (designType == 0) {
+      // Blue star legendary
+      return [const Color(0xFF5D9EF7), const Color(0xFF1B60C6)];
+    } else if (designType == 1) {
+      // Golden Expert
+      return [const Color(0xFFFBE49E), const Color(0xFFC86446)];
+    } else if (designType == 3) {
+      // Emerald Mystic
+      return [const Color(0xFF42E88A), const Color(0xFF1E8233)];
+    }
+    // Default base color hexagon
+    return [
+      Color.lerp(baseColor, Colors.white, 0.35)!,
+      Color.lerp(baseColor, Colors.black, 0.25)!,
+    ];
+  }
+
+  Color _getTierMainColor(int designType, Color baseColor) {
+    if (designType == 0) {
+      return const Color(0xFF2673D9);
+    } else if (designType == 1) {
+      return const Color(0xFFAB7315);
+    } else if (designType == 3) {
+      return const Color(0xFF22B85E);
+    }
+    return baseColor;
+  }
+}
+
+class _OrbitingRingsPainter extends CustomPainter {
+  const _OrbitingRingsPainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withOpacity(0.85)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2;
+
+    canvas.save();
+    canvas.translate(size.width / 2, size.height / 2);
+    canvas.rotate(math.pi / 6);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset.zero, width: size.width * 1.15, height: size.height * 0.4),
+      paint,
+    );
+    canvas.rotate(-math.pi / 3);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset.zero, width: size.width * 1.15, height: size.height * 0.4),
+      paint,
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _WindingPathPainter extends CustomPainter {
@@ -674,55 +786,70 @@ class _WindingPathPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (itemCount <= 0) return;
 
-    final path = Path();
-    final width = size.width;
+    final centerX = size.width / 2;
 
-    Offset getOffset(int i) {
-      // Straight road path centered down the middle
-      final x = width / 2;
-      final y = i * rowHeight + rowHeight / 2;
-      return Offset(x, y);
+    // Draw metallic chains
+    final chainPaint = Paint()
+      ..color = const Color(0xFF3E1F15) // Dark rust metal border
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.8;
+
+    final chainFill = Paint()
+      ..color = const Color(0xFF8A5A36) // Copper metal inner highlight
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+
+    final completedChainPaint = Paint()
+      ..color = const Color(0xFF42E88A) // Active/completed green chain glow border
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.8;
+
+    final completedChainFill = Paint()
+      ..color = const Color(0xFFB4FCE0) // Green inner highlight
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+
+    final startY = rowHeight / 2;
+    final endY = (itemCount - 1) * rowHeight + rowHeight / 2;
+
+    // 1. Draw regular background chains
+    for (double y = startY; y < endY; y += 12) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(centerX, y), width: 9, height: 18),
+          const Radius.circular(4.5),
+        ),
+        chainPaint,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(centerX, y), width: 5, height: 14),
+          const Radius.circular(2.5),
+        ),
+        chainFill,
+      );
     }
 
-    final pathPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 14.0
-      ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFFFD447); // Gold border road
+    // 2. Draw green completed chains (from bottom up)
+    final greenStartY = endY;
+    final greenEndY = endY - (currentLevelIndex * rowHeight);
 
-    final pathPaintInner = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 8.0
-      ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFF53381B); // Dark bronze inner road
-
-    final completedPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5.0
-      ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFF42E88A); // Completed progress (green overlay)
-
-    final startPoint = getOffset(0);
-    path.moveTo(startPoint.dx, startPoint.dy);
-
-    for (var i = 1; i < itemCount; i++) {
-      final curr = getOffset(i);
-      path.lineTo(curr.dx, curr.dy);
+    for (double y = greenStartY; y >= greenEndY && y >= startY; y -= 12) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(centerX, y), width: 9, height: 18),
+          const Radius.circular(4.5),
+        ),
+        completedChainPaint,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset(centerX, y), width: 5, height: 14),
+          const Radius.circular(2.5),
+        ),
+        completedChainFill,
+      );
     }
-
-    canvas.drawPath(path, pathPaint);
-    canvas.drawPath(path, pathPaintInner);
-
-    // Draw completed path line decorative segment (from bottom up)
-    final completedPath = Path();
-    final compStart = getOffset(itemCount - 1);
-    completedPath.moveTo(compStart.dx, compStart.dy);
-    for (var i = 1; i <= currentLevelIndex && i < itemCount; i++) {
-      final currIndex = itemCount - 1 - i;
-      final curr = getOffset(currIndex);
-      completedPath.lineTo(curr.dx, curr.dy);
-    }
-    canvas.drawPath(completedPath, completedPaint);
   }
 
   @override
@@ -785,7 +912,7 @@ class _LevelGridState extends State<_LevelGrid> {
       builder: (context, constraints) {
         return SingleChildScrollView(
           controller: _scrollController,
-          padding: const EdgeInsets.only(top: 24, bottom: 90), // Bottom padding to prevent cover by Oyna button
+          padding: const EdgeInsets.only(top: 24, bottom: 90), // prevent covered by Enter button
           child: SizedBox(
             height: levels.length * rowHeight,
             width: constraints.maxWidth,
@@ -797,7 +924,7 @@ class _LevelGridState extends State<_LevelGrid> {
                     painter: _WindingPathPainter(
                       itemCount: levels.length,
                       rowHeight: rowHeight,
-                      currentLevelIndex: widget.category.startIndex == 0 ? 3 : 0, // Mark first few levels as completed decoratively
+                      currentLevelIndex: widget.category.startIndex == 0 ? 3 : 0, // completed line decoration
                     ),
                   ),
                 ),
@@ -812,11 +939,11 @@ class _LevelGridState extends State<_LevelGrid> {
                       right: 0,
                       top: topPosition,
                       child: Center(
-                        child: _HexagonNode(
+                        child: _LevelPathNode(
                           levelNumber: item.index + 1,
                           title: _cleanTitle(item.level.name),
                           color: widget.category.color,
-                          isLocked: false, // In prototype select screen, levels are unlocked
+                          isLocked: false,
                           isSelected: isSelected,
                           onTap: () => widget.onLevelSelected(item.index),
                         ),
@@ -876,21 +1003,72 @@ class _LevelSelectAtmospherePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Elegant Art-Deco grid details or shapes
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.04)
+      ..color = const Color(0xFF53381B).withOpacity(0.09)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
+      ..strokeWidth = 1.3;
 
-    const spacing = 40.0;
-    // Draw vertical grid lines
-    for (double x = 0; x < size.width; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    // Draw mechanical gear wheels in the background
+    _drawGear(canvas, Offset(size.width * 0.1, size.height * 0.2), 65, 12, paint);
+    _drawGear(canvas, Offset(size.width * 0.85, size.height * 0.38), 90, 16, paint);
+    _drawGear(canvas, Offset(size.width * 0.15, size.height * 0.65), 110, 20, paint);
+    _drawGear(canvas, Offset(size.width * 0.8, size.height * 0.82), 75, 14, paint);
+
+    // Draw subtle celestial stars in background
+    final starPaint = Paint()
+      ..color = Colors.white.withOpacity(0.05)
+      ..style = PaintingStyle.fill;
+
+    _drawTinyStar(canvas, Offset(size.width * 0.25, size.height * 0.1), starPaint);
+    _drawTinyStar(canvas, Offset(size.width * 0.75, size.height * 0.2), starPaint);
+    _drawTinyStar(canvas, Offset(size.width * 0.45, size.height * 0.45), starPaint);
+    _drawTinyStar(canvas, Offset(size.width * 0.3, size.height * 0.75), starPaint);
+  }
+
+  void _drawGear(Canvas canvas, Offset center, double radius, int teethCount, Paint paint) {
+    canvas.drawCircle(center, radius, paint);
+    canvas.drawCircle(center, radius * 0.4, paint); // inner center hole
+    
+    // Draw teeth trapezoids
+    final double toothAngle = 2 * math.pi / teethCount;
+    for (int i = 0; i < teethCount; i++) {
+      final double angle = i * toothAngle;
+      final toothPath = Path();
+      
+      final double x1 = center.dx + math.cos(angle - 0.1) * radius;
+      final double y1 = center.dy + math.sin(angle - 0.1) * radius;
+      final double x2 = center.dx + math.cos(angle + 0.1) * radius;
+      final double y2 = center.dy + math.sin(angle + 0.1) * radius;
+      
+      final double x3 = center.dx + math.cos(angle + 0.07) * (radius + 8);
+      final double y3 = center.dy + math.sin(angle + 0.07) * (radius + 8);
+      final double x4 = center.dx + math.cos(angle - 0.07) * (radius + 8);
+      final double y4 = center.dy + math.sin(angle - 0.07) * (radius + 8);
+      
+      toothPath.moveTo(x1, y1);
+      toothPath.lineTo(x4, y4);
+      toothPath.lineTo(x3, y3);
+      toothPath.lineTo(x2, y2);
+      toothPath.close();
+      canvas.drawPath(toothPath, paint);
     }
-    // Draw horizontal grid lines
-    for (double y = 0; y < size.height; y += spacing) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
+  }
+
+  void _drawTinyStar(Canvas canvas, Offset center, Paint paint) {
+    final path = Path();
+    final double cx = center.dx;
+    final double cy = center.dy;
+    
+    path.moveTo(cx, cy - 6);
+    path.lineTo(cx + 1.8, cy - 1.8);
+    path.lineTo(cx + 6, cy);
+    path.lineTo(cx + 1.8, cy + 1.8);
+    path.lineTo(cx, cy + 6);
+    path.lineTo(cx - 1.8, cy + 1.8);
+    path.lineTo(cx - 6, cy);
+    path.lineTo(cx - 1.8, cy - 1.8);
+    path.close();
+    canvas.drawPath(path, paint);
   }
 
   @override
