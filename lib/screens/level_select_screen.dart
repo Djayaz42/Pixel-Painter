@@ -80,8 +80,8 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> with SingleTicker
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF45A2FF),
-              Color(0xFF0066FF),
+              Color(0xFF1E2630), // Deep Charcoal Slate
+              Color(0xFF0D1017), // Rich Midnight Black
             ],
           ),
         ),
