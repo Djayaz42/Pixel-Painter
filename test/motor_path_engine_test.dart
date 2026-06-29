@@ -102,14 +102,14 @@ void main() {
 
   test('levels follow the 100-level category plan', () {
     expect(LevelData.levels, hasLength(100));
-    expect(LevelData.cartridges, hasLength(155));
+    expect(LevelData.cartridges, hasLength(285));
 
     final first50Names = [
       "Yildiz", "Kalp", "Elma", "Muz", "Portakal", "Karpuz", "Cilek", "Ananas", "Havuc", "Mantar",
       "Kupkek", "Kurabiye", "Donat", "Dondurma", "Burger", "Pizzadilimi", "Kupa", "Anahtar", "Kilit", "Sandik",
       "Kalkan", "Kilic", "Yuzuk", "Tac", "Elmas", "Kedi", "Kitap", "Corgi", "Penguen", "Aslan",
-      "Ejderha", "Timsah", "Porsuk", "Yengec", "Yunus", "Capa", "Yelkenli", "Roket", "UFO", "Robot",
-      "Konsol", "Zar", "Kupa 2", "Madalya", "Kum Saati", "Pusula", "Nota", "Zil", "Zarf", "Bayrak"
+      "Ejderha", "Timsah", "Porsuk", "Yengec", "Yunus", "Ev", "Gokdelenler", "Retro TV", "UFO", "Fuji Dagi",
+      "Sokak", "Mezarlik", "Retro", "Ev", "Maymun", "Kopek", "Muzik Kutusu", "Dansci", "Tavuk", "Basketbol"
     ];
 
     final next50Names = [
