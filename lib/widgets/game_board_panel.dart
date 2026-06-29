@@ -20,6 +20,7 @@ class GameBoardPanel extends StatelessWidget {
     this.isCompact = false,
     this.backgroundColors = const <int>{},
     this.onCellTap,
+    this.hasChainDecoration = false,
   });
 
   final List<PixelCell> cells;
@@ -32,6 +33,7 @@ class GameBoardPanel extends StatelessWidget {
   final bool isCompact;
   final Set<int> backgroundColors;
   final Function(int row, int col)? onCellTap;
+  final bool hasChainDecoration;
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +122,7 @@ class GameBoardPanel extends StatelessWidget {
                           artScale: gridScale,
                           backgroundColors: backgroundColors,
                           activeMotorsCount: activeMotors.where((m) => !m.isGhost).length,
+                          hasChainDecoration: hasChainDecoration,
                         ),
                       ),
                       for (final shotEvent in shotEvents)

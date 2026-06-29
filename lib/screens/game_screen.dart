@@ -2630,6 +2630,7 @@ class _GameScreenState extends State<GameScreen>
                                 onCellTap: (_isMagnetModeActive || _isHookModeActive)
                                     ? _onBoardCellTapped
                                     : null,
+                                hasChainDecoration: _level.hasChainDecoration,
                               ),
                               SizedBox(height: isCompact ? 6 : 8),
                               Align(

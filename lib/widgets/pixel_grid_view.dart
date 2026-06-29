@@ -12,6 +12,7 @@ class PixelGridView extends StatelessWidget {
     this.artScale = 0.64,
     this.backgroundColors = const <int>{},
     this.activeMotorsCount = 0,
+    this.hasChainDecoration = false,
   });
 
   final List<PixelCell> cells;
@@ -21,6 +22,7 @@ class PixelGridView extends StatelessWidget {
   final double artScale;
   final Set<int> backgroundColors;
   final int activeMotorsCount;
+  final bool hasChainDecoration;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +35,7 @@ class PixelGridView extends StatelessWidget {
         artScale: artScale,
         backgroundColors: backgroundColors,
         activeMotorsCount: activeMotorsCount,
+        hasChainDecoration: hasChainDecoration,
       ),
     );
   }
@@ -47,6 +50,7 @@ class _PixelGridPainter extends CustomPainter {
     required this.artScale,
     required this.backgroundColors,
     required this.activeMotorsCount,
+    this.hasChainDecoration = false,
   });
 
   final List<PixelCell> cells;
@@ -56,6 +60,7 @@ class _PixelGridPainter extends CustomPainter {
   final double artScale;
   final Set<int> backgroundColors;
   final int activeMotorsCount;
+  final bool hasChainDecoration;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -242,6 +247,77 @@ class _PixelGridPainter extends CustomPainter {
       Paint()..color = const Color(0xFF2E3440),
     );
 
+    if (hasChainDecoration) {
+      final yCenter = origin.dy + 44.5 * cellSize;
+      final linkWidth = 2.2 * cellSize;
+      final linkHeight = 1.2 * cellSize;
+      final linkSpacing = 1.5 * cellSize;
+
+      final paintShadow = Paint()
+        ..color = Colors.black.withOpacity(0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.0;
+
+      final paintStroke = Paint()
+        ..color = const Color(0xFF1E222A)
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 1.6;
+
+      // 1st pass: shadows
+      for (double x = origin.dx + linkWidth / 2; x < origin.dx + artWidth - linkWidth / 2; x += linkSpacing) {
+        canvas.save();
+        canvas.translate(x, yCenter + 2.0);
+        canvas.rotate(0.35);
+
+        final shadowRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(shadowRect, Radius.circular(linkHeight * 0.45)),
+          paintShadow,
+        );
+        canvas.restore();
+      }
+
+      // 2nd pass: shiny rings
+      for (double x = origin.dx + linkWidth / 2; x < origin.dx + artWidth - linkWidth / 2; x += linkSpacing) {
+        canvas.save();
+        canvas.translate(x, yCenter);
+        canvas.rotate(0.35);
+
+        final outerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
+        final innerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth * 0.6, height: linkHeight * 0.4);
+
+        final rrectOuter = RRect.fromRectAndRadius(outerRect, Radius.circular(linkHeight * 0.45));
+        final rrectInner = RRect.fromRectAndRadius(innerRect, Radius.circular(linkHeight * 0.2));
+
+        final ringPaint = Paint()
+          ..shader = const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFFFFFF), // White shiny highlights
+              Color(0xFFD1D5DB), // Silver grey
+              Color(0xFF9CA3AF), // Medium metal
+              Color(0xFF4B5563), // Shadow/dark steel
+            ],
+            stops: [0.0, 0.3, 0.65, 1.0],
+          ).createShader(outerRect)
+          ..style = PaintingStyle.fill;
+
+        canvas.drawRRect(rrectOuter, ringPaint);
+
+        final holePaint = Paint()
+          ..color = const Color(0xFF2E3440)
+          ..style = PaintingStyle.fill;
+        canvas.drawRRect(rrectInner, holePaint);
+
+        canvas.drawRRect(rrectOuter, paintStroke);
+        canvas.drawRRect(rrectInner, paintStroke);
+
+        canvas.restore();
+      }
+    }
+
     // 6. Draw grid target cells (clean color blocks)
     for (final cell in cells) {
       if (!cell.isTarget || cell.isPainted) {
@@ -329,6 +405,7 @@ class _PixelGridPainter extends CustomPainter {
         oldDelegate.rows != rows ||
         oldDelegate.cols != cols ||
         oldDelegate.artScale != artScale ||
-        oldDelegate.activeMotorsCount != activeMotorsCount;
+        oldDelegate.activeMotorsCount != activeMotorsCount ||
+        oldDelegate.hasChainDecoration != hasChainDecoration;
   }
 }
