@@ -197,14 +197,17 @@ class _WindingPathPainter extends CustomPainter {
     canvas.drawPath(path, pathPaint);
     canvas.drawPath(path, pathPaintInner);
 
-    // Draw completed path line decorative segment
+    // Draw completed path line decorative segment (from bottom up)
     final completedPath = Path();
-    completedPath.moveTo(startPoint.dx, startPoint.dy);
+    final compStart = getOffset(itemCount - 1);
+    completedPath.moveTo(compStart.dx, compStart.dy);
     for (var i = 1; i <= currentLevelIndex && i < itemCount; i++) {
-      final prev = getOffset(i - 1);
-      final curr = getOffset(i);
-      final control1 = Offset(prev.dx, prev.dy + rowHeight / 2);
-      final control2 = Offset(curr.dx, curr.dy - rowHeight / 2);
+      final prevIndex = itemCount - i;
+      final currIndex = itemCount - 1 - i;
+      final prev = getOffset(prevIndex);
+      final curr = getOffset(currIndex);
+      final control1 = Offset(prev.dx, prev.dy - rowHeight / 2);
+      final control2 = Offset(curr.dx, curr.dy + rowHeight / 2);
       completedPath.cubicTo(control1.dx, control1.dy, control2.dx, control2.dy, curr.dx, curr.dy);
     }
     canvas.drawPath(completedPath, completedPaint);
@@ -218,19 +221,43 @@ class _WindingPathPainter extends CustomPainter {
   }
 }
 
-class _LevelGrid extends StatelessWidget {
+class _LevelGrid extends StatefulWidget {
   const _LevelGrid({required this.category});
 
   final _LevelCategory category;
 
   @override
+  State<_LevelGrid> createState() => _LevelGridState();
+}
+
+class _LevelGridState extends State<_LevelGrid> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final levels = [
-      for (var offset = 0; offset < 25; offset++)
-        if (category.startIndex + offset < LevelData.levels.length)
+      for (var offset = 24; offset >= 0; offset--)
+        if (widget.category.startIndex + offset < LevelData.levels.length)
           (
-            index: category.startIndex + offset,
-            level: LevelData.levels[category.startIndex + offset],
+            index: widget.category.startIndex + offset,
+            level: LevelData.levels[widget.category.startIndex + offset],
           ),
     ];
 
@@ -239,6 +266,7 @@ class _LevelGrid extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: SizedBox(
             height: levels.length * rowHeight,
@@ -251,7 +279,7 @@ class _LevelGrid extends StatelessWidget {
                     painter: _WindingPathPainter(
                       itemCount: levels.length,
                       rowHeight: rowHeight,
-                      currentLevelIndex: category.startIndex == 0 ? 3 : 0, // Mark first few levels as completed decoratively
+                      currentLevelIndex: widget.category.startIndex == 0 ? 3 : 0, // Mark first few levels as completed decoratively
                     ),
                   ),
                 ),
@@ -259,10 +287,6 @@ class _LevelGrid extends StatelessWidget {
                   (() {
                     final item = levels[itemIndex];
                     final double xOffset = math.sin(itemIndex * 0.9) * 90.0;
-                    // Center of node circle should be at: itemIndex * rowHeight + rowHeight / 2
-                    // Column has circle height 74, so center of circle is 37 pixels from column top.
-                    // To place the center of the circle exactly at itemIndex * rowHeight + rowHeight / 2,
-                    // the top of the column should be at: itemIndex * rowHeight + rowHeight / 2 - 37.0
                     final double topPosition = itemIndex * rowHeight + rowHeight / 2 - 37.0;
                     return Positioned(
                       left: 0,
@@ -272,9 +296,9 @@ class _LevelGrid extends StatelessWidget {
                         child: Transform.translate(
                           offset: Offset(xOffset, 0),
                           child: _LevelPathNode(
-                            category: category,
+                            category: widget.category,
                             levelIndex: item.index,
-                            localNumber: itemIndex + 1,
+                            localNumber: levels.length - itemIndex,
                             title: _cleanTitle(item.level.name),
                           ),
                         ),
