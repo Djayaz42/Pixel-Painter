@@ -264,6 +264,63 @@ class _GameScreenState extends State<GameScreen>
     _ensureTicker();
   }
 
+  void _useMagnetBooster() async {
+    if (_isGameOver) return;
+
+    final targetsByColor = _remainingTargetsByColor();
+    final options = <MagnetColorOption>[];
+
+    for (final baseCartridge in LevelData.cartridgesForLevel(_levelIndex)) {
+      final colorId = baseCartridge.colorId;
+      final remaining = targetsByColor[colorId] ?? 0;
+      if (remaining > 0) {
+        options.add(MagnetColorOption(
+          colorId: colorId,
+          color: baseCartridge.color,
+          name: baseCartridge.name,
+          remainingCells: remaining,
+        ));
+      }
+    }
+
+    final selectedColorId = await showDialog<int>(
+      context: context,
+      builder: (context) => _MagnetBoosterDialog(options: options),
+    );
+
+    if (selectedColorId != null) {
+      setState(() {
+        // 1. Paint all target cells of this color
+        _cells = [
+          for (final cell in _cells)
+            if (cell.isTarget && cell.targetColorId == selectedColorId)
+              cell.copyWith(isPainted: true)
+            else
+              cell
+        ];
+
+        // 2. Clear all bullets/cartridges of this color from all collections
+        _cartridges.removeWhere((c) => c.colorId == selectedColorId);
+        _slots = [
+          for (final slot in _slots)
+            if (slot.cartridge?.colorId == selectedColorId)
+              WaitingSlot(index: slot.index)
+            else
+              slot
+        ];
+        _movingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
+        _firingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
+
+        // 3. Trigger completion check if level is won
+        final win = _cells.where((cell) => cell.isTarget).every((cell) => cell.isPainted);
+        if (win) {
+          _handleLevelComplete(DateTime.now());
+        }
+      });
+      _ensureTicker();
+    }
+  }
+
   void _handleSlotTap(int slotIndex) {
     final slot = _slots[slotIndex];
     final cartridge = slot.cartridge;
@@ -2328,27 +2385,28 @@ class _GameScreenState extends State<GameScreen>
                                 columnCount: _levelIndex == 29 ? 4 : 3,
                                 hideSecondRow: _levelIndex >= 31,
                               ),
-                              if (_levelIndex == 33 || _levelIndex >= 35) ...[
-                                SizedBox(height: isCompact ? 4 : 6),
-                                _PremiumBeveledButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => _CartridgesPreviewDialog(
-                                        cartridges: _cartridges,
-                                      ),
-                                    );
-                                  },
-                                  label: 'TÜM KARTUŞLARI GÖSTER',
-                                  icon: Icons.visibility,
-                                  gradientColors: const [
-                                    Color(0xFF5C3D24),
-                                    Color(0xFF352010),
-                                  ],
-                                ),
-                              ],
+                              SizedBox(height: isCompact ? 4 : 6),
+                              _PremiumBeveledButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => _CartridgesPreviewDialog(
+                                      cartridges: _cartridges,
+                                    ),
+                                  );
+                                },
+                                label: 'TÜM KARTUŞLARI GÖSTER',
+                                icon: Icons.visibility,
+                                gradientColors: const [
+                                  Color(0xFF5C3D24),
+                                  Color(0xFF352010),
+                                ],
+                              ),
                               SizedBox(height: isCompact ? 8 : 12),
-                              _BoosterDock(isCompact: isCompact),
+                              _BoosterDock(
+                                isCompact: isCompact,
+                                onMagnetPressed: _levelIndex == 49 ? _useMagnetBooster : null,
+                              ),
                             ],
                           ),
                         ),
@@ -2738,9 +2796,13 @@ class _TopStatsRow extends StatelessWidget {
 }
 
 class _BoosterDock extends StatelessWidget {
-  const _BoosterDock({required this.isCompact});
+  const _BoosterDock({
+    required this.isCompact,
+    this.onMagnetPressed,
+  });
 
   final bool isCompact;
+  final VoidCallback? onMagnetPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -2780,9 +2842,13 @@ class _BoosterDock extends StatelessWidget {
             cushionColors: const [Color(0xFFB32828), Color(0xFF801A1A)],
           ),
           _BoosterButton(
-            icon: Icons.cyclone_rounded,
+            icon: Icons.explore_rounded,
             isCompact: isCompact,
-            cushionColors: const [Color(0xFF1E4C80), Color(0xFF102D59)],
+            isLocked: onMagnetPressed == null,
+            cushionColors: onMagnetPressed == null
+                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                : const [Color(0xFF1E4C80), Color(0xFF102D59)],
+            onPressed: onMagnetPressed,
           ),
           _BoosterButton(
             icon: Icons.lock_rounded,
@@ -2803,6 +2869,7 @@ class _BoosterButton extends StatelessWidget {
     this.badgeCount,
     required this.cushionColors,
     required this.isCompact,
+    this.onPressed,
   });
 
   final IconData icon;
@@ -2810,61 +2877,65 @@ class _BoosterButton extends StatelessWidget {
   final int? badgeCount;
   final List<Color> cushionColors;
   final bool isCompact;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: isLocked ? 0.6 : 1.0,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            width: isCompact ? 42 : 54,
-            height: isCompact ? 42 : 54,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFCE9E4F), width: 2.5),
-              gradient: RadialGradient(
-                center: const Alignment(-0.2, -0.2),
-                radius: 0.85,
-                colors: cushionColors,
+    return GestureDetector(
+      onTap: isLocked ? null : onPressed,
+      child: Opacity(
+        opacity: isLocked ? 0.6 : 1.0,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              width: isCompact ? 42 : 54,
+              height: isCompact ? 42 : 54,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFCE9E4F), width: 2.5),
+                gradient: RadialGradient(
+                  center: const Alignment(-0.2, -0.2),
+                  radius: 0.85,
+                  colors: cushionColors,
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFF2C1908),
+                    offset: Offset(0, 3),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0xFF2C1908),
-                  offset: Offset(0, 3),
-                  blurRadius: 4,
-                ),
-              ],
+              child: Center(
+                child: Icon(icon, color: const Color(0xFFFBE49E), size: isCompact ? 21 : 28),
+              ),
             ),
-            child: Center(
-              child: Icon(icon, color: const Color(0xFFFBE49E), size: isCompact ? 21 : 28),
-            ),
-          ),
-          if (badgeCount != null)
-            Positioned(
-              right: isCompact ? -4 : -6,
-              top: isCompact ? -4 : -6,
-              child: Container(
-                width: isCompact ? 17 : 22,
-                height: isCompact ? 17 : 22,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: const Color(0xFFFBE49E),
-                  border: Border.all(color: const Color(0xFF53381B), width: 1.2),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '$badgeCount',
-                  style: TextStyle(
-                    color: const Color(0xFF53381B),
-                    fontSize: isCompact ? 9 : 12,
-                    fontWeight: FontWeight.w900,
+            if (badgeCount != null)
+              Positioned(
+                right: isCompact ? -4 : -6,
+                top: isCompact ? -4 : -6,
+                child: Container(
+                  width: isCompact ? 17 : 22,
+                  height: isCompact ? 17 : 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFBE49E),
+                    border: Border.all(color: const Color(0xFF53381B), width: 1.2),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '$badgeCount',
+                    style: TextStyle(
+                      color: const Color(0xFF53381B),
+                      fontSize: isCompact ? 9 : 12,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -3519,6 +3590,185 @@ class _CartridgesPreviewDialog extends StatelessWidget {
               _PremiumBeveledButton(
                 onPressed: () => Navigator.of(context).pop(),
                 label: 'KAPAT',
+                icon: Icons.close,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MagnetColorOption {
+  final int colorId;
+  final Color color;
+  final String name;
+  final int remainingCells;
+
+  MagnetColorOption({
+    required this.colorId,
+    required this.color,
+    required this.name,
+    required this.remainingCells,
+  });
+}
+
+class _MagnetBoosterDialog extends StatelessWidget {
+  const _MagnetBoosterDialog({required this.options});
+
+  final List<MagnetColorOption> options;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: Container(
+        width: 380,
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: const Color(0xFFCE9E4F), width: 3.5),
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF422C1A),
+              Color(0xFF23140A),
+            ],
+          ),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0xFF160D06),
+              offset: Offset(0, 12),
+              blurRadius: 16,
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'MIKNATIS JOKERİ',
+                style: TextStyle(
+                  color: Color(0xFFFBE49E),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Ekrandan çekmek ve tüm kartuşlarını silmek istediğiniz rengi seçin:',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFFCE9E4F),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                height: 1,
+                color: const Color(0xFFCE9E4F).withAlpha(100),
+              ),
+              const SizedBox(height: 16),
+              if (options.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.0),
+                  child: Text(
+                    'Kalan hedef renk bulunmuyor!',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                )
+              else
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        for (final option in options)
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(option.colorId),
+                            child: Container(
+                              width: 140,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: option.color,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: const Color(0xFFCE9E4F),
+                                  width: 2.0,
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black45,
+                                    offset: Offset(0, 3),
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    option.name,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: ThemeData.estimateBrightnessForColor(option.color) == Brightness.dark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        if (ThemeData.estimateBrightnessForColor(option.color) == Brightness.dark)
+                                          const Shadow(
+                                            color: Colors.black,
+                                            offset: Offset(1, 1),
+                                            blurRadius: 2,
+                                          )
+                                        else
+                                          const Shadow(
+                                            color: Colors.white70,
+                                            offset: Offset(1, 1),
+                                            blurRadius: 2,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withAlpha(120),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      '${option.remainingCells} Hücre',
+                                      style: const TextStyle(
+                                        color: Color(0xFFFBE49E),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              _PremiumBeveledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                label: 'İPTAL',
                 icon: Icons.close,
               ),
             ],
