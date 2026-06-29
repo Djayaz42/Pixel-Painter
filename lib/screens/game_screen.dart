@@ -2598,12 +2598,13 @@ class _GameScreenState extends State<GameScreen>
                             children: [
                                 ProgressHeader(
                                   progress: _progress,
-                                paintedCount: _paintedCount,
-                                targetCount: _targetCount,
-                                levelNumber: _levelIndex + 1,
-                                onReset: () => setState(_resetPrototype),
-                                onMenu: widget.onOpenMenu,
-                              ),
+                                  paintedCount: _paintedCount,
+                                  targetCount: _targetCount,
+                                  levelNumber: _levelIndex + 1,
+                                  levelName: _level.name,
+                                  onReset: () => setState(_resetPrototype),
+                                  onMenu: widget.onOpenMenu,
+                                ),
                               SizedBox(height: isCompact ? 6 : 8),
                               _TopStatsRow(
                                 lives: _lives,

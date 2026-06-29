@@ -7,6 +7,7 @@ class ProgressHeader extends StatelessWidget {
     required this.paintedCount,
     required this.targetCount,
     required this.levelNumber,
+    required this.levelName,
     required this.onReset,
     this.onMenu,
   });
@@ -15,6 +16,7 @@ class ProgressHeader extends StatelessWidget {
   final int paintedCount;
   final int targetCount;
   final int levelNumber;
+  final String levelName;
   final VoidCallback onReset;
   final VoidCallback? onMenu;
 
@@ -72,12 +74,12 @@ class ProgressHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Pixel Painter',
+                  levelName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF4C2F0C),
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
