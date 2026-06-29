@@ -2534,8 +2534,7 @@ class _GameScreenState extends State<GameScreen>
                                 maxSide: boardSide,
                                 isCompact: isCompact,
                                 backgroundColors: _backgroundColors,
-                                onCellTap: _levelIndex == 49 &&
-                                        (_isMagnetModeActive || _isHookModeActive)
+                                onCellTap: (_isMagnetModeActive || _isHookModeActive)
                                     ? _onBoardCellTapped
                                     : null,
                               ),
@@ -2622,13 +2621,13 @@ class _GameScreenState extends State<GameScreen>
                               SizedBox(height: isCompact ? 8 : 12),
                               _BoosterDock(
                                 isCompact: isCompact,
-                                onMagnetPressed: _levelIndex == 49 ? _useMagnetBooster : null,
+                                onMagnetPressed: _useMagnetBooster,
                                 isMagnetActive: _isMagnetModeActive,
-                                onHookPressed: _levelIndex == 49 ? _useHookBooster : null,
+                                onHookPressed: _useHookBooster,
                                 isHookActive: _isHookModeActive,
-                                onCyclonePressed: _levelIndex == 49 ? _useCycloneBooster : null,
+                                onCyclonePressed: _useCycloneBooster,
                                 isCycloneActive: _isCycloneModeActive,
-                                onShufflePressed: _levelIndex == 49 ? _useShuffleBooster : null,
+                                onShufflePressed: _useShuffleBooster,
                               ),
                             ],
                           ),
