@@ -12,6 +12,7 @@ class LevelDefinition {
     this.cellRows = const [],
     this.gridRows = LevelData.rows,
     this.gridCols = LevelData.cols,
+    this.hasChainDecoration = false,
   });
 
   final String name;
@@ -21,6 +22,7 @@ class LevelDefinition {
   final List<String> cellRows;
   final int gridRows;
   final int gridCols;
+  final bool hasChainDecoration;
 }
 
 class LevelColorRun {
@@ -6384,6 +6386,7 @@ class LevelData {
         "................................................",
         "................................................",
         "................................................",
+        "................................................",
         "LL..LL..LL..LL..LL..LL..LL..LL..LL..LL..LL..LL..",
         ".LKL.LKL.LKL.LKL.LKL.LKL.LKL.LKL.LKL.LKL.LKL.LKL",
         ".LL..LL..LL..LL..LL..LL..LL..LL..LL..LL..LL..LL.",
@@ -6402,6 +6405,7 @@ class LevelData {
         LevelColorRun(4, 6),
       ],
       paintOrder: LevelPaintOrder.rowSnake,
+      hasChainDecoration: true,
     );
   }
 
