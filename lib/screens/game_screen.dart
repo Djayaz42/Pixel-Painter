@@ -154,6 +154,7 @@ class _GameScreenState extends State<GameScreen>
   Timer? _lifeTimer;
   int _lives = _maxLives;
   int _gold = 1000;
+  int _continueCount = 0;
   int _nextRunId = 1;
   int _generatedFortyCount = 0;
   late int _levelIndex;
@@ -220,6 +221,12 @@ class _GameScreenState extends State<GameScreen>
   int get _activeOrbitCount =>
       _movingMotors.where((m) => !m.isGhost).length + _firingMotors.length;
 
+  int get _currentContinueCost {
+    if (_continueCount == 0) return 500;
+    if (_continueCount == 1) return 750;
+    return 1000;
+  }
+
   String get _lifeStatusText {
     if (_lives >= _maxLives || _nextLifeAt == null) {
       return 'Can $_lives/$_maxLives';
@@ -251,9 +258,24 @@ class _GameScreenState extends State<GameScreen>
       return;
     }
 
+    final isGhost = _isCycloneModeActive;
+    if (isGhost && _gold < 400) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Yetersiz altın! Kasırga jokeri için 400 Altın gerekiyor.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color(0xFFE84A4A),
+        ),
+      );
+      return;
+    }
+
     setState(() {
-      final isGhost = _isCycloneModeActive;
       if (_isCycloneModeActive) {
+        _gold -= 400;
         _isCycloneModeActive = false;
       }
       
@@ -279,7 +301,7 @@ class _GameScreenState extends State<GameScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '${currentCartridge.name} Kasırga Motoru fırlatıldı! Slota yerleşmeyecek.',
+              '${currentCartridge.name} Kasırga Motoru fırlatıldı! Slota yerleşmeyecek. (400 Altın)',
               style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
             ),
             backgroundColor: const Color(0xFF42E88A),
@@ -364,7 +386,21 @@ class _GameScreenState extends State<GameScreen>
 
   void _useShuffleBooster() {
     if (_isGameOver) return;
+    if (_gold < 200) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Yetersiz altın! Karıştırma jokeri için 200 Altın gerekiyor.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color(0xFFE84A4A),
+        ),
+      );
+      return;
+    }
     setState(() {
+      _gold -= 200;
       _cartridges.shuffle();
       _isMagnetModeActive = false;
       _isHookModeActive = false;
@@ -374,7 +410,7 @@ class _GameScreenState extends State<GameScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text(
-          'Kuyruktaki tüm kartuşlar rastgele karıştırıldı!',
+          'Kuyruktaki tüm kartuşlar rastgele karıştırıldı! (200 Altın)',
           style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
         ),
         backgroundColor: Color(0xFF42E88A),
@@ -394,7 +430,21 @@ class _GameScreenState extends State<GameScreen>
       final selectedColorId = tappedCell.targetColorId;
       
       if (_isMagnetModeActive) {
+        if (_gold < 800) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Yetersiz altın! Mıknatıs jokeri için 800 Altın gerekiyor.',
+                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Color(0xFFE84A4A),
+            ),
+          );
+          return;
+        }
         setState(() {
+          _gold -= 800;
           _isMagnetModeActive = false;
           
           _cells = [
@@ -425,7 +475,7 @@ class _GameScreenState extends State<GameScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                '${cartridge.name} rengi mıknatısla çekildi ve temizlendi!',
+                '${cartridge.name} rengi mıknatısla çekildi ve temizlendi! (800 Altın)',
                 style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
               ),
               backgroundColor: const Color(0xFF42E88A),
@@ -452,7 +502,21 @@ class _GameScreenState extends State<GameScreen>
             ),
           );
         } else {
+          if (_gold < 600) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Yetersiz altın! Kartuş Kancası jokeri için 600 Altın gerekiyor.',
+                  style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: Color(0xFFE84A4A),
+              ),
+            );
+            return;
+          }
           setState(() {
+            _gold -= 600;
             _isHookModeActive = false;
             final targetCartridge = _cartridges[idx];
             _cartridges.removeAt(idx);
@@ -462,7 +526,7 @@ class _GameScreenState extends State<GameScreen>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  '${targetCartridge.name} kartuşu kancayla sıranın en başına getirildi!',
+                  '${targetCartridge.name} kartuşu kancayla sıranın en başına getirildi! (600 Altın)',
                   style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
                 ),
                 backgroundColor: const Color(0xFF42E88A),
@@ -2381,6 +2445,7 @@ class _GameScreenState extends State<GameScreen>
     _isCycloneModeActive = false;
     _showCompletionOverlay = false;
     _completedAt = null;
+    _continueCount = 0;
     _nextRunId = 1;
   }
 
@@ -2419,22 +2484,24 @@ class _GameScreenState extends State<GameScreen>
   }
 
   void _continueWithPay() {
-    if (_gold < 100) {
+    final cost = _currentContinueCost;
+    if (_gold < cost) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'Yetersiz altın! Devam etmek için 100 Altın gerekiyor.',
-            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+            'Yetersiz altın! Devam etmek için $cost Altın gerekiyor.',
+            style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Color(0xFFE84A4A),
+          backgroundColor: const Color(0xFFE84A4A),
         ),
       );
       return;
     }
 
     setState(() {
-      _gold -= 100;
+      _gold -= cost;
+      _continueCount++;
       int maxId = _cartridges.isEmpty
           ? 0
           : _cartridges.map((c) => c.id).reduce((a, b) => a > b ? a : b);
@@ -2470,12 +2537,12 @@ class _GameScreenState extends State<GameScreen>
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            '100 Altın ödenerek oyuna devam ediliyor! Slottaki kartuşlar kuyruğun sonuna eklendi.',
-            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+            '$cost Altın ödenerek oyuna devam ediliyor! Slottaki kartuşlar kuyruğun sonuna eklendi.',
+            style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Color(0xFFCE9E4F),
+          backgroundColor: const Color(0xFFCE9E4F),
         ),
       );
     });
@@ -2810,7 +2877,7 @@ class _GameScreenState extends State<GameScreen>
                         const SizedBox(height: 24),
                         _PremiumBeveledButton(
                           onPressed: _continueWithPay,
-                          label: 'DEVAM ET (100 Altın)',
+                          label: 'DEVAM ET ($_currentContinueCost Altın)',
                           icon: Icons.monetization_on_rounded,
                           gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
                         ),
@@ -3166,17 +3233,6 @@ class _BoosterDock extends StatelessWidget {
             onPressed: onCyclonePressed,
           ),
           _BoosterButton(
-            icon: Icons.explore_rounded,
-            isCompact: isCompact,
-            isLocked: onMagnetPressed == null,
-            cushionColors: onMagnetPressed == null
-                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
-                : (isMagnetActive
-                    ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
-                    : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
-            onPressed: onMagnetPressed,
-          ),
-          _BoosterButton(
             icon: Icons.anchor_rounded,
             isCompact: isCompact,
             isLocked: onHookPressed == null,
@@ -3186,6 +3242,17 @@ class _BoosterDock extends StatelessWidget {
                     ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
                     : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
             onPressed: onHookPressed,
+          ),
+          _BoosterButton(
+            icon: Icons.explore_rounded,
+            isCompact: isCompact,
+            isLocked: onMagnetPressed == null,
+            cushionColors: onMagnetPressed == null
+                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                : (isMagnetActive
+                    ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
+                    : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
+            onPressed: onMagnetPressed,
           ),
         ],
       ),
