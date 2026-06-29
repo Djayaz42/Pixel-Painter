@@ -2287,9 +2287,16 @@ class _GameScreenState extends State<GameScreen>
       for (final slot in _slots) {
         if (slot.cartridge != null && slot.cartridge!.amount > 0) {
           maxId++;
+          final c = slot.cartridge!;
           returnedCartridges.add(
-            slot.cartridge!.copyWith(
+            PaintCartridge(
               id: maxId,
+              colorId: c.colorId,
+              name: c.name,
+              color: c.color,
+              amount: c.amount,
+              packageAmount: c.packageAmount,
+              isUsed: c.isUsed,
               isSelected: false,
             ),
           );
