@@ -146,6 +146,7 @@ class _GameScreenState extends State<GameScreen>
   final Set<int> _burnedColorIds = {};
   bool _isGameOver = false;
   bool _isMagnetModeActive = false;
+  bool _isHookModeActive = false;
   bool _showCompletionOverlay = false;
   DateTime? _completedAt;
   DateTime? _nextLifeAt;
@@ -269,6 +270,9 @@ class _GameScreenState extends State<GameScreen>
     if (_isGameOver) return;
     setState(() {
       _isMagnetModeActive = !_isMagnetModeActive;
+      if (_isMagnetModeActive) {
+        _isHookModeActive = false;
+      }
     });
     if (_isMagnetModeActive) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -285,8 +289,31 @@ class _GameScreenState extends State<GameScreen>
     }
   }
 
+  void _useHookBooster() {
+    if (_isGameOver) return;
+    setState(() {
+      _isHookModeActive = !_isHookModeActive;
+      if (_isHookModeActive) {
+        _isMagnetModeActive = false;
+      }
+    });
+    if (_isHookModeActive) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Kartuş Kancası Aktif! En öne getirmek istediğiniz renge ait bir piksele dokunun.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          duration: Duration(seconds: 4),
+          backgroundColor: Color(0xFF1E4C80),
+        ),
+      );
+    }
+  }
+
   void _onBoardCellTapped(int row, int col) {
-    if (!_isMagnetModeActive) return;
+    if (!_isMagnetModeActive && !_isHookModeActive) return;
 
     final tappedCell = _cells.firstWhere(
       (cell) => cell.row == row && cell.col == col,
@@ -296,50 +323,84 @@ class _GameScreenState extends State<GameScreen>
     if (tappedCell.row != -1 && tappedCell.isTarget) {
       final selectedColorId = tappedCell.targetColorId;
       
-      setState(() {
-        _isMagnetModeActive = false;
-        
-        _cells = [
-          for (final cell in _cells)
-            if (cell.isTarget && cell.targetColorId == selectedColorId)
-              cell.copyWith(isPainted: true)
-            else
-              cell
-        ];
+      if (_isMagnetModeActive) {
+        setState(() {
+          _isMagnetModeActive = false;
+          
+          _cells = [
+            for (final cell in _cells)
+              if (cell.isTarget && cell.targetColorId == selectedColorId)
+                cell.copyWith(isPainted: true)
+              else
+                cell
+          ];
 
-        _cartridges.removeWhere((c) => c.colorId == selectedColorId);
-        _slots = [
-          for (final slot in _slots)
-            if (slot.cartridge?.colorId == selectedColorId)
-              WaitingSlot(index: slot.index)
-            else
-              slot
-        ];
-        _movingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
-        _firingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
+          _cartridges.removeWhere((c) => c.colorId == selectedColorId);
+          _slots = [
+            for (final slot in _slots)
+              if (slot.cartridge?.colorId == selectedColorId)
+                WaitingSlot(index: slot.index)
+              else
+                slot
+          ];
+          _movingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
+          _firingMotors.removeWhere((m) => m.cartridge.colorId == selectedColorId);
 
-        final cartridge = LevelData.cartridges.firstWhere(
-          (c) => c.colorId == selectedColorId,
-          orElse: () => PaintCartridge(id: -1, colorId: selectedColorId, name: 'Bilinmeyen', color: Colors.transparent, amount: 0),
-        );
-        
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${cartridge.name} rengi mıknatısla çekildi ve temizlendi!',
-              style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          final cartridge = LevelData.cartridges.firstWhere(
+            (c) => c.colorId == selectedColorId,
+            orElse: () => PaintCartridge(id: -1, colorId: selectedColorId, name: 'Bilinmeyen', color: Colors.transparent, amount: 0),
+          );
+          
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${cartridge.name} rengi mıknatısla çekildi ve temizlendi!',
+                style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: const Color(0xFF42E88A),
             ),
-            backgroundColor: const Color(0xFF42E88A),
-          ),
-        );
+          );
 
-        final win = _cells.where((cell) => cell.isTarget).every((cell) => cell.isPainted);
-        if (win) {
-          _handleLevelComplete(DateTime.now());
+          final win = _cells.where((cell) => cell.isTarget).every((cell) => cell.isPainted);
+          if (win) {
+            _handleLevelComplete(DateTime.now());
+          }
+        });
+        _ensureTicker();
+      } else if (_isHookModeActive) {
+        final idx = _cartridges.indexWhere((c) => c.colorId == selectedColorId && c.amount > 0);
+        if (idx == -1) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Kuyrukta bu renge ait kullanılabilir kartuş bulunamadı!',
+                style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: Color(0xFFE84A4A),
+            ),
+          );
+        } else {
+          setState(() {
+            _isHookModeActive = false;
+            final targetCartridge = _cartridges[idx];
+            _cartridges.removeAt(idx);
+            _cartridges.insert(0, targetCartridge);
+
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  '${targetCartridge.name} kartuşu kancayla sıranın en başına getirildi!',
+                  style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: const Color(0xFF42E88A),
+              ),
+            );
+          });
         }
-      });
-      _ensureTicker();
+      }
     }
   }
 
@@ -2237,6 +2298,7 @@ class _GameScreenState extends State<GameScreen>
     _burnedColorIds.clear();
     _isGameOver = false;
     _isMagnetModeActive = false;
+    _isHookModeActive = false;
     _showCompletionOverlay = false;
     _completedAt = null;
     _nextRunId = 1;
@@ -2393,7 +2455,8 @@ class _GameScreenState extends State<GameScreen>
                                 maxSide: boardSide,
                                 isCompact: isCompact,
                                 backgroundColors: _backgroundColors,
-                                onCellTap: _levelIndex == 49 && _isMagnetModeActive
+                                onCellTap: _levelIndex == 49 &&
+                                        (_isMagnetModeActive || _isHookModeActive)
                                     ? _onBoardCellTapped
                                     : null,
                               ),
@@ -2482,6 +2545,8 @@ class _GameScreenState extends State<GameScreen>
                                 isCompact: isCompact,
                                 onMagnetPressed: _levelIndex == 49 ? _useMagnetBooster : null,
                                 isMagnetActive: _isMagnetModeActive,
+                                onHookPressed: _levelIndex == 49 ? _useHookBooster : null,
+                                isHookActive: _isHookModeActive,
                               ),
                             ],
                           ),
@@ -2883,11 +2948,15 @@ class _BoosterDock extends StatelessWidget {
     required this.isCompact,
     this.onMagnetPressed,
     this.isMagnetActive = false,
+    this.onHookPressed,
+    this.isHookActive = false,
   });
 
   final bool isCompact;
   final VoidCallback? onMagnetPressed;
   final bool isMagnetActive;
+  final VoidCallback? onHookPressed;
+  final bool isHookActive;
 
   @override
   Widget build(BuildContext context) {
@@ -2938,10 +3007,15 @@ class _BoosterDock extends StatelessWidget {
             onPressed: onMagnetPressed,
           ),
           _BoosterButton(
-            icon: Icons.lock_rounded,
-            isLocked: true,
+            icon: Icons.anchor_rounded,
             isCompact: isCompact,
-            cushionColors: const [Color(0xFF7A828A), Color(0xFF4C5259)],
+            isLocked: onHookPressed == null,
+            cushionColors: onHookPressed == null
+                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                : (isHookActive
+                    ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
+                    : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
+            onPressed: onHookPressed,
           ),
         ],
       ),
