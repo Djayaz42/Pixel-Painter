@@ -153,6 +153,7 @@ class _GameScreenState extends State<GameScreen>
   DateTime? _nextLifeAt;
   Timer? _lifeTimer;
   int _lives = _maxLives;
+  int _gold = 1500;
   int _nextRunId = 1;
   int _generatedFortyCount = 0;
   late int _levelIndex;
@@ -2522,6 +2523,7 @@ class _GameScreenState extends State<GameScreen>
                                 lives: _lives,
                                 maxLives: _maxLives,
                                 isCompact: isCompact,
+                                gold: _gold,
                               ),
                               SizedBox(height: gap),
                               GameBoardPanel(
@@ -2680,12 +2682,58 @@ class _GameScreenState extends State<GameScreen>
                             fontWeight: FontWeight.w700,
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.monetization_on_rounded, color: Color(0xFFFBE49E), size: 24),
+                            const SizedBox(width: 6),
+                            Text(
+                              '+30 Altın',
+                              style: TextStyle(
+                                color: const Color(0xFFFBE49E),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                shadows: [
+                                  Shadow(color: Colors.black.withOpacity(0.5), offset: const Offset(0, 1.5), blurRadius: 2.0),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 24),
                         _PremiumBeveledButton(
-                          onPressed: () => setState(_advanceLevel),
-                          label: 'Next Level',
-                          icon: Icons.arrow_forward_rounded,
+                          onPressed: () {
+                            setState(() {
+                              _gold += 30;
+                              _advanceLevel();
+                            });
+                          },
+                          label: 'Kazan (+30)',
+                          icon: Icons.monetization_on_rounded,
                           gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
+                        ),
+                        const SizedBox(height: 12),
+                        _PremiumBeveledButton(
+                          onPressed: () {
+                            setState(() {
+                              _gold += 60;
+                              _advanceLevel();
+                            });
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Reklam izlendi! +60 Altın kazanıldı.',
+                                  style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+                                ),
+                                backgroundColor: Color(0xFF42E88A),
+                              ),
+                            );
+                          },
+                          label: 'Reklam İzle & 2x Kazan (+60)',
+                          icon: Icons.ondemand_video_rounded,
+                          gradientColors: const [Color(0xFF42E88A), Color(0xFF22B85E)], // Green/Emerald gradient
                         ),
                       ],
                     ),
@@ -2914,11 +2962,23 @@ class _TopStatsRow extends StatelessWidget {
     required this.lives,
     required this.maxLives,
     required this.isCompact,
+    required this.gold,
   });
 
   final int lives;
   final int maxLives;
   final bool isCompact;
+  final int gold;
+
+  String get _formattedGold {
+    if (gold >= 10000) {
+      return '${(gold / 1000).toStringAsFixed(1)}k';
+    }
+    if (gold >= 1000) {
+      return '${(gold / 1000).toStringAsFixed(2)}k';
+    }
+    return '$gold';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -3002,19 +3062,19 @@ class _TopStatsRow extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.monetization_on_rounded, color: Color(0xFFFBE49E), size: 18),
-                SizedBox(width: 6),
+              children: [
+                const Icon(Icons.monetization_on_rounded, color: Color(0xFFFBE49E), size: 18),
+                const SizedBox(width: 6),
                 Text(
-                  '1.50k',
-                  style: TextStyle(
+                  _formattedGold,
+                  style: const TextStyle(
                     color: Color(0xFFFBE49E),
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                SizedBox(width: 4),
-                Icon(Icons.add_circle_rounded, color: Color(0xFF42E88A), size: 14),
+                const SizedBox(width: 4),
+                const Icon(Icons.add_circle_rounded, color: Color(0xFF42E88A), size: 14),
               ],
             ),
           ),
