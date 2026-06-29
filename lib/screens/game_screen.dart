@@ -459,11 +459,15 @@ class _GameScreenState extends State<GameScreen>
         setState(() {
           if (!_brokenLinks.contains(linkIndex)) {
             _brokenLinks.add(linkIndex);
+            final targetCenter = Offset(
+              (col + 0.5) / _gridCols,
+              (row + 0.5) / _gridRows,
+            );
             _shotEvents.add(
               ShotEvent(
-                row: row,
-                col: col,
-                color: const Color(0xFFCE9E4F),
+                from: Offset(targetCenter.dx, 1.15),
+                to: targetCenter,
+                color: const Color(0xFFFF9F43),
                 createdAt: DateTime.now(),
               ),
             );
