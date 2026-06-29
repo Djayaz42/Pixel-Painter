@@ -153,7 +153,7 @@ class _GameScreenState extends State<GameScreen>
   DateTime? _nextLifeAt;
   Timer? _lifeTimer;
   int _lives = _maxLives;
-  int _gold = 1500;
+  int _gold = 1000;
   int _nextRunId = 1;
   int _generatedFortyCount = 0;
   late int _levelIndex;
@@ -2419,7 +2419,22 @@ class _GameScreenState extends State<GameScreen>
   }
 
   void _continueWithPay() {
+    if (_gold < 100) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Yetersiz altın! Devam etmek için 100 Altın gerekiyor.',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Color(0xFFE84A4A),
+        ),
+      );
+      return;
+    }
+
     setState(() {
+      _gold -= 100;
       int maxId = _cartridges.isEmpty
           ? 0
           : _cartridges.map((c) => c.id).reduce((a, b) => a > b ? a : b);
@@ -2457,7 +2472,7 @@ class _GameScreenState extends State<GameScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            '1 \$ ödenerek oyuna devam ediliyor! Slottaki kartuşlar kuyruğun sonuna eklendi.',
+            '100 Altın ödenerek oyuna devam ediliyor! Slottaki kartuşlar kuyruğun sonuna eklendi.',
             style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
           ),
           backgroundColor: Color(0xFFCE9E4F),
@@ -2795,7 +2810,7 @@ class _GameScreenState extends State<GameScreen>
                         const SizedBox(height: 24),
                         _PremiumBeveledButton(
                           onPressed: _continueWithPay,
-                          label: 'DEVAM ET (1 \$)',
+                          label: 'DEVAM ET (100 Altın)',
                           icon: Icons.monetization_on_rounded,
                           gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
                         ),
