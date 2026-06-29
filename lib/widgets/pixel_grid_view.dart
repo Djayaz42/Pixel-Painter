@@ -248,15 +248,9 @@ class _PixelGridPainter extends CustomPainter {
     );
 
     if (hasChainDecoration) {
-      final yCenter = origin.dy + 44.5 * cellSize;
-      final linkWidth = 2.2 * cellSize;
-      final linkHeight = 1.2 * cellSize;
-      final linkSpacing = 1.5 * cellSize;
-
-      final paintShadow = Paint()
-        ..color = Colors.black.withOpacity(0.35)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3.0;
+      final yCenter = origin.dy + 45.0 * cellSize;
+      final linkWidth = 4.0 * cellSize;
+      final linkHeight = 2.0 * cellSize;
 
       final paintStroke = Paint()
         ..color = const Color(0xFF1E222A)
@@ -264,25 +258,17 @@ class _PixelGridPainter extends CustomPainter {
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 1.6;
 
-      // 1st pass: shadows
-      for (double x = origin.dx + linkWidth / 2; x < origin.dx + artWidth - linkWidth / 2; x += linkSpacing) {
-        canvas.save();
-        canvas.translate(x, yCenter + 2.0);
-        canvas.rotate(0.35);
+      for (int i = 0; i < 12; i++) {
+        final x = origin.dx + (i * 4 + 2) * cellSize;
+        
+        final rangeCells = cells.where((c) => c.row >= 44 && c.row <= 46 && c.col >= i * 4 && c.col <= i * 4 + 3);
+        final linkTotal = rangeCells.length;
+        final linkPainted = rangeCells.where((c) => c.isPainted).length;
+        final linkProgress = linkTotal == 0 ? 0.0 : linkPainted / linkTotal;
 
-        final shadowRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(shadowRect, Radius.circular(linkHeight * 0.45)),
-          paintShadow,
-        );
-        canvas.restore();
-      }
-
-      // 2nd pass: shiny rings
-      for (double x = origin.dx + linkWidth / 2; x < origin.dx + artWidth - linkWidth / 2; x += linkSpacing) {
         canvas.save();
         canvas.translate(x, yCenter);
-        canvas.rotate(0.35);
+        canvas.rotate(0.35); // 20 degrees tilt
 
         final outerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
         final innerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth * 0.6, height: linkHeight * 0.4);
@@ -290,19 +276,29 @@ class _PixelGridPainter extends CustomPainter {
         final rrectOuter = RRect.fromRectAndRadius(outerRect, Radius.circular(linkHeight * 0.45));
         final rrectInner = RRect.fromRectAndRadius(innerRect, Radius.circular(linkHeight * 0.2));
 
+        // Draw shadow under the ring (grows stronger as it's painted)
+        final shadowPaint = Paint()
+          ..color = Colors.black.withOpacity(0.08 + 0.25 * linkProgress)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3.0;
+        canvas.drawRRect(rrectOuter.shift(const Offset(0.0, 2.0)), shadowPaint);
+
+        // Draw ring body filled with silver gradient
+        // Unpainted: low opacity dark steel. Painted: full opacity silver.
         final ringPaint = Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFFFFFFF), // White shiny highlights
-              Color(0xFFD1D5DB), // Silver grey
-              Color(0xFF9CA3AF), // Medium metal
-              Color(0xFF4B5563), // Shadow/dark steel
+              Color.lerp(const Color(0xFF374151), Colors.white, linkProgress)!,
+              Color.lerp(const Color(0xFF1F2937), const Color(0xFFD1D5DB), linkProgress)!,
+              Color.lerp(const Color(0xFF111827), const Color(0xFF9CA3AF), linkProgress)!,
+              Color.lerp(const Color(0xFF030712), const Color(0xFF4B5563), linkProgress)!,
             ],
-            stops: [0.0, 0.3, 0.65, 1.0],
+            stops: const [0.0, 0.3, 0.65, 1.0],
           ).createShader(outerRect)
-          ..style = PaintingStyle.fill;
+          ..style = PaintingStyle.fill
+          ..color = Colors.white.withOpacity(0.15 + 0.85 * linkProgress);
 
         canvas.drawRRect(rrectOuter, ringPaint);
 
@@ -311,6 +307,8 @@ class _PixelGridPainter extends CustomPainter {
           ..style = PaintingStyle.fill;
         canvas.drawRRect(rrectInner, holePaint);
 
+        // Draw outlines (grows clearer as it's painted)
+        paintStroke.color = const Color(0xFF1E222A).withOpacity(0.2 + 0.8 * linkProgress);
         canvas.drawRRect(rrectOuter, paintStroke);
         canvas.drawRRect(rrectInner, paintStroke);
 
@@ -323,6 +321,9 @@ class _PixelGridPainter extends CustomPainter {
       if (!cell.isTarget || cell.isPainted) {
         continue;
       }
+
+      final isChainCell = hasChainDecoration && cell.row >= 44 && cell.row <= 46;
+      final cellOpacity = isChainCell ? 0.65 : 1.0;
 
       final baseColor =
           colorValues[cell.targetColorId] ?? const Color(0xFF25264F);
@@ -340,9 +341,9 @@ class _PixelGridPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Color.lerp(baseColor, Colors.white, 0.25)!,
-          baseColor,
-          Color.lerp(baseColor, Colors.black, 0.15)!,
+          Color.lerp(baseColor, Colors.white, 0.25)!.withOpacity(cellOpacity),
+          baseColor.withOpacity(cellOpacity),
+          Color.lerp(baseColor, Colors.black, 0.15)!.withOpacity(cellOpacity),
         ],
       ).createShader(rect);
       canvas.drawRRect(cellRRect, paint);
@@ -352,7 +353,7 @@ class _PixelGridPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.0
-          ..color = const Color(0xFF0D1017),
+          ..color = const Color(0xFF0D1017).withOpacity(cellOpacity),
       );
     }
 
