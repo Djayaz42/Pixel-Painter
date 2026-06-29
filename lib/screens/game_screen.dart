@@ -2278,18 +2278,29 @@ class _GameScreenState extends State<GameScreen>
 
   void _continueWithPay() {
     setState(() {
+      int maxId = _cartridges.isEmpty
+          ? 0
+          : _cartridges.map((c) => c.id).reduce((a, b) => a > b ? a : b);
+
+      final returnedCartridges = <PaintCartridge>[];
+
       for (final slot in _slots) {
         if (slot.cartridge != null && slot.cartridge!.amount > 0) {
-          final cartridgeInSlot = slot.cartridge!;
-          _cartridges = [
-            for (final c in _cartridges)
-              if (c.id == cartridgeInSlot.id)
-                c.copyWith(amount: c.amount + cartridgeInSlot.amount)
-              else
-                c
-          ];
+          maxId++;
+          returnedCartridges.add(
+            slot.cartridge!.copyWith(
+              id: maxId,
+              isSelected: false,
+            ),
+          );
         }
       }
+
+      _cartridges = [
+        ..._cartridges,
+        ...returnedCartridges,
+      ];
+
       _slots = List.generate(5, (index) => WaitingSlot(index: index));
       _isGameOver = false;
 
@@ -2297,7 +2308,7 @@ class _GameScreenState extends State<GameScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            '1 \$ ödenerek oyuna devam ediliyor! Slotlar temizlendi ve kartuşlar geri yüklendi.',
+            '1 \$ ödenerek oyuna devam ediliyor! Slottaki kartuşlar kuyruğun sonuna eklendi.',
             style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
           ),
           backgroundColor: Color(0xFFCE9E4F),
