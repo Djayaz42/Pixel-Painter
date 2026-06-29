@@ -361,6 +361,26 @@ class _GameScreenState extends State<GameScreen>
     }
   }
 
+  void _useShuffleBooster() {
+    if (_isGameOver) return;
+    setState(() {
+      _cartridges.shuffle();
+      _isMagnetModeActive = false;
+      _isHookModeActive = false;
+      _isCycloneModeActive = false;
+    });
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Kuyruktaki tüm kartuşlar rastgele karıştırıldı!',
+          style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Color(0xFF42E88A),
+      ),
+    );
+  }
+
   void _onBoardCellTapped(int row, int col) {
     if (!_isMagnetModeActive && !_isHookModeActive) return;
 
@@ -2608,6 +2628,7 @@ class _GameScreenState extends State<GameScreen>
                                 isHookActive: _isHookModeActive,
                                 onCyclonePressed: _levelIndex == 49 ? _useCycloneBooster : null,
                                 isCycloneActive: _isCycloneModeActive,
+                                onShufflePressed: _levelIndex == 49 ? _useShuffleBooster : null,
                               ),
                             ],
                           ),
@@ -3013,6 +3034,7 @@ class _BoosterDock extends StatelessWidget {
     this.isHookActive = false,
     this.onCyclonePressed,
     this.isCycloneActive = false,
+    this.onShufflePressed,
   });
 
   final bool isCompact;
@@ -3022,6 +3044,7 @@ class _BoosterDock extends StatelessWidget {
   final bool isHookActive;
   final VoidCallback? onCyclonePressed;
   final bool isCycloneActive;
+  final VoidCallback? onShufflePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -3049,10 +3072,13 @@ class _BoosterDock extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _BoosterButton(
-            icon: Icons.bolt_rounded,
-            badgeCount: 3,
+            icon: Icons.shuffle_rounded,
             isCompact: isCompact,
-            cushionColors: const [Color(0xFFB32828), Color(0xFF801A1A)],
+            isLocked: onShufflePressed == null,
+            cushionColors: onShufflePressed == null
+                ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
+                : const [Color(0xFF1E4C80), Color(0xFF102D59)],
+            onPressed: onShufflePressed,
           ),
           _BoosterButton(
             icon: Icons.cyclone_rounded,
