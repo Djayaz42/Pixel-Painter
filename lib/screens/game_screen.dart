@@ -1228,6 +1228,10 @@ class _GameScreenState extends State<GameScreen>
     }
     queue.sort((a, b) => cartridgeProgress[a]!.compareTo(cartridgeProgress[b]!));
 
+    if (_levelIndex == 50) {
+      queue.shuffle(math.Random());
+    }
+
     if (_levelIndex == 26) {
       final List<PaintCartridge> selectedMavis = [];
       final List<PaintCartridge> selectedKrems = [];
