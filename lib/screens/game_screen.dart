@@ -2768,7 +2768,7 @@ class _GameScreenState extends State<GameScreen>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.monetization_on_rounded, color: Color(0xFFFBE49E), size: 24),
+                            const _GoldCoinIcon(size: 24),
                             const SizedBox(width: 6),
                             Text(
                               '+30 Altın',
@@ -2792,7 +2792,7 @@ class _GameScreenState extends State<GameScreen>
                             });
                           },
                           label: 'Kazan (+30)',
-                          icon: Icons.monetization_on_rounded,
+                          customIcon: const _GoldCoinIcon(size: 20),
                           gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
                         ),
                         const SizedBox(height: 12),
@@ -2878,7 +2878,7 @@ class _GameScreenState extends State<GameScreen>
                         _PremiumBeveledButton(
                           onPressed: _continueWithPay,
                           label: 'DEVAM ET ($_currentContinueCost Altın)',
-                          icon: Icons.monetization_on_rounded,
+                          customIcon: const _GoldCoinIcon(size: 20),
                           gradientColors: const [Color(0xFFE29B3C), Color(0xFFAB7315)], // Gold gradient
                         ),
                         const SizedBox(height: 12),
@@ -2897,6 +2897,41 @@ class _GameScreenState extends State<GameScreen>
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _GoldCoinIcon extends StatelessWidget {
+  const _GoldCoinIcon({required this.size});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: [Color(0xFFFFE082), Color(0xFFFFB300)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x33000000),
+            offset: Offset(0, 1),
+            blurRadius: 1.5,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Icon(
+          Icons.star_rounded,
+          color: const Color(0xFFFFFFFF),
+          size: size * 0.7,
+        ),
       ),
     );
   }
@@ -3145,7 +3180,7 @@ class _TopStatsRow extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.monetization_on_rounded, color: Color(0xFFFBE49E), size: 18),
+                const _GoldCoinIcon(size: 18),
                 const SizedBox(width: 6),
                 Text(
                   _formattedGold,
@@ -3504,13 +3539,15 @@ class _PremiumBeveledButton extends StatefulWidget {
   const _PremiumBeveledButton({
     required this.onPressed,
     required this.label,
-    required this.icon,
+    this.icon,
+    this.customIcon,
     this.gradientColors = const [Color(0xFFB32828), Color(0xFF801A1A)], // default ruby red
   });
 
   final VoidCallback onPressed;
   final String label;
-  final IconData icon;
+  final IconData? icon;
+  final Widget? customIcon;
   final List<Color> gradientColors;
 
   @override
@@ -3579,15 +3616,19 @@ class _PremiumBeveledButtonState extends State<_PremiumBeveledButton> with Singl
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  widget.icon,
-                  color: const Color(0xFFFBE49E), // Gold text color
-                  size: 20,
-                  shadows: const [
-                    Shadow(color: Colors.black54, offset: Offset(0, 1.5), blurRadius: 2.0),
-                  ],
-                ),
-                const SizedBox(width: 8),
+                if (widget.customIcon != null)
+                  widget.customIcon!
+                else if (widget.icon != null)
+                  Icon(
+                    widget.icon!,
+                    color: const Color(0xFFFBE49E), // Gold text color
+                    size: 20,
+                    shadows: const [
+                      Shadow(color: Colors.black54, offset: Offset(0, 1.5), blurRadius: 2.0),
+                    ],
+                  ),
+                if (widget.customIcon != null || widget.icon != null)
+                  const SizedBox(width: 8),
                 Text(
                   widget.label,
                   style: const TextStyle(
