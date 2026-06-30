@@ -14,6 +14,8 @@ class PixelGridView extends StatelessWidget {
     this.activeMotorsCount = 0,
     this.hasChainDecoration = false,
     this.brokenLinks = const [],
+    this.chainLinkHits = const [],
+    this.levelIndex = 0,
   });
 
   final List<PixelCell> cells;
@@ -25,6 +27,8 @@ class PixelGridView extends StatelessWidget {
   final int activeMotorsCount;
   final bool hasChainDecoration;
   final List<int> brokenLinks;
+  final List<int> chainLinkHits;
+  final int levelIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +43,8 @@ class PixelGridView extends StatelessWidget {
         activeMotorsCount: activeMotorsCount,
         hasChainDecoration: hasChainDecoration,
         brokenLinks: brokenLinks,
+        chainLinkHits: chainLinkHits,
+        levelIndex: levelIndex,
       ),
     );
   }
@@ -55,6 +61,8 @@ class _PixelGridPainter extends CustomPainter {
     required this.activeMotorsCount,
     this.hasChainDecoration = false,
     this.brokenLinks = const [],
+    this.chainLinkHits = const [],
+    this.levelIndex = 0,
   });
 
   final List<PixelCell> cells;
@@ -66,6 +74,8 @@ class _PixelGridPainter extends CustomPainter {
   final int activeMotorsCount;
   final bool hasChainDecoration;
   final List<int> brokenLinks;
+  final List<int> chainLinkHits;
+  final int levelIndex;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -253,88 +263,30 @@ class _PixelGridPainter extends CustomPainter {
     );
 
     if (hasChainDecoration) {
-      final yCenter = origin.dy + 45.0 * cellSize;
-      final linkWidth = 4.0 * cellSize;
-      final linkHeight = 2.0 * cellSize;
-
       final paintStroke = Paint()
         ..color = const Color(0xFF1E222A)
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 1.6;
 
-      for (int i = 0; i < 12; i++) {
-        final x = origin.dx + (i * 4 + 2) * cellSize;
-        final isBroken = brokenLinks.contains(i);
-        
-        canvas.save();
-        canvas.translate(x, yCenter);
-        canvas.rotate(0.35); // 20 degrees tilt
-
-        final outerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
-        final innerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth * 0.6, height: linkHeight * 0.4);
-
-        final rrectOuter = RRect.fromRectAndRadius(outerRect, Radius.circular(linkHeight * 0.45));
-        final rrectInner = RRect.fromRectAndRadius(innerRect, Radius.circular(linkHeight * 0.2));
-
-        // Draw shadow under the ring
-        final shadowPaint = Paint()
-          ..color = isBroken ? Colors.transparent : Colors.black.withOpacity(0.3)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3.0;
-        canvas.drawRRect(rrectOuter.shift(const Offset(0.0, 2.0)), shadowPaint);
-
-        // Draw shiny silver metal or charred red gradient
-        final ringPaint = Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: isBroken
-                ? const [
-                    Color(0xFF5C2C2C), // Charred red
-                    Color(0xFF3C1F1F), // Deeper red-brown
-                    Color(0xFF241414), // Dark charcoal
-                    Color(0xFF140A0A), // Black
-                  ]
-                : const [
-                    Color(0xFFFFFFFF), // White shiny highlights
-                    Color(0xFFD1D5DB), // Silver grey
-                    Color(0xFF9CA3AF), // Medium metal
-                    Color(0xFF4B5563), // Shadow steel
-                  ],
-            stops: const [0.0, 0.3, 0.65, 1.0],
-          ).createShader(outerRect)
-          ..style = PaintingStyle.fill;
-
-        canvas.drawRRect(rrectOuter, ringPaint);
-
-        final holePaint = Paint()
-          ..color = const Color(0xFF2E3440)
-          ..style = PaintingStyle.fill;
-        canvas.drawRRect(rrectInner, holePaint);
-
-        // Draw outlines (lowered opacity for broken links)
-        paintStroke.color = isBroken
-            ? const Color(0xFFE74C3C).withOpacity(0.5)
-            : const Color(0xFF1E222A);
-        canvas.drawRRect(rrectOuter, paintStroke);
-        canvas.drawRRect(rrectInner, paintStroke);
-
-        if (isBroken) {
-          // Draw a glowing orange/red crack line across the link
-          final crackPaint = Paint()
-            ..color = const Color(0xFFFF6B6B)
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = 2.0;
-          canvas.drawLine(
-            Offset(-linkWidth * 0.45, -linkHeight * 0.25),
-            Offset(linkWidth * 0.45, linkHeight * 0.25),
-            crackPaint,
-          );
+      // Pass 1: Draw odd/vertical links (behind)
+      for (int i = 0; i < 72; i++) {
+        final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        if (linkIdx % 2 != 0) {
+          final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
+          if (hits >= 20) continue;
+          _drawSingleLink(canvas, i, hits, false, cellSize, origin, rows, cols, paintStroke);
         }
+      }
 
-        canvas.restore();
+      // Pass 2: Draw even/horizontal links (on top)
+      for (int i = 0; i < 72; i++) {
+        final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        if (linkIdx % 2 == 0) {
+          final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
+          if (hits >= 20) continue;
+          _drawSingleLink(canvas, i, hits, true, cellSize, origin, rows, cols, paintStroke);
+        }
       }
     }
 
@@ -418,6 +370,150 @@ class _PixelGridPainter extends CustomPainter {
     pullTextPainterFill.paint(canvas, pullTextOffset);
   }
 
+  void _drawSingleLink(
+    Canvas canvas,
+    int i,
+    int hits,
+    bool isEven,
+    double cellSize,
+    Offset origin,
+    int rows,
+    int cols,
+    Paint paintStroke,
+  ) {
+    final double x;
+    final double y;
+    final double rotation;
+
+    final int sideIdx;
+    final int linkIdx;
+
+    if (i < 19) {
+      sideIdx = 0;
+      linkIdx = i;
+    } else if (i < 36) {
+      sideIdx = 1;
+      linkIdx = i - 19;
+    } else if (i < 55) {
+      sideIdx = 2;
+      linkIdx = i - 36;
+    } else {
+      sideIdx = 3;
+      linkIdx = i - 55;
+    }
+
+    final double linkOffset;
+    if (sideIdx == 0 || sideIdx == 2) {
+      linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
+    } else {
+      linkOffset = 5.5 * cellSize + (linkIdx / 16.0) * 37.0 * cellSize;
+    }
+
+    if (sideIdx == 0) {
+      x = origin.dx + linkOffset;
+      y = origin.dy + (rows - 2.0) * cellSize;
+      rotation = 0.0;
+    } else if (sideIdx == 1) {
+      x = origin.dx + (cols - 3.0) * cellSize;
+      y = origin.dy + linkOffset;
+      rotation = 1.5708;
+    } else if (sideIdx == 2) {
+      x = origin.dx + linkOffset;
+      y = origin.dy + 2.0 * cellSize;
+      rotation = 0.0;
+    } else {
+      if (levelIndex == 52) {
+        x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (originally 3.0, now 2.0)
+        y = origin.dy + linkOffset + 8.0 * cellSize; // shifted down by 8 cells
+      } else {
+        x = origin.dx + 3.0 * cellSize;
+        y = origin.dy + linkOffset;
+      }
+      rotation = 1.5708;
+    }
+
+    canvas.save();
+    canvas.translate(x, y);
+    canvas.rotate(rotation);
+
+    final double linkWidth;
+    final double linkHeight;
+
+    if (isEven) {
+      linkWidth = 3.4 * cellSize;
+      linkHeight = 1.7 * cellSize;
+    } else {
+      linkWidth = 1.4 * cellSize;
+      linkHeight = 2.2 * cellSize;
+    }
+
+    final outerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);
+    final innerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth * 0.55, height: linkHeight * 0.4);
+
+    final rrectOuter = RRect.fromRectAndRadius(outerRect, Radius.circular(linkHeight * 0.45));
+    final rrectInner = RRect.fromRectAndRadius(innerRect, Radius.circular(linkHeight * 0.2));
+
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
+    canvas.drawRRect(rrectOuter.shift(const Offset(0.0, 2.0)), shadowPaint);
+
+    final ratio = (hits / 20.0).clamp(0.0, 1.0);
+    final List<Color> gradientColors;
+
+    final Color highlightColor = isEven 
+        ? Color.lerp(const Color(0xFF4B5563), const Color(0xFFFFFFFF), ratio)!
+        : Color.lerp(const Color(0xFF374151), const Color(0xFFD1D5DB), ratio)!;
+    final Color silverColor = isEven
+        ? Color.lerp(const Color(0xFF2D3748), const Color(0xFFE5E7EB), ratio)!
+        : Color.lerp(const Color(0xFF1F2937), const Color(0xFF9CA3AF), ratio)!;
+    final Color steelColor = isEven
+        ? Color.lerp(const Color(0xFF1A202C), const Color(0xFF9CA3AF), ratio)!
+        : Color.lerp(const Color(0xFF111827), const Color(0xFF6B7280), ratio)!;
+    final Color outlineColor = isEven
+        ? Color.lerp(const Color(0xFF0F172A), const Color(0xFF4B5563), ratio)!
+        : Color.lerp(const Color(0xFF030712), const Color(0xFF374151), ratio)!;
+
+    gradientColors = [highlightColor, silverColor, steelColor, outlineColor];
+
+    final ringPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: gradientColors,
+        stops: const [0.0, 0.3, 0.65, 1.0],
+      ).createShader(outerRect)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRRect(rrectOuter, ringPaint);
+
+    final holePaint = Paint()
+      ..color = const Color(0xFF2E3440)
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(rrectInner, holePaint);
+
+    paintStroke.color = const Color(0xFF1E222A);
+    canvas.drawRRect(rrectOuter, paintStroke);
+    canvas.drawRRect(rrectInner, paintStroke);
+
+    if (hits > 0) {
+      final crackPaint = Paint()
+        ..color = const Color(0xFFFF6B6B).withOpacity(0.3 + 0.7 * ratio)
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 1.0 + 1.0 * ratio;
+      final crackLen = ratio * 0.45;
+      canvas.drawLine(
+        Offset(-linkWidth * crackLen, -linkHeight * crackLen * 0.5),
+        Offset(linkWidth * crackLen, linkHeight * crackLen * 0.5),
+        crackPaint,
+      );
+    }
+
+    canvas.restore();
+  }
+
   @override
   bool shouldRepaint(covariant _PixelGridPainter oldDelegate) {
     return oldDelegate.cells != cells ||
@@ -428,6 +524,8 @@ class _PixelGridPainter extends CustomPainter {
         oldDelegate.activeMotorsCount != activeMotorsCount ||
         oldDelegate.hasChainDecoration != hasChainDecoration ||
         oldDelegate.brokenLinks != brokenLinks ||
-        oldDelegate.brokenLinks.length != brokenLinks.length;
+        oldDelegate.brokenLinks.length != brokenLinks.length ||
+        oldDelegate.chainLinkHits != chainLinkHits ||
+        oldDelegate.chainLinkHits.length != chainLinkHits.length;
   }
 }

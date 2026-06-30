@@ -22,6 +22,8 @@ class GameBoardPanel extends StatelessWidget {
     this.onCellTap,
     this.hasChainDecoration = false,
     this.brokenLinks = const [],
+    this.chainLinkHits = const [],
+    this.levelIndex = 0,
   });
 
   final List<PixelCell> cells;
@@ -36,6 +38,8 @@ class GameBoardPanel extends StatelessWidget {
   final Function(int row, int col)? onCellTap;
   final bool hasChainDecoration;
   final List<int> brokenLinks;
+  final List<int> chainLinkHits;
+  final int levelIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +130,8 @@ class GameBoardPanel extends StatelessWidget {
                           activeMotorsCount: activeMotors.where((m) => !m.isGhost).length,
                           hasChainDecoration: hasChainDecoration,
                           brokenLinks: brokenLinks,
+                          chainLinkHits: chainLinkHits,
+                          levelIndex: levelIndex,
                         ),
                       ),
                       for (final shotEvent in shotEvents)

@@ -21,6 +21,8 @@ class PaintCartridge {
   final bool isUsed;
   final bool isSelected;
 
+  bool get isChainBreaker => colorId == -999;
+
   PaintCartridge copyWith({
     int? amount,
     int? packageAmount,

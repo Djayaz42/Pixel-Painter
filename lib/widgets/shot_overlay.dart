@@ -43,7 +43,7 @@ class _ShotOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final age = DateTime.now().difference(shot.createdAt).inMilliseconds;
-    final t = (age / 260).clamp(0.0, 1.0);
+    final t = (age / 700).clamp(0.0, 1.0);
     final alpha = ((1 - t) * 255).round();
     final frameSize = size.shortestSide;
     final center = Offset(size.width / 2, size.height / 2);

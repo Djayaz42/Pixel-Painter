@@ -151,6 +151,7 @@ class _GameScreenState extends State<GameScreen>
   bool _isCycloneModeActive = false;
   bool _isChainWeaponActive = false;
   final List<int> _brokenLinks = [];
+  final List<int> _chainLinkHits = List.filled(72, 0);
   bool _showCompletionOverlay = false;
   DateTime? _completedAt;
   DateTime? get _nextLifeAt => GameStats.nextLifeAt;
@@ -317,6 +318,16 @@ class _GameScreenState extends State<GameScreen>
     });
     _ensureTicker();
   }
+  void _deactivateChainBreaker() {
+    _isChainWeaponActive = false;
+    _slots = [
+      for (final s in _slots)
+        if (s.cartridge?.isChainBreaker == true && s.status == WaitingSlotStatus.running)
+          s.copyWith(status: WaitingSlotStatus.waiting)
+        else
+          s,
+    ];
+  }
 
   void _useMagnetBooster() {
     if (_isGameOver) return;
@@ -325,6 +336,7 @@ class _GameScreenState extends State<GameScreen>
       if (_isMagnetModeActive) {
         _isHookModeActive = false;
         _isCycloneModeActive = false;
+        _deactivateChainBreaker();
       }
     });
     if (_isMagnetModeActive) {
@@ -349,6 +361,7 @@ class _GameScreenState extends State<GameScreen>
       if (_isHookModeActive) {
         _isMagnetModeActive = false;
         _isCycloneModeActive = false;
+        _deactivateChainBreaker();
       }
     });
     if (_isHookModeActive) {
@@ -373,6 +386,7 @@ class _GameScreenState extends State<GameScreen>
       if (_isCycloneModeActive) {
         _isMagnetModeActive = false;
         _isHookModeActive = false;
+        _deactivateChainBreaker();
       }
     });
     if (_isCycloneModeActive) {
@@ -411,7 +425,7 @@ class _GameScreenState extends State<GameScreen>
       _isMagnetModeActive = false;
       _isHookModeActive = false;
       _isCycloneModeActive = false;
-      _isChainWeaponActive = false;
+      _deactivateChainBreaker();
     });
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -425,58 +439,10 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  void _useChainWeapon() {
-    if (_isGameOver) return;
-    setState(() {
-      _isChainWeaponActive = !_isChainWeaponActive;
-      if (_isChainWeaponActive) {
-        _isMagnetModeActive = false;
-        _isHookModeActive = false;
-        _isCycloneModeActive = false;
-      }
-    });
-    if (_isChainWeaponActive) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Zincir Kırıcı Aktif! Kırmak istediğiniz zincir halkasına dokunun.',
-            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
-          ),
-          duration: Duration(seconds: 4),
-          backgroundColor: Color(0xFF801A1A),
-        ),
-      );
-    }
-  }
+
 
   void _onBoardCellTapped(int row, int col) {
-    if (!_isMagnetModeActive && !_isHookModeActive && !_isChainWeaponActive) return;
-
-    if (_isChainWeaponActive) {
-      if (row >= 44 && row <= 46) {
-        final linkIndex = (col / 4).floor().clamp(0, 11);
-        setState(() {
-          if (!_brokenLinks.contains(linkIndex)) {
-            _brokenLinks.add(linkIndex);
-            final targetCenter = Offset(
-              (col + 0.5) / _gridCols,
-              (row + 0.5) / _gridRows,
-            );
-            _shotEvents.add(
-              ShotEvent(
-                from: Offset(targetCenter.dx, 1.15),
-                to: targetCenter,
-                color: const Color(0xFFFF9F43),
-                createdAt: DateTime.now(),
-              ),
-            );
-          }
-          _isChainWeaponActive = false;
-        });
-      }
-      return;
-    }
+    if (!_isMagnetModeActive && !_isHookModeActive) return;
 
     final tappedCell = _cells.firstWhere(
       (cell) => cell.row == row && cell.col == col,
@@ -598,9 +564,12 @@ class _GameScreenState extends State<GameScreen>
   void _handleSlotTap(int slotIndex) {
     final slot = _slots[slotIndex];
     final cartridge = slot.cartridge;
-    if (_isGameOver ||
-        cartridge == null ||
-        cartridge.amount <= 0 ||
+    if (_isGameOver || cartridge == null) {
+      return;
+    }
+
+
+    if (cartridge.amount <= 0 ||
         slot.isRunning ||
         _activeOrbitCount >= _orbitPullCount) {
       return;
@@ -637,7 +606,7 @@ class _GameScreenState extends State<GameScreen>
 
     _shotEvents.removeWhere(
       (shot) =>
-          now.difference(shot.createdAt) > const Duration(milliseconds: 260),
+          now.difference(shot.createdAt) > const Duration(milliseconds: 700),
     );
 
     for (final motor in List<_MovingMotor>.from(_movingMotors)) {
@@ -790,6 +759,73 @@ class _GameScreenState extends State<GameScreen>
     return (elapsed % lap) / lap;
   }
 
+  bool _isLineOfSightBlockedByChain(MotorSide side, int index) {
+    if (!_level.hasChainDecoration) {
+      return false;
+    }
+    
+    final int startLinkIdx;
+    final int endLinkIdx;
+    switch (side) {
+      case MotorSide.bottom:
+        startLinkIdx = 0;
+        endLinkIdx = 18;
+        break;
+      case MotorSide.right:
+        startLinkIdx = 19;
+        endLinkIdx = 35;
+        break;
+      case MotorSide.top:
+        startLinkIdx = 36;
+        endLinkIdx = 54;
+        break;
+      case MotorSide.left:
+        startLinkIdx = 55;
+        endLinkIdx = 71;
+        break;
+    }
+
+    double getLinkPos(int i) {
+      final idx = i - startLinkIdx;
+      if (side == MotorSide.bottom || side == MotorSide.top) {
+        return 4.2 + (idx / 18.0) * (_gridCols - 8.4);
+      } else {
+        final double base = 5.5 + (idx / 16.0) * 37.0;
+        if (_levelIndex == 52 && side == MotorSide.left) {
+          return base + 8.0; // shifted down by 8 cells
+        }
+        return base;
+      }
+    }
+
+    for (var i = startLinkIdx; i <= endLinkIdx; i++) {
+      if (_chainLinkHits[i] < 20) {
+        final double center = getLinkPos(i);
+        if ((index - center).abs() <= 1.7) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
+  void _onChainLinkBroken() {
+    if (_brokenLinks.length >= 72) {
+      _cleanupChainBreakers();
+    }
+  }
+
+  void _cleanupChainBreakers() {
+    _cartridges.removeWhere((c) => c.colorId == -999);
+    _slots = [
+      for (final slot in _slots)
+        if (slot.cartridge?.colorId == -999) WaitingSlot(index: slot.index) else slot,
+    ];
+    _movingMotors.removeWhere((m) => m.cartridge.colorId == -999);
+    _firingMotors.removeWhere((m) => m.cartridge.colorId == -999);
+  }
+
   bool _processMovingMotorLines({
     required _MovingMotor liveMotor,
     required ActiveMotor activeMotor,
@@ -806,6 +842,167 @@ class _GameScreenState extends State<GameScreen>
       if (currentIndex == -1 ||
           _movingMotors[currentIndex].cartridge.amount <= 0) {
         break;
+      }
+      if (liveMotor.cartridge.isChainBreaker) {
+        final side = motor.side;
+        final index = motor.lineIndex;
+        final key = '${side.name}_index:$index';
+        
+        if (!liveMotor.processedLineKeys.contains(key)) {
+          liveMotor.processedLineKeys.add(key);
+          
+          (int, int) getRangeForSide(MotorSide s) {
+            switch (s) {
+              case MotorSide.bottom: return (0, 18);
+              case MotorSide.right: return (19, 35);
+              case MotorSide.top: return (36, 54);
+              case MotorSide.left: return (55, 71);
+            }
+          }
+
+          double getLinkPos(MotorSide s, int i) {
+            final (start, _) = getRangeForSide(s);
+            final idx = i - start;
+            if (s == MotorSide.bottom || s == MotorSide.top) {
+              return 4.2 + (idx / 18.0) * (_gridCols - 8.4);
+            } else {
+              final double base = 5.5 + (idx / 16.0) * 37.0;
+              if (_levelIndex == 52 && s == MotorSide.left) {
+                return base + 8.0; // shifted down by 8 cells
+              }
+              return base;
+            }
+          }
+
+          int? targetLinkIndex;
+          MotorSide targetLinkSide = side;
+          double minPathDistance = double.infinity;
+
+          for (int i = 0; i < 72; i++) {
+            if (_chainLinkHits[i] >= 20) continue;
+
+            final MotorSide linkSide;
+            if (i < 19) {
+              linkSide = MotorSide.bottom;
+            } else if (i < 36) {
+              linkSide = MotorSide.right;
+            } else if (i < 55) {
+              linkSide = MotorSide.top;
+            } else {
+              linkSide = MotorSide.left;
+            }
+
+            final double linkCol;
+            final double linkRow;
+            if (linkSide == MotorSide.bottom) {
+              linkCol = getLinkPos(MotorSide.bottom, i);
+              linkRow = _gridRows - 2.0;
+            } else if (linkSide == MotorSide.top) {
+              linkCol = getLinkPos(MotorSide.top, i);
+              linkRow = 2.0;
+            } else if (linkSide == MotorSide.left) {
+              linkCol = (_levelIndex == 52) ? 2.0 : 3.0;
+              linkRow = getLinkPos(MotorSide.left, i);
+            } else {
+              linkCol = _gridCols - 3.0;
+              linkRow = getLinkPos(MotorSide.right, i);
+            }
+
+            final double alignmentDist;
+            if (side == MotorSide.bottom || side == MotorSide.top) {
+              alignmentDist = (index - linkCol).abs();
+            } else {
+              alignmentDist = (index - linkRow).abs();
+            }
+
+            final double threshold = (linkSide == side) ? 8.0 : 1.7;
+            if (alignmentDist > threshold) continue;
+
+            bool isBlocked = false;
+            if (linkSide != side) {
+              if (side == MotorSide.bottom) {
+                isBlocked = _cells.any((cell) => cell.col == index && cell.isTarget && cell.row > linkRow);
+              } else if (side == MotorSide.top) {
+                isBlocked = _cells.any((cell) => cell.col == index && cell.isTarget && cell.row < linkRow);
+              } else if (side == MotorSide.left) {
+                isBlocked = _cells.any((cell) => cell.row == index && cell.isTarget && cell.col < linkCol);
+              } else if (side == MotorSide.right) {
+                isBlocked = _cells.any((cell) => cell.row == index && cell.isTarget && cell.col > linkCol);
+              }
+            }
+
+            if (isBlocked) continue;
+
+            final double pathDist;
+            if (side == MotorSide.bottom) {
+              pathDist = (_gridRows - 1.0) - linkRow;
+            } else if (side == MotorSide.top) {
+              pathDist = linkRow;
+            } else if (side == MotorSide.left) {
+              pathDist = linkCol;
+            } else {
+              pathDist = (_gridCols - 1.0) - linkCol;
+            }
+
+            if (pathDist < minPathDistance) {
+              minPathDistance = pathDist;
+              targetLinkIndex = i;
+              targetLinkSide = linkSide;
+            }
+          }
+
+          if (targetLinkIndex != null) {
+            _chainLinkHits[targetLinkIndex]++;
+            if (_chainLinkHits[targetLinkIndex] == 20) {
+              _brokenLinks.add(targetLinkIndex);
+              _onChainLinkBroken();
+            }
+            
+            final double targetX;
+            final double targetY;
+            final double linkOffset = getLinkPos(targetLinkSide, targetLinkIndex);
+            
+            switch (targetLinkSide) {
+              case MotorSide.bottom:
+                targetX = linkOffset / _gridCols;
+                targetY = (_gridRows - 2.0) / _gridRows;
+                break;
+              case MotorSide.right:
+                targetX = (_gridCols - 3.0) / _gridCols;
+                targetY = linkOffset / _gridRows;
+                break;
+              case MotorSide.top:
+                targetX = linkOffset / _gridCols;
+                targetY = 2.0 / _gridRows;
+                break;
+              case MotorSide.left:
+                targetX = (_levelIndex == 52) ? (2.0 / _gridCols) : (3.0 / _gridCols);
+                targetY = linkOffset / _gridRows;
+                break;
+            }
+            
+            final targetCenter = Offset(targetX, targetY);
+            
+            _shotEvents.add(
+              ShotEvent(
+                from: motor.position,
+                to: targetCenter,
+                color: const Color(0xFFFF9F43),
+                createdAt: DateTime.now(),
+              ),
+            );
+            
+            _decreaseMovingMotorAmount(_movingMotors[currentIndex]);
+            changed = true;
+          }
+        }
+        continue;
+      }
+
+      if (!liveMotor.cartridge.isChainBreaker &&
+          _isLineOfSightBlockedByChain(motor.side, motor.lineIndex)) {
+        changed = true;
+        continue;
       }
 
       final target = MotorPathEngine.findShotTarget(
@@ -851,6 +1048,168 @@ class _GameScreenState extends State<GameScreen>
       if (currentIndex == -1 ||
           _firingMotors[currentIndex].cartridge.amount <= 0) {
         break;
+      }
+
+      if (liveMotor.cartridge.isChainBreaker) {
+        final side = motor.side;
+        final index = motor.lineIndex;
+        final key = '${side.name}_index:$index';
+        
+        if (!liveMotor.processedLineKeys.contains(key)) {
+          liveMotor.processedLineKeys.add(key);
+          
+          (int, int) getRangeForSide(MotorSide s) {
+            switch (s) {
+              case MotorSide.bottom: return (0, 18);
+              case MotorSide.right: return (19, 35);
+              case MotorSide.top: return (36, 54);
+              case MotorSide.left: return (55, 71);
+            }
+          }
+
+          double getLinkPos(MotorSide s, int i) {
+            final (start, _) = getRangeForSide(s);
+            final idx = i - start;
+            if (s == MotorSide.bottom || s == MotorSide.top) {
+              return 4.2 + (idx / 18.0) * (_gridCols - 8.4);
+            } else {
+              final double base = 5.5 + (idx / 16.0) * 37.0;
+              if (_levelIndex == 52 && s == MotorSide.left) {
+                return base + 8.0; // shifted down by 8 cells
+              }
+              return base;
+            }
+          }
+
+          int? targetLinkIndex;
+          MotorSide targetLinkSide = side;
+          double minPathDistance = double.infinity;
+
+          for (int i = 0; i < 72; i++) {
+            if (_chainLinkHits[i] >= 20) continue;
+
+            final MotorSide linkSide;
+            if (i < 19) {
+              linkSide = MotorSide.bottom;
+            } else if (i < 36) {
+              linkSide = MotorSide.right;
+            } else if (i < 55) {
+              linkSide = MotorSide.top;
+            } else {
+              linkSide = MotorSide.left;
+            }
+
+            final double linkCol;
+            final double linkRow;
+            if (linkSide == MotorSide.bottom) {
+              linkCol = getLinkPos(MotorSide.bottom, i);
+              linkRow = _gridRows - 2.0;
+            } else if (linkSide == MotorSide.top) {
+              linkCol = getLinkPos(MotorSide.top, i);
+              linkRow = 2.0;
+            } else if (linkSide == MotorSide.left) {
+              linkCol = (_levelIndex == 52) ? 2.0 : 3.0;
+              linkRow = getLinkPos(MotorSide.left, i);
+            } else {
+              linkCol = _gridCols - 3.0;
+              linkRow = getLinkPos(MotorSide.right, i);
+            }
+
+            final double alignmentDist;
+            if (side == MotorSide.bottom || side == MotorSide.top) {
+              alignmentDist = (index - linkCol).abs();
+            } else {
+              alignmentDist = (index - linkRow).abs();
+            }
+
+            final double threshold = (linkSide == side) ? 8.0 : 1.7;
+            if (alignmentDist > threshold) continue;
+
+            bool isBlocked = false;
+            if (linkSide != side) {
+              if (side == MotorSide.bottom) {
+                isBlocked = _cells.any((cell) => cell.col == index && cell.isTarget && cell.row > linkRow);
+              } else if (side == MotorSide.top) {
+                isBlocked = _cells.any((cell) => cell.col == index && cell.isTarget && cell.row < linkRow);
+              } else if (side == MotorSide.left) {
+                isBlocked = _cells.any((cell) => cell.row == index && cell.isTarget && cell.col < linkCol);
+              } else if (side == MotorSide.right) {
+                isBlocked = _cells.any((cell) => cell.row == index && cell.isTarget && cell.col > linkCol);
+              }
+            }
+
+            if (isBlocked) continue;
+
+            final double pathDist;
+            if (side == MotorSide.bottom) {
+              pathDist = (_gridRows - 1.0) - linkRow;
+            } else if (side == MotorSide.top) {
+              pathDist = linkRow;
+            } else if (side == MotorSide.left) {
+              pathDist = linkCol;
+            } else {
+              pathDist = (_gridCols - 1.0) - linkCol;
+            }
+
+            if (pathDist < minPathDistance) {
+              minPathDistance = pathDist;
+              targetLinkIndex = i;
+              targetLinkSide = linkSide;
+            }
+          }
+
+          if (targetLinkIndex != null) {
+            _chainLinkHits[targetLinkIndex]++;
+            if (_chainLinkHits[targetLinkIndex] == 20) {
+              _brokenLinks.add(targetLinkIndex);
+              _onChainLinkBroken();
+            }
+            
+            final double targetX;
+            final double targetY;
+            final double linkOffset = getLinkPos(targetLinkSide, targetLinkIndex);
+            
+            switch (targetLinkSide) {
+              case MotorSide.bottom:
+                targetX = linkOffset / _gridCols;
+                targetY = (_gridRows - 2.0) / _gridRows;
+                break;
+              case MotorSide.right:
+                targetX = (_gridCols - 3.0) / _gridCols;
+                targetY = linkOffset / _gridRows;
+                break;
+              case MotorSide.top:
+                targetX = linkOffset / _gridCols;
+                targetY = 2.0 / _gridRows;
+                break;
+              case MotorSide.left:
+                targetX = (_levelIndex == 52) ? (2.0 / _gridCols) : (3.0 / _gridCols);
+                targetY = linkOffset / _gridRows;
+                break;
+            }
+            
+            final targetCenter = Offset(targetX, targetY);
+            
+            _shotEvents.add(
+              ShotEvent(
+                from: motor.position,
+                to: targetCenter,
+                color: const Color(0xFFFF9F43),
+                createdAt: DateTime.now(),
+              ),
+            );
+            
+            _decreaseFiringMotorAmount(_firingMotors[currentIndex]);
+            changed = true;
+          }
+        }
+        continue;
+      }
+
+      if (!liveMotor.cartridge.isChainBreaker &&
+          _isLineOfSightBlockedByChain(motor.side, motor.lineIndex)) {
+        changed = true;
+        continue;
       }
 
       final target = MotorPathEngine.findShotTarget(
@@ -937,6 +1296,9 @@ class _GameScreenState extends State<GameScreen>
   bool _shouldKeepLastWeaponMoving() => _isLastWeaponPhase;
 
   bool _hasTargetsForColor(int colorId) {
+    if (colorId == -999) {
+      return _brokenLinks.length < 72;
+    }
     return _cells.any(
       (cell) =>
           cell.targetColorId == colorId && cell.isTarget && !cell.isPainted,
@@ -944,6 +1306,9 @@ class _GameScreenState extends State<GameScreen>
   }
 
   bool _isCartridgeUseful(int colorId) {
+    if (colorId == -999) {
+      return _brokenLinks.length < 72;
+    }
     final targets = _remainingTargetsForColor(colorId);
     if (targets == 0) return false;
     
@@ -1735,9 +2100,61 @@ class _GameScreenState extends State<GameScreen>
     }
 
 
+    if (_level.hasChainDecoration) {
+      final int numChainBreakers = (_levelIndex == 54) ? 29 : ((_levelIndex == 52) ? 4 : 29);
+      final List<PaintCartridge> chainBreakers = List.generate(
+        numChainBreakers,
+        (i) => PaintCartridge(
+          id: nextId++,
+          colorId: -999,
+          name: 'Zincir Kırıcı',
+          color: const Color(0xFFE84A4A),
+          amount: (_levelIndex == 54)
+              ? (i < 11 ? 20 : 30) // 11 of 20-rounds, 18 of 30-rounds -> total 760!
+              : ((_levelIndex == 52)
+                  ? ((i < 2) ? 50 : 40)
+                  : ((i == 28) ? 40 : 50)),
+        ),
+      );
+      final int originalLength = queue.length;
+      for (int i = 0; i < chainBreakers.length; i++) {
+        final double fraction = i / chainBreakers.length;
+        final int targetIdx = 3 + (fraction * (originalLength - 1)).floor();
+        final int insertIdx = (targetIdx + i).clamp(3, queue.length);
+        queue.insert(insertIdx, chainBreakers[i]);
+      }
+    }
+
     _generatedFortyCount = queue
-        .where((cartridge) => cartridge.amount == 40)
+        .where((cartridge) => cartridge.amount == 40 && cartridge.colorId != -999)
         .length;
+
+    if (_levelIndex == 51) {
+      void swap(int idxA, int idxB) {
+        if (idxA >= 0 && idxA < queue.length && idxB >= 0 && idxB < queue.length) {
+          final temp = queue[idxA];
+          queue[idxA] = queue[idxB];
+          queue[idxB] = temp;
+        }
+      }
+      swap(0, 9);
+      swap(29, 2);
+      swap(15, 2);
+      swap(9, 22);
+
+      // Merge Grey (35) into White (11)
+      for (int i = 0; i < queue.length; i++) {
+        if (queue[i].colorId == 35) {
+          queue[i] = PaintCartridge(
+            id: queue[i].id,
+            colorId: 11,
+            name: 'Beyaz',
+            color: const Color(0xFFF7F8FF),
+            amount: queue[i].amount,
+          );
+        }
+      }
+    }
 
     return queue;
   }
@@ -1776,9 +2193,9 @@ class _GameScreenState extends State<GameScreen>
         for (final addition in additions)
           PaintCartridge(
             id: nextId++,
-            colorId: addition.baseCartridge.colorId,
-            name: addition.baseCartridge.name,
-            color: addition.baseCartridge.color,
+            colorId: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? 11 : addition.baseCartridge.colorId,
+            name: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? 'Beyaz' : addition.baseCartridge.name,
+            color: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? const Color(0xFFF7F8FF) : addition.baseCartridge.color,
             amount: addition.amount,
           ),
       ];
@@ -2506,6 +2923,52 @@ class _GameScreenState extends State<GameScreen>
     _isCycloneModeActive = false;
     _isChainWeaponActive = false;
     _brokenLinks.clear();
+    _chainLinkHits.fillRange(0, 72, 0);
+    if (_levelIndex == 52) {
+      // Only keep links 59 to 67 active (9 links total: 5 vertical + 4 horizontal). Pre-break all other 63 links.
+      for (int i = 0; i < 72; i++) {
+        if (i < 59 || i > 67) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    } else if (_levelIndex == 53) {
+      // Keep only 5 links on each group, shifted 2 positions inward to bring them closer (B-K-B-K-B on each group).
+      for (int i = 0; i < 72; i++) {
+        bool isActive = false;
+        if (i >= 0 && i < 19) {
+          // Bottom side (indices 0..18)
+          final idx = i;
+          if ((idx >= 2 && idx <= 6) || (idx >= 12 && idx <= 16)) isActive = true;
+        } else if (i >= 19 && i < 36) {
+          // Right side (indices 19..35)
+          final idx = i - 19;
+          if ((idx >= 2 && idx <= 6) || (idx >= 10 && idx <= 14)) isActive = true;
+        } else if (i >= 36 && i < 55) {
+          // Top side (indices 36..54)
+          final idx = i - 36;
+          if ((idx >= 2 && idx <= 6) || (idx >= 12 && idx <= 16)) isActive = true;
+        } else if (i >= 55 && i < 72) {
+          // Left side (indices 55..71)
+          final idx = i - 55;
+          if ((idx >= 2 && idx <= 6) || (idx >= 10 && idx <= 14)) isActive = true;
+        }
+        
+        if (!isActive) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    } else if (_levelIndex == 54) {
+      // Keep only top (36..54) and bottom (0..18) sides active, pre-break left and right sides.
+      for (int i = 0; i < 72; i++) {
+        final bool isActive = (i >= 0 && i < 19) || (i >= 36 && i < 55);
+        if (!isActive) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    }
     _showCompletionOverlay = false;
     _completedAt = null;
     _continueCount = 0;
@@ -2687,6 +3150,8 @@ class _GameScreenState extends State<GameScreen>
                                     : null,
                                 hasChainDecoration: _level.hasChainDecoration,
                                 brokenLinks: _brokenLinks,
+                                chainLinkHits: List<int>.from(_chainLinkHits),
+                                levelIndex: _levelIndex,
                               ),
                               SizedBox(height: isCompact ? 6 : 8),
                               Align(
@@ -2778,9 +3243,6 @@ class _GameScreenState extends State<GameScreen>
                                 onCyclonePressed: _useCycloneBooster,
                                 isCycloneActive: _isCycloneModeActive,
                                 onShufflePressed: _useShuffleBooster,
-                                hasChain: _level.hasChainDecoration,
-                                onChainPressed: _useChainWeapon,
-                                isChainActive: _isChainWeaponActive,
                               ),
                             ],
                           ),
@@ -3280,9 +3742,6 @@ class _BoosterDock extends StatelessWidget {
     this.onCyclonePressed,
     this.isCycloneActive = false,
     this.onShufflePressed,
-    this.onChainPressed,
-    this.isChainActive = false,
-    this.hasChain = false,
   });
 
   final bool isCompact;
@@ -3293,9 +3752,6 @@ class _BoosterDock extends StatelessWidget {
   final VoidCallback? onCyclonePressed;
   final bool isCycloneActive;
   final VoidCallback? onShufflePressed;
-  final VoidCallback? onChainPressed;
-  final bool isChainActive;
-  final bool hasChain;
 
   @override
   Widget build(BuildContext context) {
@@ -3364,18 +3820,6 @@ class _BoosterDock extends StatelessWidget {
                     : const [Color(0xFF1E4C80), Color(0xFF102D59)]),
             onPressed: onMagnetPressed,
           ),
-          if (hasChain)
-            _BoosterButton(
-              icon: Icons.link_off_rounded,
-              isCompact: isCompact,
-              isLocked: onChainPressed == null,
-              cushionColors: onChainPressed == null
-                  ? const [Color(0xFF7A828A), Color(0xFF4C5259)]
-                  : (isChainActive
-                      ? const [Color(0xFFCE9E4F), Color(0xFF9E7833)]
-                      : const [Color(0xFF801A1A), Color(0xFF530F0F)]),
-              onPressed: onChainPressed,
-            ),
         ],
       ),
     );
