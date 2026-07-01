@@ -2628,8 +2628,8 @@ class LevelData {
     LevelDefinition? level,
   }) {
     final lvl = level ?? levelAt(levelIndex ?? 0);
-    final isLevel52 = levelIndex == 51 || lvl.name == 'Kopek';
-    final isLevel53 = levelIndex == 52 || lvl.name == 'Ev';
+    final isLevel52 = levelIndex == 51;
+    final isLevel53 = levelIndex == 52;
     List<PixelCell> cells = [];
     final rows = lvl.cellRows;
     if (rows.isEmpty) return [];
