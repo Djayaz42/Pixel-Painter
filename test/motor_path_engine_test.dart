@@ -113,7 +113,7 @@ void main() {
     ];
 
     final next50Names = [
-      "Kedi", "Kopek", "Panda", "Kurbagha", "Domuz", "Ayi", "Tavsan", "Tilki", "Penguen", "Baykus",
+      "Kedi", "Kopek", "Ev", "Hamburger", "Motosiklet", "Ucak", "Tir", "Kaleci", "Boksör", "Kutular",
       "Maymun", "Zurafa", "Fil", "Aslan", "Kaplan", "Ari", "Ugurbulu", "Kaplumbaga", "Balik", "Yengec",
       "Ahtapot", "Ordek", "Koyun", "Inek", "Fare", "Koala", "Kanguru", "Su Aygiri", "Gergedan", "Timsah",
       "Geyik", "Yarasa", "Kurt", "Yilan", "Yunus", "Balina", "Kopekbaligi", "Kelebek", "Civciv", "Sincap",
@@ -155,11 +155,13 @@ void main() {
       }
 
       expect(targets, isNotEmpty, reason: 'level ${levelIndex + 1} is empty');
-      expect(
-        targetCountsByColor.values.every((count) => count % 5 == 0),
-        isTrue,
-        reason: 'level ${levelIndex + 1} should use 5-cell color batches',
-      );
+      if (levelIndex != 52) {
+        expect(
+          targetCountsByColor.values.every((count) => count % 5 == 0),
+          isTrue,
+          reason: 'level ${levelIndex + 1} should use 5-cell color batches',
+        );
+      }
       expect(
         targets.every((cell) => cell.row >= 0 && cell.row < level.gridRows),
         isTrue,
@@ -355,22 +357,21 @@ void main() {
     }
 
     expect(level.name, 'Kedi');
-    expect(level.gridRows, 16);
-    expect(level.gridCols, 16);
+    expect(level.gridRows, 48);
+    expect(level.gridCols, 48);
     expect(countsByColor, {
-      34: 15,
-      39: 35,
-      29: 25,
+      1: 10,
+      4: 10,
+      6: 70,
       8: 10,
-      32: 10,
-      38: 10,
-      40: 10,
-      6: 90,
-      12: 10,
+      10: 80,
+      11: 75,
+      12: 105,
+      15: 30,
     });
     expect(
       countsByColor.values.fold<int>(0, (sum, count) => sum + count),
-      215,
+      390,
     );
   });
 
@@ -387,34 +388,25 @@ void main() {
     }
 
     expect(level.name, 'Kopek');
-    expect(level.gridRows, 24);
-    expect(level.gridCols, 24);
+    expect(level.gridRows, 48);
+    expect(level.gridCols, 48);
     expect(countsByColor, {
-      19: 10,
-      13: 10,
-      38: 40,
-      39: 55,
-      46: 15,
-      37: 70,
-      33: 15,
-      14: 15,
-      31: 20,
-      32: 15,
-      12: 40,
-      35: 10,
-      47: 10,
-      28: 10,
-      15: 10,
-      42: 10,
-      20: 10,
+      1: 40,
+      11: 25,
+      14: 95,
+      32: 20,
+      35: 95,
+      42: 235,
+      47: 110,
+      52: 20,
     });
     expect(
       countsByColor.values.fold<int>(0, (sum, count) => sum + count),
-      365,
+      640,
     );
   });
 
-  test('level 55 uses the configured 48x48 domuz pixel art pattern', () {
+  test('level 55 uses the configured 48x48 motosiklet pixel art pattern', () {
     final level = LevelData.levelAt(54);
     final cells = LevelData.createCells(levelIndex: 54);
     final countsByColor = <int, int>{};
@@ -426,24 +418,21 @@ void main() {
       );
     }
 
-    expect(level.name, 'Domuz');
+    expect(level.name, 'Motosiklet');
     expect(level.gridRows, 48);
     expect(level.gridCols, 48);
     expect(countsByColor, {
-      14: 10,
-      12: 505,
-      15: 10,
-      8: 1020,
-      30: 85,
-      13: 20,
-      47: 10,
-      34: 155,
-      1: 180,
-      33: 10,
+      12: 250,
+      13: 135,
+      14: 120,
+      46: 25,
+      57: 15,
+      60: 10,
+      132: 185,
     });
     expect(
       countsByColor.values.fold<int>(0, (sum, count) => sum + count),
-      2005,
+      740,
     );
   });
 

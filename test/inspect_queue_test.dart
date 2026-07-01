@@ -208,10 +208,10 @@ void main() {
 
     print('Tens: $tens, Fifteens: $fifteens, Twenties: $twenties');
 
-    expect(cartridges.length, 70);
-    expect(tens, 42); // 60% of 70
-    expect(fifteens, 14); // 20% of 70
-    expect(twenties, 14); // 20% of 70
+    expect(cartridges.length, 33);
+    expect(tens, 20); // 60.6% of 33
+    expect(fifteens, 7); // 21.2% of 33
+    expect(twenties, 6); // 18.2% of 33
   });
 
   testWidgets('Level 27 (Kitap) starting cartridge queue matches user-defined rows', (

@@ -610,32 +610,33 @@ class _GameScreenState extends State<GameScreen>
     );
 
     for (final motor in List<_MovingMotor>.from(_movingMotors)) {
-      final index = _movingMotors.indexWhere(
-        (item) => item.runId == motor.runId,
-      );
-      if (index == -1) {
+      int getLiveIndex() => _movingMotors.indexWhere((item) => item.runId == motor.runId);
+      if (getLiveIndex() == -1) {
         continue;
       }
 
-      final liveMotor = _movingMotors[index];
+      final liveMotor = _movingMotors[getLiveIndex()];
       if (now.difference(liveMotor.startedAt) >= _currentLapDuration) {
+        final currentIdx = getLiveIndex();
+        if (currentIdx == -1) continue;
+
         if (liveMotor.isGhost) {
           if (liveMotor.cartridge.amount > 0) {
-            _movingMotors[index] = liveMotor.copyWith(
+            _movingMotors[currentIdx] = liveMotor.copyWith(
               startedAt: now,
               processedLineKeys: <String>{},
             );
           } else {
-            _movingMotors.removeAt(index);
+            _movingMotors.removeAt(currentIdx);
           }
         } else if (liveMotor.cartridge.amount > 0 && _shouldKeepLastWeaponMoving()) {
-          _movingMotors[index] = liveMotor.copyWith(
+          _movingMotors[currentIdx] = liveMotor.copyWith(
             startedAt: now,
             processedLineKeys: <String>{},
           );
         } else {
           final slotIndex = _firstEmptySlotIndex();
-          _movingMotors.removeAt(index);
+          _movingMotors.removeAt(currentIdx);
           if (slotIndex != -1 && liveMotor.cartridge.amount > 0) {
             _slots = [
               for (final slot in _slots)
@@ -653,42 +654,49 @@ class _GameScreenState extends State<GameScreen>
         continue;
       }
 
-      if (liveMotor.cartridge.amount <= 0) {
-        _movingMotors.removeAt(index);
+      final currentIdx2 = getLiveIndex();
+      if (currentIdx2 == -1) continue;
+
+      if (_movingMotors[currentIdx2].cartridge.amount <= 0) {
+        _movingMotors.removeAt(currentIdx2);
         changed = true;
         continue;
       }
 
-      if (!_hasTargetsForColor(liveMotor.cartridge.colorId)) {
-        _movingMotors.removeAt(index);
-        _clearShotsForColor(liveMotor.cartridge.color);
-        changed = true;
+      if (!_hasTargetsForColor(_movingMotors[currentIdx2].cartridge.colorId)) {
+        final currentIdx3 = getLiveIndex();
+        if (currentIdx3 != -1) {
+          _movingMotors.removeAt(currentIdx3);
+          _clearShotsForColor(liveMotor.cartridge.color);
+          changed = true;
+        }
         continue;
       }
+
+      final currentIdx4 = getLiveIndex();
+      if (currentIdx4 == -1) continue;
 
       final activeMotor = MotorPathEngine.activeMotorAt(
-        cartridge: liveMotor.cartridge,
-        progress: _progressFor(liveMotor.startedAt, now),
+        cartridge: _movingMotors[currentIdx4].cartridge,
+        progress: _progressFor(_movingMotors[currentIdx4].startedAt, now),
         rows: _gridRows,
         cols: _gridCols,
       );
       changed =
           _processMovingMotorLines(
-            liveMotor: liveMotor,
+            liveMotor: _movingMotors[currentIdx4],
             activeMotor: activeMotor,
           ) ||
           changed;
     }
 
     for (final motor in List<_FiringMotor>.from(_firingMotors)) {
-      final index = _firingMotors.indexWhere(
-        (item) => item.runId == motor.runId,
-      );
-      if (index == -1) {
+      int getLiveIndex() => _firingMotors.indexWhere((item) => item.runId == motor.runId);
+      if (getLiveIndex() == -1) {
         continue;
       }
 
-      final liveMotor = _firingMotors[index];
+      final liveMotor = _firingMotors[getLiveIndex()];
       if (now.difference(liveMotor.startedAt) >= _currentLapDuration) {
         _finishFiringMotor(liveMotor);
         _clearShotsForColor(liveMotor.cartridge.color);
@@ -714,15 +722,18 @@ class _GameScreenState extends State<GameScreen>
         continue;
       }
 
+      final currentIdx5 = getLiveIndex();
+      if (currentIdx5 == -1) continue;
+
       final activeMotor = MotorPathEngine.activeMotorAt(
-        cartridge: liveMotor.cartridge,
-        progress: _progressFor(liveMotor.startedAt, now),
+        cartridge: _firingMotors[currentIdx5].cartridge,
+        progress: _progressFor(_firingMotors[currentIdx5].startedAt, now),
         rows: _gridRows,
         cols: _gridCols,
       );
       changed =
           _processFiringMotorLines(
-            liveMotor: liveMotor,
+            liveMotor: _firingMotors[currentIdx5],
             activeMotor: activeMotor,
           ) ||
           changed;
@@ -992,7 +1003,11 @@ class _GameScreenState extends State<GameScreen>
               ),
             );
             
-            _decreaseMovingMotorAmount(_movingMotors[currentIndex]);
+            final currentMotorIndex = _movingMotors.indexWhere((item) => item.runId == liveMotor.runId);
+            if (currentMotorIndex == -1 || _movingMotors[currentMotorIndex].cartridge.amount <= 0) {
+              break;
+            }
+            _decreaseMovingMotorAmount(_movingMotors[currentMotorIndex]);
             changed = true;
           }
         }
@@ -1199,7 +1214,11 @@ class _GameScreenState extends State<GameScreen>
               ),
             );
             
-            _decreaseFiringMotorAmount(_firingMotors[currentIndex]);
+            final currentMotorIndex = _firingMotors.indexWhere((item) => item.runId == liveMotor.runId);
+            if (currentMotorIndex == -1 || _firingMotors[currentMotorIndex].cartridge.amount <= 0) {
+              break;
+            }
+            _decreaseFiringMotorAmount(_firingMotors[currentMotorIndex]);
             changed = true;
           }
         }
@@ -2101,7 +2120,11 @@ class _GameScreenState extends State<GameScreen>
 
 
     if (_level.hasChainDecoration) {
-      final int numChainBreakers = (_levelIndex == 54) ? 29 : ((_levelIndex == 52) ? 4 : 29);
+      final int numChainBreakers = (_levelIndex == 54)
+          ? 29
+          : ((_levelIndex == 52)
+              ? 4
+              : ((_levelIndex == 56) ? 7 : 29));
       final List<PaintCartridge> chainBreakers = List.generate(
         numChainBreakers,
         (i) => PaintCartridge(
@@ -2113,7 +2136,9 @@ class _GameScreenState extends State<GameScreen>
               ? (i < 11 ? 20 : 30) // 11 of 20-rounds, 18 of 30-rounds -> total 760!
               : ((_levelIndex == 52)
                   ? ((i < 2) ? 50 : 40)
-                  : ((i == 28) ? 40 : 50)),
+                  : ((_levelIndex == 56)
+                      ? 20 // 7 slots of 20 rounds = 140 rounds total
+                      : ((i == 28) ? 40 : 50))),
         ),
       );
       final int originalLength = queue.length;
@@ -2156,6 +2181,23 @@ class _GameScreenState extends State<GameScreen>
       }
     }
 
+    if (_levelIndex == 57) {
+      void swap(int idxA, int idxB) {
+        if (idxA >= 0 && idxA < queue.length && idxB >= 0 && idxB < queue.length) {
+          final temp = queue[idxA];
+          queue[idxA] = queue[idxB];
+          queue[idxB] = temp;
+        }
+      }
+      // User requested swaps (1-indexed converted to 0-indexed):
+      // 1. 151. sıra ile 1. sırayı
+      swap(150, 0);
+      // 2. 24. sıra ile 63. sırayı
+      swap(23, 62);
+      // 3. 140. sıra ile 32. sırayı
+      swap(139, 31);
+    }
+
     return queue;
   }
 
@@ -2193,9 +2235,9 @@ class _GameScreenState extends State<GameScreen>
         for (final addition in additions)
           PaintCartridge(
             id: nextId++,
-            colorId: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? 11 : addition.baseCartridge.colorId,
-            name: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? 'Beyaz' : addition.baseCartridge.name,
-            color: (addition.baseCartridge.colorId == 35 && _levelIndex == 51) ? const Color(0xFFF7F8FF) : addition.baseCartridge.color,
+            colorId: addition.baseCartridge.colorId,
+            name: addition.baseCartridge.name,
+            color: addition.baseCartridge.color,
             amount: addition.amount,
           ),
       ];
@@ -2290,22 +2332,22 @@ class _GameScreenState extends State<GameScreen>
       final List<int> list;
       switch (colorId) {
         case 12:
-          list = [20, 20, 15, 15, 10, 10, 10, 10];
+          list = [20, 15, 10];
           break;
         case 131:
-          list = [20, 20, 20, 20, 15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+          list = [20, 20, 15, 15, 10, 10, 10, 10, 10, 10, 10];
           break;
         case 132:
-          list = [20, 20, 20, 20, 15, 15, 15, 15, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
+          list = [20, 10, 10, 10, 10, 10, 10, 10, 10, 10];
           break;
         case 133:
-          list = [20, 20, 15, 15, 10, 10, 10, 10];
+          list = [20, 15, 10];
           break;
         case 134:
-          list = [20, 20, 15, 15, 10, 10, 10, 10, 10];
+          list = [20, 15, 15, 10, 10];
           break;
         case 76:
-          list = [10, 10];
+          list = [15];
           break;
         default:
           list = List.filled(deficit ~/ 10, 10);
@@ -2964,6 +3006,14 @@ class _GameScreenState extends State<GameScreen>
       for (int i = 0; i < 72; i++) {
         final bool isActive = (i >= 0 && i < 19) || (i >= 36 && i < 55);
         if (!isActive) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    } else if (_levelIndex == 56) {
+      // Level 57 (Tır): Keep only 7 links active (indices 42..48) to center them perfectly between the two exhaust stacks.
+      for (int i = 0; i < 72; i++) {
+        if (i < 42 || i > 48) {
           _chainLinkHits[i] = 20;
           _brokenLinks.add(i);
         }

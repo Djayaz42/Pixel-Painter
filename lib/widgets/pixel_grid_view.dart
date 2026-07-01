@@ -93,7 +93,7 @@ class _PixelGridPainter extends CustomPainter {
     final gridRect = frameOrigin & Size(frameSize, frameSize);
     final artRect = origin & Size(artWidth, artHeight);
     final paint = Paint()..style = PaintingStyle.fill;
-    final gap = cellSize * 0.04;
+    final gap = cellSize * 0.01;
 
     // 1. Draw main frame container
     canvas.drawRRect(
