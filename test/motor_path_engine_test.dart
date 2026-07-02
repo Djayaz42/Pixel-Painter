@@ -101,7 +101,7 @@ void main() {
   });
 
   test('levels follow the 100-level category plan', () {
-    expect(LevelData.levels, hasLength(100));
+    expect(LevelData.levels, hasLength(66));
     expect(LevelData.cartridges, hasLength(285));
 
     final first50Names = [
@@ -112,19 +112,16 @@ void main() {
       "Sokak", "Mezarlik", "Retro", "Ev", "Maymun", "Kopek", "Muzik Kutusu", "Dansci", "Tavuk", "Basketbol"
     ];
 
-    final next50Names = [
+    final next16Names = [
       "Kedi", "Kopek", "Ev", "Hamburger", "Motosiklet", "Ucak", "Tir", "Kaleci", "Boksör", "Kutular",
-      "Doğa Sporları", "Günbatımı", "Snowboardcu", "Şehir Trafiği", "Tiyatro Sahnesi", "Radyatör", "Ugurbulu", "Kaplumbaga", "Balik", "Yengec",
-      "Ahtapot", "Ordek", "Koyun", "Inek", "Fare", "Koala", "Kanguru", "Su Aygiri", "Gergedan", "Timsah",
-      "Geyik", "Yarasa", "Kurt", "Yilan", "Yunus", "Balina", "Kopekbaligi", "Kelebek", "Civciv", "Sincap",
-      "Deve", "Kugu", "Hamster", "Ugur Bocegi", "Baykus 2", "Kizil Tilki", "Penguen 2", "Kutup Ayisi", "Yavru Panda", "Disi Aslan"
+      "Doğa Sporları", "Günbatımı", "Snowboardcu", "Şehir Trafiği", "Tiyatro Sahnesi", "Radyatör"
     ];
 
     for (var i = 0; i < 50; i++) {
       expect(LevelData.levels[i].name, first50Names[i]);
     }
-    for (var i = 0; i < 50; i++) {
-      expect(LevelData.levels[50 + i].name, next50Names[i]);
+    for (var i = 0; i < 16; i++) {
+      expect(LevelData.levels[50 + i].name, next16Names[i]);
     }
 
     final usedColorIds = {
@@ -135,7 +132,7 @@ void main() {
   });
 
   test('levels are playable target shapes', () {
-    expect(LevelData.levels, hasLength(100));
+    expect(LevelData.levels, hasLength(66));
 
     for (
       var levelIndex = 0;

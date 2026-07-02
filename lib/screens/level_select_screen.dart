@@ -27,12 +27,6 @@ class LevelSelectScreen extends StatefulWidget {
       startIndex: 50,
       color: Color(0xFF42E88A),
     ),
-    _LevelCategory(
-      title: 'Spor',
-      icon: Icons.sports_soccer_rounded,
-      startIndex: 75,
-      color: Color(0xFFFF7AC8),
-    ),
   ];
 
   @override
