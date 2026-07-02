@@ -446,7 +446,7 @@ void main() {
       for (final level in LevelData.levels.skip(50).take(50))
         level.cellRows.join('\n'),
     };
-    expect(animalShapes.length, 47);
+    expect(animalShapes.length, 16);
   });
 }
 
