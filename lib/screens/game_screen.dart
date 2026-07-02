@@ -3019,6 +3019,16 @@ class _GameScreenState extends State<GameScreen>
         }
       }
     }
+    else if (_levelIndex == 65) {
+      // Level 66 (Radyatör): Active chains: Left centered (58..68), Right centered (22..32), Top centered (40..50).
+      for (int i = 0; i < 72; i++) {
+        bool isActive = (i >= 58 && i <= 68) || (i >= 22 && i <= 32) || (i >= 40 && i <= 50);
+        if (!isActive) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    }
     _showCompletionOverlay = false;
     _completedAt = null;
     _continueCount = 0;

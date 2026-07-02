@@ -401,12 +401,23 @@ class _PixelGridPainter extends CustomPainter {
       sideIdx = 3;
       linkIdx = i - 55;
     }
+    
+    final bool drawAsEven;
+    if (levelIndex == 65 && (sideIdx == 1 || sideIdx == 3)) {
+      drawAsEven = !isEven;
+    } else {
+      drawAsEven = isEven;
+    }
 
     final double linkOffset;
     if (sideIdx == 0 || sideIdx == 2) {
       linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
     } else {
-      linkOffset = 5.5 * cellSize + (linkIdx / 16.0) * 37.0 * cellSize;
+      if (levelIndex == 65) {
+        linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (rows - 8.4) * cellSize;
+      } else {
+        linkOffset = 5.5 * cellSize + (linkIdx / 16.0) * 37.0 * cellSize;
+      }
     }
 
     if (sideIdx == 0) {
@@ -419,7 +430,7 @@ class _PixelGridPainter extends CustomPainter {
       rotation = 1.5708;
     } else if (sideIdx == 2) {
       x = origin.dx + linkOffset;
-      y = origin.dy + 2.0 * cellSize;
+      y = origin.dy + (levelIndex == 65 ? 4.0 : 2.0) * cellSize;
       rotation = 0.0;
     } else {
       if (levelIndex == 52) {
@@ -439,7 +450,7 @@ class _PixelGridPainter extends CustomPainter {
     final double linkWidth;
     final double linkHeight;
 
-    if (isEven) {
+    if (drawAsEven) {
       linkWidth = 3.4 * cellSize;
       linkHeight = 1.7 * cellSize;
     } else {
@@ -462,16 +473,16 @@ class _PixelGridPainter extends CustomPainter {
     final ratio = (hits / 20.0).clamp(0.0, 1.0);
     final List<Color> gradientColors;
 
-    final Color highlightColor = isEven 
+    final Color highlightColor = drawAsEven 
         ? Color.lerp(const Color(0xFF4B5563), const Color(0xFFFFFFFF), ratio)!
         : Color.lerp(const Color(0xFF374151), const Color(0xFFD1D5DB), ratio)!;
-    final Color silverColor = isEven
+    final Color silverColor = drawAsEven
         ? Color.lerp(const Color(0xFF2D3748), const Color(0xFFE5E7EB), ratio)!
         : Color.lerp(const Color(0xFF1F2937), const Color(0xFF9CA3AF), ratio)!;
-    final Color steelColor = isEven
+    final Color steelColor = drawAsEven
         ? Color.lerp(const Color(0xFF1A202C), const Color(0xFF9CA3AF), ratio)!
         : Color.lerp(const Color(0xFF111827), const Color(0xFF6B7280), ratio)!;
-    final Color outlineColor = isEven
+    final Color outlineColor = drawAsEven
         ? Color.lerp(const Color(0xFF0F172A), const Color(0xFF4B5563), ratio)!
         : Color.lerp(const Color(0xFF030712), const Color(0xFF374151), ratio)!;
 

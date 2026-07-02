@@ -2714,6 +2714,21 @@ class LevelData {
             case 'K': colorId = 47; break;
           }
           cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+        } else if (lvl.name == 'Radyatör') {
+          int colorId = 0;
+          switch (char) {
+            case 'W': colorId = 11; break;
+            case 'D': colorId = 12; break;
+            case 'R': colorId = 61; break;
+            case 'K': colorId = 139; break;
+            case 'O': colorId = 40; break;
+            case 'Y': colorId = 4; break;
+            case 'G': colorId = 15; break;
+            case 'A': colorId = 124; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
         } else {
           if (_charToColor.containsKey(char)) {
             var colorId = _charToColor[char]!;
@@ -7323,47 +7338,82 @@ class LevelData {
 
   static LevelDefinition _level66() {
     return LevelDefinition(
-      name: 'Ari',
+      name: 'Radyatör',
+      hasChainDecoration: true,
       rows: [],
       cellRows: const [
-        "................................",
-        "...........LLLL.................",
-        "...........LLLLLLLLL............",
-        "...........LLLLLLLLL............",
-        "........LLLLDDDDDDDDLLLL........",
-        "........LLLLDDDDDDDDLLLL........",
-        "......LLLLDDDDDDDDDDDDLLLL......",
-        "......LLLLDDDDDDDDDDDDLLLL......",
-        "......LLLLLLLLLLLLLLLLLLLL......",
-        "......LLLLLLLLLLLLLLLLLLLL......",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLDDDDDDDDDDDDDDDDLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "....LLLLLLLLLLLLLLLLLLLLLLLL....",
-        "......LLLLDDDDDDDDDDDDLLLL......",
-        "......LLLLDDDDDDDDDDDDLLLL......",
-        "........LLLLLLLLLLLLLLLL........",
-        "........LLLLLLLLLLLLLLLL........",
-        "............LLLLLLLL............",
-        "............LLLLLLLL............",
-        "................................",
-        "................................",
-        "................................",
-        "................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        ".......DKKK.................................................",
+        ".......DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD.......",
+        "......DKYOYYYYYYKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKYYKD......",
+        ".....DKYYOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOYYKD.....",
+        ".....KKYKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKYKK.....",
+        ".....KKOKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKYKK.....",
+        ".....KKOKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKOKK.....",
+        ".....KKOKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKOKK.....",
+        ".....KKORKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKOKK.....",
+        ".....KKORRRKRRRRRRRRKRRRRRRRRRRRRRRRRRRRKRRKRRRRRRRROKK.....",
+        ".....KKOOOOWWOOOOOOOOOWOOOOOWOOOOOOOOOOOWOOOOOWOOOOWOKK.....",
+        ".....KKOKKDKWOKDKWOKDDKWOKDDDOOKKDKWOKDDWYOKDKWOKDKKOKK.....",
+        ".....KKOKDWKWODDDWOKDDDWOKDDWOOKDDDWOKDDKYODWDWOKDDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODDWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDWODWDWOKDWDWOKDWWOOKDWDWODWWKYODWWWOKWDKOKK.....",
+        ".....KKOKDWDKODWDKOKDWDKOKDWKOOYDWDKODWWKOODWWKOKWDKOKK.....",
+        ".....KKOKDWDKODWDKOKDWDKOKDWKOOYDWDKODWWKOODWWKOKWDKOKK.....",
+        ".....KKOKDWDKODWDKOKDWDKOKDWKOOYDWDKODWWKOODWWKOKWDKOKK.....",
+        ".....KKOKDDDKODWDKOKDWDKOKDWKOOYDWDKODDWKOODWDKOKWDKOKK.....",
+        ".....KKOYKDKKYKDDKOKDDKKOKDDKOOYKDKKOKDDKOODDKKOKDDKOKK.....",
+        ".....KKKYKDKKYKDKKOKKDKOOKDDKOOYKDKOOKDDKOOKDKKOKDKKRKK.....",
+        ".....KKKYYKKKOGYKOOKKKKOOKKKKOOYKKKOOKKKKOOKKKKOKKKKKKK.....",
+        ".....KKKKKKOOOGGDOOOOOOOOOOOOOOOOOOOOOOOOOOOGGDOOOKKKKK.....",
+        ".....KKKKKKRRRGADRRRRRRRRRRRRRRRRRRRRRRRRRRRGADRRRKKKKK.....",
+        ".......DKKKKKKAADKKKKKKKKKKKKKKKKKKKKKKKKKKKGADKKKKKDD......",
+        "........DDDDDDAADDDDDDDDDDDDDDDDDDDDDDDDDDDDAADDDDDDD.......",
+        ".............DAAAD.........................DAAAD............",
+        ".............GAAAD.........................GAAAD............",
+        ".............AAAAD.........................AAAAD............",
+        ".............AAAAD.........................AAAAD............",
+        ".............AAAAD.........................AAAAD............",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................"
       ],
-      gridRows: 32,
-      gridCols: 32,
+      gridRows: 60,
+      gridCols: 60,
       colorRuns: const [
-        LevelColorRun(12, 350),
-        LevelColorRun(4, 160),
+        LevelColorRun(11, 265),
+        LevelColorRun(12, 375),
+        LevelColorRun(61, 75),
+        LevelColorRun(139, 675),
+        LevelColorRun(40, 350),
+        LevelColorRun(4, 45),
+        LevelColorRun(15, 10),
+        LevelColorRun(124, 45)
       ],
       paintOrder: LevelPaintOrder.rowSnake,
     );
