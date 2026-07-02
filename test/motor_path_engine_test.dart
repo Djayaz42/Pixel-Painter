@@ -114,7 +114,7 @@ void main() {
 
     final next50Names = [
       "Kedi", "Kopek", "Ev", "Hamburger", "Motosiklet", "Ucak", "Tir", "Kaleci", "Boksör", "Kutular",
-      "Maymun", "Zurafa", "Fil", "Aslan", "Kaplan", "Radyatör", "Ugurbulu", "Kaplumbaga", "Balik", "Yengec",
+      "Doğa Sporları", "Günbatımı", "Snowboardcu", "Şehir Trafiği", "Tiyatro Sahnesi", "Radyatör", "Ugurbulu", "Kaplumbaga", "Balik", "Yengec",
       "Ahtapot", "Ordek", "Koyun", "Inek", "Fare", "Koala", "Kanguru", "Su Aygiri", "Gergedan", "Timsah",
       "Geyik", "Yarasa", "Kurt", "Yilan", "Yunus", "Balina", "Kopekbaligi", "Kelebek", "Civciv", "Sincap",
       "Deve", "Kugu", "Hamster", "Ugur Bocegi", "Baykus 2", "Kizil Tilki", "Penguen 2", "Kutup Ayisi", "Yavru Panda", "Disi Aslan"
