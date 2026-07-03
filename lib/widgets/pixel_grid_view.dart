@@ -272,6 +272,12 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 1: Draw odd/vertical links (behind)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        if (levelIndex == 67) {
+          final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
+          if (sideIdx == 0 || sideIdx == 2) continue;
+          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+        }
         if (linkIdx % 2 != 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
           if (hits >= 20) continue;
@@ -282,6 +288,12 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 2: Draw even/horizontal links (on top)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        if (levelIndex == 67) {
+          final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
+          if (sideIdx == 0 || sideIdx == 2) continue;
+          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+        }
         if (linkIdx % 2 == 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
           if (hits >= 20) continue;
@@ -422,20 +434,34 @@ class _PixelGridPainter extends CustomPainter {
 
     if (sideIdx == 0) {
       x = origin.dx + linkOffset;
-      y = origin.dy + (rows - 2.0) * cellSize;
+      y = origin.dy + (levelIndex == 71 ? rows - 9.0 : rows - 2.0) * cellSize;
       rotation = 0.0;
     } else if (sideIdx == 1) {
-      x = origin.dx + (cols - 3.0) * cellSize;
-      y = origin.dy + linkOffset;
+      if (levelIndex == 67) {
+        x = origin.dx + (cols - 2.0) * cellSize; // shifted right by 1 cell (from cols - 3.0 to cols - 2.0)
+        y = origin.dy + linkOffset + 1.0 * cellSize; // shifted down by 1 cell
+      } else if (levelIndex == 71) {
+        x = origin.dx + (cols - 3.0) * cellSize;
+        y = origin.dy + linkOffset + 6.0 * cellSize;
+      } else {
+        x = origin.dx + (cols - 3.0) * cellSize;
+        y = origin.dy + linkOffset;
+      }
       rotation = 1.5708;
     } else if (sideIdx == 2) {
       x = origin.dx + linkOffset;
-      y = origin.dy + (levelIndex == 65 ? 4.0 : 2.0) * cellSize;
+      y = origin.dy + (levelIndex == 65 ? 4.0 : levelIndex == 71 ? 8.0 : 2.0) * cellSize;
       rotation = 0.0;
     } else {
       if (levelIndex == 52) {
         x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (originally 3.0, now 2.0)
         y = origin.dy + linkOffset + 8.0 * cellSize; // shifted down by 8 cells
+      } else if (levelIndex == 67) {
+        x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (from 3.0 to 2.0)
+        y = origin.dy + linkOffset + 11.0 * cellSize; // shifted down by 11 cells (2 additional cells down)
+      } else if (levelIndex == 71) {
+        x = origin.dx + 3.0 * cellSize;
+        y = origin.dy + linkOffset + 6.0 * cellSize;
       } else {
         x = origin.dx + 3.0 * cellSize;
         y = origin.dy + linkOffset;

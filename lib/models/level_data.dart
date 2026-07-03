@@ -335,6 +335,77 @@ class LevelData {
     283: Color(0xFFD2D5E6), // Basket Grisi
     284: Color(0xFF000000), // Basket Siyahi
     285: Color(0xFF90E6EC), // Basket Turkuazi
+    286: Color(0xFFE46178), // TV Case Pink
+    287: Color(0xFFF9B0B3), // TV Speaker Panel Light Pink
+    288: Color(0xFFA05372), // TV Top Box Grape
+    289: Color(0xFF5E343C), // Legs/Antenna Base Dark Brown
+    290: Color(0xFF57CB67), // Screen Bar Green
+    292: Color(0xFFFEC151), // Screen Bar Yellow
+    293: Color(0xFFFDEDDE), // Screen Bar Cream
+    294: Color(0xFF68DBBB), // Screen Bar Light Teal
+    295: Color(0xFF1DACBD), // Screen Bar Teal
+    296: Color(0xFF995B8F), // Screen Bar Purple
+    297: Color(0xFF1E1A26), // Screen Dark Bezel
+    298: Color(0xFFFEED51), // Top Box Lights Yellow
+    300: Color(0xFF181A28), // Charcoal/Black Outline
+    301: Color(0xFFFFFFFF), // White
+    302: Color(0xFFB9E0EE), // Lightest Cyan
+    303: Color(0xFF88D3F6), // Light Blue Water
+    304: Color(0xFF5CBCE8), // Medium Blue Water
+    305: Color(0xFF10486B), // Dark Blue Water Shadow
+    306: Color(0xFFFAC1AA), // Swimmer Skin Light
+    307: Color(0xFFF69478), // Swimmer Skin Shadow
+    308: Color(0xFFEA3333), // Swimsuit Red Bright
+    309: Color(0xFF744C98), // Swim Cap Purple
+    310: Color(0xFFDB2B52), // Swimsuit Red Deep
+    311: Color(0xFF4C4949), // Road Dark Grey
+    312: Color(0xFF686768), // Road Medium Grey
+    313: Color(0xFFEBEBEB), // Skyline Light Grey
+    314: Color(0xFF578997), // Skyline Medium Grey
+    315: Color(0xFF3A545D), // Skyline Dark Grey
+    316: Color(0xFF599001), // Grass Green Medium
+    317: Color(0xFF67AC02), // Grass Green Light
+    318: Color(0xFF3C5811), // Grass Green Dark
+    319: Color(0xFF010101), // Black
+    320: Color(0xFFFCFCFC), // White
+    321: Color(0xFFDA3A3D), // Red
+    322: Color(0xFF25C3E9), // Sky Cyan
+    323: Color(0xFF56F6FC), // Sky Light Cyan
+    330: Color(0xFF912920), // Bridge Red
+    331: Color(0xFF27CAF3), // Water Cyan
+    332: Color(0xFFFB5308), // Bridge Orange
+    333: Color(0xFF149FC1), // Water Dark Cyan
+    334: Color(0xFFE3936B), // Bridge Peach
+    340: Color(0xFF79460C), // Sack Dark Brown Outline
+    341: Color(0xFFF4C474), // Sack Lightest Peach
+    342: Color(0xFFE6AC5D), // Sack Light Orange/Brown
+    343: Color(0xFFDE934C), // Sack Medium Brown
+    344: Color(0xFFC9813B), // Sack Darker Shadow Brown
+    345: Color(0xFFFCDE91), // Gold Coin Light Yellow
+    346: Color(0xFFFABF46), // Gold Coin Dark Orange/Yellow
+    347: Color(0xFF0B512D), // Dollar Sign Dark Green
+    348: Color(0xFF27904A), // Dollar Sign Medium Green
+    349: Color(0xFF41AD53), // Dollar Sign Light Green
+    350: Color(0xFF0A1814), // Van Gogh Outline
+    351: Color(0xFFECEAD2), // Van Gogh Skin Light
+    352: Color(0xFFC5B492), // Van Gogh Skin Shadow
+    353: Color(0xFF9E6E3C), // Van Gogh Beard Orange
+    354: Color(0xFF4C341F), // Van Gogh Beard Dark
+    355: Color(0xFFA5BCB2), // Van Gogh Suit Light
+    356: Color(0xFF56707B), // Van Gogh Suit Dark
+    357: Color(0xFF8CAF9F), // Van Gogh Background Mint
+    358: Color(0xFF7A948C), // Van Gogh Background Sage
+    359: Color(0xFF8EA7B8), // Van Gogh Background Steel Blue
+    360: Color(0xFF101028), // Space Black-blue
+    361: Color(0xFF14253F), // Space Deep Navy
+    362: Color(0xFF1E4061), // Space Steel Blue
+    363: Color(0xFF225B6E), // Space Teal
+    364: Color(0xFF52252D), // Kitten Dark Maroon Stripe
+    365: Color(0xFF9D643F), // Kitten Warm Bronze Brown
+    366: Color(0xFFECA25E), // Kitten Ginger Orange
+    367: Color(0xFFFBD596), // Kitten Peach-Cream
+    368: Color(0xFF3A8BA4), // Nebula Bright Cyan
+    369: Color(0xFFE6E3C6), // Shining Star Pale Gold-White
   };
 
   static const List<PaintCartridge> cartridges = [
@@ -2333,6 +2404,503 @@ class LevelData {
       color: Color(0xFF90E6EC),
       amount: 20,
     ),
+    PaintCartridge(
+      id: 286,
+      colorId: 286,
+      name: 'TV Pembe',
+      color: Color(0xFFE46178),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 287,
+      colorId: 287,
+      name: 'Hoparlor Pembe',
+      color: Color(0xFFF9B0B3),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 288,
+      colorId: 288,
+      name: 'TV Ust Kutu',
+      color: Color(0xFFA05372),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 289,
+      colorId: 289,
+      name: 'TV Ayak',
+      color: Color(0xFF5E343C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 290,
+      colorId: 290,
+      name: 'TV Ekran Yesil',
+      color: Color(0xFF57CB67),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 292,
+      colorId: 292,
+      name: 'TV Ekran Sari',
+      color: Color(0xFFFEC151),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 293,
+      colorId: 293,
+      name: 'TV Ekran Krem',
+      color: Color(0xFFFDEDDE),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 294,
+      colorId: 294,
+      name: 'TV Ekran Acik Turkuaz',
+      color: Color(0xFF68DBBB),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 295,
+      colorId: 295,
+      name: 'TV Ekran Turkuaz',
+      color: Color(0xFF1DACBD),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 296,
+      colorId: 296,
+      name: 'TV Ekran Mor',
+      color: Color(0xFF995B8F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 297,
+      colorId: 297,
+      name: 'TV Ekran Cerceve',
+      color: Color(0xFF1E1A26),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 298,
+      colorId: 298,
+      name: 'TV Tus Sari',
+      color: Color(0xFFFEED51),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 300,
+      colorId: 300,
+      name: 'Yuzucu Kontur',
+      color: Color(0xFF181A28),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 301,
+      colorId: 301,
+      name: 'Yuzucu Beyaz',
+      color: Color(0xFFFFFFFF),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 302,
+      colorId: 302,
+      name: 'Yuzucu Parlak Su',
+      color: Color(0xFFB9E0EE),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 303,
+      colorId: 303,
+      name: 'Yuzucu Acik Mavi',
+      color: Color(0xFF88D3F6),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 304,
+      colorId: 304,
+      name: 'Yuzucu Mavi',
+      color: Color(0xFF5CBCE8),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 305,
+      colorId: 305,
+      name: 'Yuzucu Koyu Mavi',
+      color: Color(0xFF10486B),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 306,
+      colorId: 306,
+      name: 'Yuzucu Ten',
+      color: Color(0xFFFAC1AA),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 307,
+      colorId: 307,
+      name: 'Yuzucu Ten Golgesi',
+      color: Color(0xFFF69478),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 308,
+      colorId: 308,
+      name: 'Yuzucu Kirmizi',
+      color: Color(0xFFEA3333),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 309,
+      colorId: 309,
+      name: 'Yuzucu Mor Bone',
+      color: Color(0xFF744C98),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 310,
+      colorId: 310,
+      name: 'Yuzucu Koyu Kirmizi',
+      color: Color(0xFFDB2B52),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 311,
+      colorId: 311,
+      name: 'Yol Koyu Gri',
+      color: Color(0xFF4C4949),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 312,
+      colorId: 312,
+      name: 'Yol Gri',
+      color: Color(0xFF686768),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 313,
+      colorId: 313,
+      name: 'Sehir Acik Gri',
+      color: Color(0xFFEBEBEB),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 314,
+      colorId: 314,
+      name: 'Sehir Gri',
+      color: Color(0xFF578997),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 315,
+      colorId: 315,
+      name: 'Sehir Koyu Gri',
+      color: Color(0xFF3A545D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 316,
+      colorId: 316,
+      name: 'Cimen Yesili',
+      color: Color(0xFF599001),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 317,
+      colorId: 317,
+      name: 'Acik Cimen',
+      color: Color(0xFF67AC02),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 318,
+      colorId: 318,
+      name: 'Koyu Cimen',
+      color: Color(0xFF3C5811),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 319,
+      colorId: 319,
+      name: 'Yaris Siyahi',
+      color: Color(0xFF010101),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 320,
+      colorId: 320,
+      name: 'Yaris Beyazi',
+      color: Color(0xFFFCFCFC),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 321,
+      colorId: 321,
+      name: 'Yaris Kirmizisi',
+      color: Color(0xFFDA3A3D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 322,
+      colorId: 322,
+      name: 'Gok Mavi',
+      color: Color(0xFF25C3E9),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 323,
+      colorId: 323,
+      name: 'Acik Gok Mavi',
+      color: Color(0xFF56F6FC),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 330,
+      colorId: 330,
+      name: 'Kopru Kirmizisi',
+      color: Color(0xFF912920),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 331,
+      colorId: 331,
+      name: 'Kopru Suyu',
+      color: Color(0xFF27CAF3),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 332,
+      colorId: 332,
+      name: 'Kopru Turuncusu',
+      color: Color(0xFFFB5308),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 333,
+      colorId: 333,
+      name: 'Kopru Derin Suyu',
+      color: Color(0xFF149FC1),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 334,
+      colorId: 334,
+      name: 'Kopru Turuncu Golgesi',
+      color: Color(0xFFE3936B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 340,
+      colorId: 340,
+      name: 'Torba Kontur',
+      color: Color(0xFF79460C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 341,
+      colorId: 341,
+      name: 'Torba Acik Ten',
+      color: Color(0xFFF4C474),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 342,
+      colorId: 342,
+      name: 'Torba Sarisi',
+      color: Color(0xFFE6AC5D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 343,
+      colorId: 343,
+      name: 'Torba Rengi',
+      color: Color(0xFFDE934C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 344,
+      colorId: 344,
+      name: 'Torba Golgesi',
+      color: Color(0xFFC9813B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 345,
+      colorId: 345,
+      name: 'Sikke Parlak',
+      color: Color(0xFFFCDE91),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 346,
+      colorId: 346,
+      name: 'Sikke Altin',
+      color: Color(0xFFFABF46),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 347,
+      colorId: 347,
+      name: 'Dolar Koyu Yesil',
+      color: Color(0xFF0B512D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 348,
+      colorId: 348,
+      name: 'Dolar Yesili',
+      color: Color(0xFF27904A),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 349,
+      colorId: 349,
+      name: 'Dolar Acik Yesil',
+      color: Color(0xFF41AD53),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 350,
+      colorId: 350,
+      name: 'Gogh Kontur',
+      color: Color(0xFF0A1814),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 351,
+      colorId: 351,
+      name: 'Gogh Ten',
+      color: Color(0xFFECEAD2),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 352,
+      colorId: 352,
+      name: 'Gogh Ten Golgesi',
+      color: Color(0xFFC5B492),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 353,
+      colorId: 353,
+      name: 'Gogh Sakal Turuncusu',
+      color: Color(0xFF9E6E3C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 354,
+      colorId: 354,
+      name: 'Gogh Sakal Koyu',
+      color: Color(0xFF4C341F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 355,
+      colorId: 355,
+      name: 'Gogh Ceket Acik',
+      color: Color(0xFFA5BCB2),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 356,
+      colorId: 356,
+      name: 'Gogh Ceket Koyu',
+      color: Color(0xFF56707B),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 357,
+      colorId: 357,
+      name: 'Gogh Fon Nanesi',
+      color: Color(0xFF8CAF9F),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 358,
+      colorId: 358,
+      name: 'Gogh Fon Adacayi',
+      color: Color(0xFF7A948C),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 359,
+      colorId: 359,
+      name: 'Gogh Fon Mavisi',
+      color: Color(0xFF8EA7B8),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 360,
+      colorId: 360,
+      name: 'Uzay Siyahi',
+      color: Color(0xFF101028),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 361,
+      colorId: 361,
+      name: 'Uzay Laciverti',
+      color: Color(0xFF14253F),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 362,
+      colorId: 362,
+      name: 'Uzay Mavisi',
+      color: Color(0xFF1E4061),
+      amount: 40,
+    ),
+    PaintCartridge(
+      id: 363,
+      colorId: 363,
+      name: 'Uzay Yesili',
+      color: Color(0xFF225B6E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 364,
+      colorId: 364,
+      name: 'Kedi Deseni Koyu',
+      color: Color(0xFF52252D),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 365,
+      colorId: 365,
+      name: 'Kedi Deseni Acik',
+      color: Color(0xFF9D643F),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 366,
+      colorId: 366,
+      name: 'Kedi Tuyu Turuncu',
+      color: Color(0xFFECA25E),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 367,
+      colorId: 367,
+      name: 'Kedi Tuyu Krem',
+      color: Color(0xFFFBD596),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 368,
+      colorId: 368,
+      name: 'Bulutsu Turkuazi',
+      color: Color(0xFF3A8BA4),
+      amount: 20,
+    ),
+    PaintCartridge(
+      id: 369,
+      colorId: 369,
+      name: 'Yildiz Parlakligi',
+      color: Color(0xFFE6E3C6),
+      amount: 20,
+    ),
   ];
 
   static final Map<String, int> _charToColor = {
@@ -2650,6 +3218,7 @@ class LevelData {
             case 'I': colorId = 23; break;     // Orange
           }
           cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+
         } else if (lvl.name == 'Ucak') {
           int colorId = 0;
           switch (char) {
@@ -2833,6 +3402,127 @@ class LevelData {
           if (colorId > 0) {
             cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
           }
+        } else if (lvl.name == 'Retro TV') {
+          int colorId = 0;
+          switch (char) {
+            case 'L': colorId = 12; break;
+            case 'P': colorId = 286; break;
+            case 'S': colorId = 287; break;
+            case 'G': colorId = 288; break;
+            case 'B': colorId = 289; break;
+            case 'v': colorId = 290; break;
+            case 'y': colorId = 292; break;
+            case 'c': colorId = 293; break;
+            case 't': colorId = 294; break;
+            case 'u': colorId = 295; break;
+            case 'p': colorId = 296; break;
+            case 'd': colorId = 297; break;
+            case 'o': colorId = 298; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Yüzücü') {
+          int colorId = 0;
+          switch (char) {
+            case 'O': colorId = 300; break;
+            case 'K': colorId = 301; break;
+            case 'S': colorId = 302; break;
+            case 'w': colorId = 303; break;
+            case 'W': colorId = 304; break;
+            case 'D': colorId = 305; break;
+            case 's': colorId = 306; break;
+            case 'h': colorId = 307; break;
+            case 'R': colorId = 308; break;
+            case 'P': colorId = 309; break;
+            case 'd': colorId = 310; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Formül 1') {
+          int colorId = 0;
+          switch (char) {
+            case 'g': colorId = 311; break;
+            case 'G': colorId = 312; break;
+            case 'l': colorId = 313; break;
+            case 'm': colorId = 314; break;
+            case 'd': colorId = 315; break;
+            case 'e': colorId = 316; break;
+            case 'E': colorId = 317; break;
+            case 'q': colorId = 318; break;
+            case 'B': colorId = 319; break;
+            case 'W': colorId = 320; break;
+            case 'R': colorId = 321; break;
+            case 'c': colorId = 322; break;
+            case 'C': colorId = 323; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Köprü') {
+          int colorId = 0;
+          switch (char) {
+            case 'R': colorId = 330; break;
+            case 'c': colorId = 331; break;
+            case 'O': colorId = 332; break;
+            case 'C': colorId = 333; break;
+            case 'P': colorId = 334; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Para Torbası') {
+          int colorId = 0;
+          switch (char) {
+            case 'O': colorId = 340; break;
+            case 's': colorId = 341; break;
+            case 'S': colorId = 342; break;
+            case 'm': colorId = 343; break;
+            case 'd': colorId = 344; break;
+            case 'y': colorId = 345; break;
+            case 'Y': colorId = 346; break;
+            case 'g': colorId = 347; break;
+            case 'G': colorId = 348; break;
+            case 'e': colorId = 349; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Van Gogh') {
+          int colorId = 0;
+          switch (char) {
+            case 'O': colorId = 350; break;
+            case 's': colorId = 351; break;
+            case 'S': colorId = 352; break;
+            case 'o': colorId = 353; break;
+            case 'B': colorId = 354; break;
+            case 'j': colorId = 355; break;
+            case 'J': colorId = 356; break;
+            case 'g': colorId = 357; break;
+            case 'G': colorId = 358; break;
+            case 'b': colorId = 359; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
+        } else if (lvl.name == 'Yıldızlı Kedi') {
+          int colorId = 0;
+          switch (char) {
+            case 'd': colorId = 360; break;
+            case 'D': colorId = 361; break;
+            case 's': colorId = 362; break;
+            case 't': colorId = 363; break;
+            case 'S': colorId = 364; break;
+            case 'B': colorId = 365; break;
+            case 'o': colorId = 366; break;
+            case 'c': colorId = 367; break;
+            case 'C': colorId = 368; break;
+            case 'w': colorId = 369; break;
+          }
+          if (colorId > 0) {
+            cells.add(PixelCell(row: r, col: c, targetColorId: colorId));
+          }
         } else {
           if (_charToColor.containsKey(char)) {
             var colorId = _charToColor[char]!;
@@ -2935,6 +3625,15 @@ class LevelData {
     _level64(),
     _level65(),
     _level66(),
+    _level67(),
+    _level68(),
+    _level69(),
+    _level70(),
+    _level71(),
+    _level72(),
+    _level73(),
+    _level74(),
+    _level75(),
   ];
 
   static LevelDefinition levelAt(int index) {
@@ -7683,6 +8382,742 @@ class LevelData {
         LevelColorRun(124, 45)
       ],
       paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+  static LevelDefinition _level67() {
+    return LevelDefinition(
+      name: 'Stadyum',
+      rows: [],
+      cellRows: const [
+        "MrrrrLLLLPMMMMMMMMMMMMMMMMeeeeMeeMeeeMeMMMMMMMMMMMMPLLLLrrrr",
+        "rrrrrrLMMPMMMMMMMMMMMMMeMeeeeeMeeMeeeMeeMMMMMMMMMMMPMMLrrrrr",
+        "PPrrrrLMMPMMMMMMMMMMMeMeMeeeeeeeeeeeeeeeMMMMMMMMMMMPPMLrrrrP",
+        "PPPrrrLMPPMMMMMMMMMMMMMMeeeeeeeeeeeeeeeeeMMMMMMMMMMPPMLrrrPP",
+        "PPPPrrLMPPMMMMMMMMMMeMeeeeeeeeeeeeeeeeeeeMMMMMMMMMMPPMMrrPPP",
+        "qPPrrrMMPPMMMMMMMMeeeeeeeeeeeeeeeeeeeeeeeeMeeMMMMMMPPMMrrrPP",
+        "PPPPPrMPPPYYYYYYPYYYYYYeYYYYYYeYYYYYYeYYYYYYMYYYYYYPPPMrPPPP",
+        "PPPPPrMPPPYYYYYYPYYYYYYeYYYYYYeYYYYYYeYYYYYYPYYYYYYPPPMPPPPP",
+        "PPPPPMMPPPYYPYPYPPYPYPPKMYMMYMeMYMMYMKMPYMYPPMPYPYYPPPMMLPPP",
+        "PrrrrMPPPMMMMMMPMMPMMYMYYMYYYYMYYYYMYYYYYYMMMMPMMMMMPPPMLrrr",
+        "MMPPPMPPeeeeeePPPPPPMMMMMMMMMMKMMMMPMMMMMMMMPPPeeeeeePPMPPPM",
+        "PPrrMMPPeeeeeYYYYMYYPYMYYMYYYYMYYYYMYYMYMYYMYMYYeeeeePPMMrrP",
+        "PrrrMPPPMMMMMMPMPPMMYMMYYMYMYYeYMYMMYYYYMYMPMPMPMMMMMPPPMrrP",
+        "MMPrMPPMeeeeePPPPPPMPMMMMMMMMMKMMMMMMMMMMMMPPPPPeeeeeMPPMPPq",
+        "rrrMMPPeeeeeYYYYYYYMYYMYYYYYYYeYYYYYYYMYYMYYYYYYYeeeeePPMMrr",
+        "PrrMMPPMMMMMYYYYYYYMYYYYYYYYYYeYYYYYYYYYYMYYYYYYYMMMMMPPPMrr",
+        "MPPMPPPMMMMMYYYYYYYMYYMYYYYYYYKYYYYYYYYYYMYYYYYYYMMMMMPPPMPP",
+        "rrMMPPeeeeePPMPPPPMMPMMMMYYYMMMMMYMMMMMMPYMPYPPMPPeeeeePPMMr",
+        "rrMPPPMMMMPYYYYYYYYYYYYYYYYMYYMYYMYYYYYYYYYYYYYYYYPMMMMPPPMr",
+        "PrMPPPeeeePYYYYYYYYYYYYYYYYMYYeYYMYYYYYYYYYYYYYYYYPeeeePPPMP",
+        "PMMPPMMMMMPYYYYYYYYYYYYYYYYPYYeYYPYYYYYYYYYYYYYYYYPMMMMMPPMM",
+        "rMPPPeeeePMMPMPPMPPMPYMMeMMeYPeMMKMMKYMPYMPYMPYMPYMPeeeePPPM",
+        "PMPPMMMMMMMPPMPPMPPMPPMPMMPMMPMMPMMPPMPPMPPMPPMPPMPPMMMMMPPM",
+        "MMPPMMMeePPPPPPPPPPPPPPPMPPePPKPPKPPPPPPPPPPPPPPPPPPeeeMMPPM",
+        "MPPPeeeeePPPPPPPPPPPPPPPMPPePPMPPYPPPPPPPPPPPPPPPPPPeeeeePPP",
+        "MPPMeeeeYMPPMPeMMPMMPYMPYMPPMPeMMPYMPYMPYMPPMPeMMPYMPeeeeMPP",
+        "MPPMMMeeMPPPMPeMPPMPPMPPMMPPMPeMPPMPPMPPMMPPMPeMPPMPPeMMMMPP",
+        "PPPeeeeePPPPPPePPPPPPPPPPPPPPPePPPPPPPPPPPPPPPePPPPPPeeeeePP",
+        "PPPeeeeePPPPPPMPPPPPPPPPPPPPPPMPPPPPPPPPPPPPPPMPPPPPPeeeeePP",
+        "PPMMMMMYYYPYYPYYYYYYMYYYYYYYYYMYYYYYYYYYMYYYYYYPYYPYYYMMMMMP",
+        "PPMMMeeYYYPYYPYYYYYYMYYYYYYYYYeYYYYYYYYYMYYYYYYPYYPYYYeeMMMP",
+        "PPMeeeePPYPPPPPYYPYYeYPYYYYYPYKPPYYYPYYPMYPYYPYPPPPPPYeeeeMP",
+        "PMMeeeePPPPPPPPPPPPPMPPPPPPPPPMPPPPPPPPPMPPPPPPPPPPPPPeeeeMM",
+        "PMeeeeYYYPYYYYYYMYYYYYYKYYYYYYeYYYYYYKYYYYYYPYYYYYYPYYYeeeeM",
+        "PMMMMMYYYYYYYYYYPYYYYYYYYYYYYYMYYYYYYYYYYYYYPYYYYYYYYYYMMMMM",
+        "PMeeeeYYYPYYYYYYPYYYYYYKYYYYYYeYYYYYYKYYYYYYPYYYYYYPYYYeeeeM",
+        "MMMMMeYYYPYYYYYYPYYYYYYKYYYYYYKYYYYYYKYYYYYYPYYYYYYPYYYeMMMM",
+        "MMMMMMeeePeePYMeMeePYeeYeePPeeKeePPeeKeeYPeePeqePeePeMeMMMMM",
+        "LLLLLLLLLLLLLYYLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
+        "LLLLKKKLKKKLKLKLKKKLKLLLLLLLKKKLLKLLKKKLKLKLKKKLKKKLKKKLLLLL",
+        "LLLLKKLLLKLLKLKLKLLLKLLLLLLLKKLLKLKLLKLLKKLLLKLLKLLLKLKLLLLL",
+        "LLLLKKKLLKLLLKLLKKLLKLLLLLLLKKKLKKKLLKLLKLKLLKLLKKLLKKKLLLLL",
+        "LLLLKLLLLKLLKLKLKLLLKLLLLLLLKLLLKLKLLKLLKLKLLKLLKLLLKKLLLLLL",
+        "LLLLKLLLKKKLKLKLKKKLKKKLLLLLKLLLKLKLKKKLKLKLLKLLKKKLKLKLLLLL",
+        "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL",
+        "rLLLLrLLLLLLrrrrrrLLLLLLrrrrrrMLLLLLLLrrrrrrrrrrrrLLLLLLLLLL",
+        "MMMMMMMMMMMMMMMMMMMMMMMMMeeeeeeeMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKKrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKKqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKKrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKKqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKKrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKKqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKKrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqKKqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
+        "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrKKrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+        "qqqqqqqqqMMMMMMMMMMMMMMMMMMMMMKKMMMMMMMMMMMMMMMMMMMMqqqqqqqq"
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(11, 155),
+        LevelColorRun(12, 355),
+        LevelColorRun(25, 650),
+        LevelColorRun(16, 625),
+        LevelColorRun(43, 370),
+        LevelColorRun(44, 455),
+        LevelColorRun(31, 320),
+        LevelColorRun(13, 670)
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+  static LevelDefinition _level68() {
+    return LevelDefinition(
+      name: 'İskelet Köpek',
+      hasChainDecoration: true,
+      rows: [],
+      cellRows: const [
+        "................................................",
+        ".......L............Y...........................",
+        "......YL...........LYK..........................",
+        "......YYKV........LYYYK.........................",
+        ".....LLLYLL.......KYLLYY........................",
+        ".....LLWLYWL.....LYWWWYKL.......................",
+        ".....YWWVYKWL....KYWWVLYW.......................",
+        ".....YWWVLKLKKKKLKYVVVVYWL......................",
+        ".....YVVLKKKKKKKKKKLVVVYWL......................",
+        ".....YVLKKKKKKKKKKKKLVVLYW......................",
+        ".....YLKKKKKKKKKKKKKKLVLYY......................",
+        ".....LKKKKKKKKKKKKKKYYYYW......................",
+        ".....KKVKKKKKKKKLLKKKYLYYY......................",
+        ".....KYLLLKKKKKALLLLKYYYYK......................",
+        ".....KLLnLKKKKLAonLLKYYYYYL.....................",
+        ".....YLnonKKKKLnonLLKYYYYYLL....................",
+        "....LKLLLLKKKKLLLLLLKYLYYYKnFn..................",
+        "....LKKLVKKKKKKKLLKKKYLYYYLFnnF.................",
+        ".....LYKKKYLLKKKKKKYYLVYYYLnoLnL................",
+        "......LKKKLLLKKKKYLLVVYYYWnLFoFL.........LKY....",
+        ".....ALKKLLKLKKKKYLVYWWWYnAnnLFL.........KKKV...",
+        "....LFLKKKKKKKKKKYLVWWWWLnAnnnn.........LKKKY...",
+        "...FnnLKKKKKKKKYKYLVWWWLnFFnnn..........KKKKYL..",
+        "..FnLFnYKKKKKKKLYLVVWWLnLoFFnLYL.......LKKKYYL..",
+        ".LnoFLnLLYYKYLYLLVVWLLnFnFoLnWYYKLL....KKKKYYLK.",
+        ".LFLFFLnnnLLLVVVVVLnnFAAFnLFAYYVYYKKL.KKYKYWLKYL",
+        "..nnnAnLFFnnnnnnnnnFLFnLnnnnYYKKYWYKYKLYYYKYYKYY",
+        "...LnLFoFoFAFFFnAnFoFoFnnnLYYKKKKKWYYKKLYYYKYWY.",
+        ".....LnLFFFnFoFLnLFFooFnLWYYYYKVYKKKKYYKYYYVWY..",
+        "......LnFnLnLFFFFAnFFFnnWWKKVYYKYYKYKYYYLVVYLL..",
+        ".......LnnnnFLFFnnAAnnLWWYKKVYYKYVKYYYYYYVVWYL..",
+        "........WVLnAnnnnnLLLWWWYYKKYYYKYVKYYYYYYLLV....",
+        "........KYVWLLLLLVWVVYYYYVKVYYYKYVVYYYYYWL......",
+        "........KYWVYVVVWYKYYYYYVKYYYYKYYVYYYYYYWL......",
+        "........KYYWVKYYYKYYYYYVKKVYYYVYYYYYYYYYYY......",
+        "........KYYLWVKWWYYYWYYKVVVYYYYYYYVYYYYYYY......",
+        "........KYKYLWWWWWYWWYYKKKVYYYYWWWYYKKKVYWL.....",
+        "........KKVKYLWWWWWWWKYYKYYYYVWWWWYYKKYYYWV.....",
+        "........KKWKYWWVYWWWWKKYKYYYYVWWWYLYYKYYYWY.....",
+        "........KYVKVWWWLLVYYKKYKYYYWYYVL.LWYKYYWWY.....",
+        ".......LWYVKVYWYL....KKYKYYWYVVVL..YWKKVWWY.....",
+        ".......LWYKKYYWY.....KKWKYWWYVVVL..YWKKKWWY.....",
+        ".......LWVKKVWWY.....KWVKKWWYVVYL..YWKKWWWY.....",
+        ".......LWKVKKWWY.....KWKKKVWYVVW...YWKKKVWY.....",
+        ".......KKKKYWWVL....LKKKKVWWLVVL..LKKKKWWWL.....",
+        "......LKKKLKKWY.....KKKKLKYYYWL...YKKKKKYYLK....",
+        "......YYYYYYYYY.....LYYYYYYL......LYYYYYYL......",
+        "......................LLL......................."
+      ],
+      gridRows: 48,
+      gridCols: 48,
+      colorRuns: const [
+        LevelColorRun(11, 325),
+        LevelColorRun(12, 210),
+        LevelColorRun(25, 350),
+        LevelColorRun(23, 140),
+        LevelColorRun(22, 105),
+        LevelColorRun(40, 90),
+        LevelColorRun(6, 55),
+        LevelColorRun(41, 15),
+        LevelColorRun(1, 15)
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+  static LevelDefinition _level69() {
+    return LevelDefinition(
+      name: 'Retro TV',
+      rows: [],
+            cellRows: const [
+        "uuuuucccccccccccccuuuSSvvSSSSSuuuuuucccLLccccuuuuu",
+        "uuuuuuuccccccccuuuuuuuSLLSSSSuuuuuuucccLLcccuuuuuu",
+        "uuuuuuuuccccccccuuuuuuSSSLSSSuuuuuucccLccccuuuuuuu",
+        "uuuuuuuuccccccccuuuuuupSSLSSpuuuuuucccLccccuuuuuuu",
+        "uuuuuuuuuccccccccuuuuuuSSSLSuuuuuucccLccccuuuuuuuu",
+        "uuuuuuuuuucccccccuuuuuuSSSLSuuuuuucccLcccuuuuuuuuu",
+        "tuuuuuuuuuuccccccuuuuuuSSSSLuuuuuuccLcccuuuuuuuuuu",
+        "ttuuuuuuuuuLccccccuuuuuSSSSLuuuuucccLccuuuuuuuuuut",
+        "tttuuuuuuuuuccccccuuuuuSSSSSLuuuuccLcycuuuuuuuuutt",
+        "tttttuuuuuuuuccccccuuuuSSSSSLuLucccLccuuuuuuuutttt",
+        "ttttttuuuuuuuucccccuuuuSSSSSuLuuccLccuuuuuuuuttttt",
+        "tttttttuuuuuuuuccccuuuuuLLLLLLLLLLLLLLLLLLuutttttt",
+        "tttttttttuuuuuucccccuuuuLGooLoooGGGGGGGGGLtttttttt",
+        "ttttttttttuuuuuuccccuuuuLGooLoooGGGGGGGGGLtttttttt",
+        "tttttttttttuuuuuuccccuuuLLddLLLLLLLLLLLLLLtttttttt",
+        "ttttttttttttuuuuuucccuuuyLdLLLLLLLLLLLLttttttttttt",
+        "tcccttttLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLttttccc",
+        "cccccctLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLPPtccccc",
+        "cccccccLLSSLPLLLLLLLLLLLLLLLLLLLLLLLLLPLPLSLcccccc",
+        "cccccccLPSSdddddddddddddddddddddddddddSSPLLLcccccc",
+        "cccccccLPSLdddddddddddddddddddddddddddLSPLLLcccccc",
+        "cccccccLPSSdddvvvPPPyyyccctttuuuddpdddSSPLPLcccccc",
+        "SSSSSccLPSLdddvvvPPPyyyccctttuuupppdddLSPLPLccSSSS",
+        "SSSSSSSLPSSdddvvvPPPyyyccctttuuupppdddSSPLLLSSSSSS",
+        "SSSSSSSLPSLdddvvvPPPyyyccctttuuupppdddLSPLLLSSSSSS",
+        "SSSSSSSLPSSdddvvvPPPyyyccctttuuupppdddSSPLPLSSSSSS",
+        "SSSSSSSLPSLdddvvvPPPyyyccctttuuupppdddLSPLPLSSSSSS",
+        "SSSSSSSLPSSdddvvvPPPyyyccctttuuupppdddSSPLuLSSSSSS",
+        "SSSSSccLPSLdddvvvPPPyyyccctttuuupppdddLSPLLLccSSSS",
+        "cccccccLPSSdddvvvPPPyyyccctttuuupppdddSSPLPLcccccc",
+        "cccccccLPSLdddvvvPPPyyyccctttuuupppdddLSPLPLcccccc",
+        "cccccccLPSSdddvvvPPPyyyccctttuuupppdddSSPLLLcccccc",
+        "cccccccLPSLdddddddddddddddddddddddddddLSPLLLcccccc",
+        "cccccccLPSSdddddddddddddddddddddddddddSSPLSLcccccc",
+        "cccctttLPSSLPLLLLLLLLLLLLLLLLLLLLLLLLLPLPLSLtttccc",
+        "cctttttLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLPPtttttc",
+        "ttttttttLLdLLBBBLLLLLLLLLLLLLLLLLBBBLLLLLLLttttttt",
+        "ttttttttttLLLBBLLLLLLLLLLLLLLLLLLLBBLLLLuttttttttt",
+        "ttttttttuuuuuuuucLLcuuuuSSSuuuucLLcuuuuuuuuttttttt",
+        "tttttttuuuuuLuuccLccuuuuSSSuuuuccLccuuLuuuuutttttt",
+        "ttttttuuuuuuuLcccccuuuuuSSSuuuuucccccLuuuuuuuttttt",
+        "tttttuuuuuuuuccccccuuuuSSSSSuuuuccccccuuuuuuuutttt",
+        "tttuuuuuuuuuccccccuuuuuSSSSSuuuuuccccccuuuuuuuuutt",
+        "ttuuuuuuuuuuccccccuuuuuSSSSSuuuuuccccccuuuuuuuuuut",
+        "tuuuuuuuuuuccccccuuuuuuSSSSSuuuuuuccccccuuuuuuuuuu",
+        "uuuuuuuuuucccccccuuuuuuSSSSSuuuuuucccccccuuuuuuuuu",
+        "uuuuuuuuuccccccccuuuuuuSSSSSuuuuuuccccccccuuuuuuuu",
+        "uuuuuuuuucccccccuuuuuuuSSSSSuuuuuuucccccccuuuuuuuu",
+        "uuuuuuuuccccccccuuuuuupSSSSSpuuuuuuccccccccuuuuuuu",
+        "uuuuuuuccccccccuuuuuuuSSSSSSSuuuuuuuccccccccuuuuuu",
+      ],
+      gridRows: 50,
+      gridCols: 50,
+      colorRuns: const [
+        LevelColorRun(12, 375),
+        LevelColorRun(286, 80),
+        LevelColorRun(287, 245),
+        LevelColorRun(288, 20),
+        LevelColorRun(289, 10),
+        LevelColorRun(290, 35),
+        LevelColorRun(292, 35),
+        LevelColorRun(293, 495),
+        LevelColorRun(294, 270),
+        LevelColorRun(295, 710),
+        LevelColorRun(296, 35),
+        LevelColorRun(297, 180),
+        LevelColorRun(298, 10),
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+  static LevelDefinition _level70() {
+    return LevelDefinition(
+      name: 'Yüzücü',
+      rows: [],
+      cellRows: const [
+        "wwWWWwwwwwwwwwwwwwwwwWWWWWWWWWwwwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+        "wwwDWWwwwwwwwwwwwwwwwwwwwWwwwwWwwwDWWDDWwwwwWWWWWWwwwwwwwwww",
+        "wwwwwWwwwwwwwwwwwwwwwwwwwwwwDWWWWWWDwwwwwDWWWWWWWWWWWWWWWDDW",
+        "wwwwwDDwwwwwwwwwwwwwwwwwwwWWDWwwDDwwwwwwwwwwwWWWWWWWWWDWDWWW",
+        "wwwwwwDDwwwwwwwwwwwwwwwwwWwwwwwwwwwwwwwwwwwwwwwwwwwDWwwwwwww",
+        "wwwwwwwDWDwwwwwwwwwwwwwwWwwwwwwwwwwwwwwwwwwwOwwwwwwWDwwwwwww",
+        "wwwwwwwwwWDwwwwwwwwwwDDWWwwwwwwwwwwwwwwwwwwwOwwwwWWDwwwwwwww",
+        "wwwwwwwwwwDWwwwwwwwWWWWDwwwwwwwwwwwwwwwwwwwOOPOwWWDwwwwwwwww",
+        "wwwwwwwwwwwWWWWWWWWWDwwwwwwwwwwwwwwwwwwwSSShshhWWwwwwwwwwwww",
+        "wwwwwwwwwwwwwWWWWWWwwwwwwwwwwwwwwwwwwwwSSSsPhhSWwwwwwwwwwwww",
+        "WWWWWWwwwwwwwwDWWwwwwwwSSwwwwwwwwwwwwDSSOsshhhSWWwwwwwwwwwww",
+        "WWWWWWWWwwWDwwWWDwwSSwwwSDwwwwwwwwwDSSSsOOsshPSSWWWwwwwwwwww",
+        "DwwwwDWWWWWWWWWWWDwwDwwwwSwSwwwwwwDSSSSOsshsOSSSDWWDwwwwwwww",
+        "wwwwwwwWWWWWWWWWWWWWWWWWWDwwwwwwwwSSSSSSsshhhSSSSWWWDwwwwDWW",
+        "wwwwwwwwwwwwwDWWWWDwwwDWWWWWWWWWWwDSSSSDsshOWDSSSDDWWWWWWWWW",
+        "wwwwwwwwwwwwwwwwwwwwwwwDwwDDWWWWPSWSSSWSssOSDwSSSwwwDWWDwwww",
+        "wwwwwwwwwwwwwwSSwwwSSwwWwWDwWWWSSWSSSSWOshSSDwSSDwwwwwwwwwwW",
+        "wwwwwwwwwwwwwwwwwwwwSPSwDSwDWwDSWWSSDWDsshSSwDSSwwwwwwDWWWWW",
+        "wwwwwwwwwwwwwwwwwwwDwwwSWwWWPPPWWSwWDDOsshSDSDSSwwwwwWWWWWWW",
+        "wwwwwwwwwwwwwwwSDwwSSwwDSWWPPPPPODDDwwsshOSwSwSDwwwwWWWWWWWW",
+        "wwwwwwwwwwwwwwwSSSwwSSDwwDPPPPPPPWwwwOsshSSDSwSwwwDWWWwwwDDw",
+        "wwwwwwwwwwwwwwwwSSSPwwSwwWPOPPPPPWwwwssshSSDDWSDWWWWwwwwwwww",
+        "wwwwwwwwwwwwwwwwwwSSDwwwWWPPPssOPWWwssshhSSDWWSWWWDwwwwwwwww",
+        "wwwwwwwwwwwwwwwwwwwwwwwWDWOsOSsssWWwssshPWSwDWwwwwwwwwwwwwww",
+        "wwwwwwwwwwwwwwwwwwwwwwWWSPOSSPsssWWOssswwSSwSDDwwwwwwwwwwwww",
+        "wwwwwwwwwwwwwwwwwDDDWWWWWSSsPOOwPWOssshwDSSwSwwWWwwwwwwwwwww",
+        "wwwwwwwwwwwwwwwwWWWWWSSSSSsssshOODsshhhOSSDDSwwwwWWDwwwwwwww",
+        "wwwwwwwwwwwwwwDWWWDSSSSSSssSssshWKsshhOwSSwSSwwwwwwWWWWWWDWO",
+        "wwwwwwwwwwwwDWWWSSSSOKdOKOOssOshKsshhhSwSSwSDwwwwwwwWWWWWWWR",
+        "wwwwwwwwDWWWWWWSSSSKsdOsshhsssOsOsshhOSwSPwSwwwwwwwwwwDWDwwR",
+        "wwwwwwwwWWWWWWSSSDPsdssOshhhhOsssshhhSDwSwwPwwwwwwwwwwwwwORR",
+        "WWDWWDWWWWWWSDWwWWWdssssshhOdsssshhhhSwDSwwwwwwwwwwwwwwWRORR",
+        "WWWWWWWWWWWWWWWSWWddssssshhOOssshhhhOSwSSwwwwwwwwDWWWWWDRRdR",
+        "WWWWDDDWWWWWWWWDSWdddsshhhhdsssOhhhdSSwSDwwwwDDDWWWwwwORRRRR",
+        "WDwwwwwwwDWWWWWWPWddddhhhhPdssshhhhSSDwDwwwwWWWPwwwwwwRRRRRw",
+        "wwwwwwwwwwwDWWWWWWOddddhhhddssPhhhSSSwwwwwwWWwwwwwwwwRORRRww",
+        "wwwwwwwwwwwwwwDWDWdddddddddhssdhhhSSSWWWWWWWwDWwwwwwORRORPww",
+        "wwwwwwwwwwwwwwwwwDddddddddddsshhhSSSwwwDWWWPDWDWWWWORRRRWWWW",
+        "wwwwwwwwwwwwwwwwwSddddddddddhhhhOSSDDwwwwwwwwwwwwwwORRRWWWWW",
+        "wwwwwwwwwwwDSSSSSOdddddddddOdOOSSSSwSwwwwwwwwwwwwwRRORwwwwww",
+        "wwwwwwwwwwwDwSSSSdddddddOOdddOSSSSDwSwwwwwwwwwwwwRORRwwwwwww",
+        "wwwwwwwwwwwwwwwSPdddOddddddddOSSSSwwSDwwwwwwwwwwPRRRwwwwwwDW",
+        "wwwwwwwwwwwwwwwDsOddSddddddPwwSSSSwwSWwwwwwwwwwORROwwwwwWWWW",
+        "wwwwwwwwwwwwwwwOssddddddddPOwDSSSPwwSwwwwwwwwwwRORSWWWWWWWPw",
+        "wwwwwwwwwwwwwwwsssPddddddddwSDSSSwwWwwwwwWWWWWRdRWWWDDDwwwww",
+        "WwwwwwDWWWWwWWwssssdddddOssDSwDSSwwwwwWWWWDWWRdRWWwwwwwwwwww",
+        "WWWWWWWWWWWWDwwsssssOsssssODDWDSwDWWWWWWwwwwRRRwwwwwwwwwwwwD",
+        "WWWWWWWWwwwwwwwssssSssssssWSWWWWWWWWWwwwwwwOORwwwwwwwwDDDDWW",
+        "wwwDWWWwwwwwwwDsssSSsssssWSSWWWwwwwwwwwwwwWdRwwwwwwwwWWWWWWW",
+        "wwwwwDWwwwwwwwSsssSSssssWWSDWwwwwwwwwwwwwORdwwwwwDWWWWWWWWWW",
+        "wwwwwwWWwwwwwwSssOPOsssWWSwWWWWWWWwwwwwwwROwwWWWWWWWWWWWWWWW",
+        "wwDDDDWWWwwwwwSssWSDsPwwDPwwwwwwwWWWWWWWdRwWWWWWWWWwwwwwwwww",
+        "WWWWWWWWWWWWWSSssWPOsODwwwwwwwwwwwwwwwWOOWWWwwwwwwwwwwwwwwww",
+        "WWWWWWWDDDDwwDWsWWOsOWWWDDDDwwwwwwwwDWOOWWPwwwwwwwwwwwwwwwww",
+        "WWWWWWWwwwwwwDwsSssSDDDDDDWWWWDwwwwDWOOWWwwwwwwwwwwwwwDPDDDD",
+        "WWWWWWWWWDwwwSwsODSwwwwwwwwwwWWWWWWWROWwwwwwwwwwwwwwwwWWWWWW",
+        "WWWWWWWWWWWWWwwDWSwwDWWWWWWWWWWWWWWdWwWDWWWwwwWDDwwDWWWWWWWW",
+        "WWWWWWWWWWWWWWWWDWWWWWWWWWWWWWWWWWOWWWWWWWWWWWWWWWWDDWWDWWDD",
+        "WWWWWDDWWWWWWWwWDDWWDDWWWDWWWWWWWOWWwWWWWWWWWWOWWWWWWOWWWWWW",
+        "WWWWWWWWWWWWWWWWWWWWWWWPWWWWWWWWWWWWWWWWWWWWWWPWWWWWWOWWWWWW",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(300, 100),
+        LevelColorRun(303, 1675),
+        LevelColorRun(304, 830),
+        LevelColorRun(302, 255),
+        LevelColorRun(305, 225),
+        LevelColorRun(306, 180),
+        LevelColorRun(307, 90),
+        LevelColorRun(308, 60),
+        LevelColorRun(309, 60),
+        LevelColorRun(310, 120),
+        LevelColorRun(301, 5),
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+
+  static LevelDefinition _level71() {
+    return LevelDefinition( 
+      name: 'Formül 1',
+      rows: [],
+      cellRows: const [
+        "EEqqRccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "ccccccccccccccccccccccclcccccccccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccccWWlcccccccccccccccccccccccccccccccccccc",
+        "ccccccccccccccccccWWWWWWWccccccccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccccccccccccccccccccllWccccccccccccWccccccc",
+        "ccccccWcccccccccccccccccccccclCcccclWWWWWCcccccccccWWlcccccc",
+        "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccClcccccccccccccCWcccccccccccccccccccccccc",
+        "ccccccccccccccccccccccccccccccccccCcccccccccccccWccccccccccc",
+        "ccccccccccccWlccccccccccccccccccccccccccccccccCWWWCccccccccc",
+        "cccccccccccccccccccccccmmccccddccccccccccccccccccccccccccccc",
+        "cccccccccccccccccccccccmmccccddGcccdcccccccccccccccccccccccc",
+        "cccccccccccccccccccccccmmcccmmGGcccdcccccccccccccccccccccccc",
+        "CCCCCCCCCCCCCCCCCCCCCCCmmdddddddCmdddCCCCCCmCCCCCCCCCCCCCCCC",
+        "CCCCCCCCCCCCCCCCCCCCCCCmmdddmmmGCmdddCCCCCmmmCCCCCCCCCCCCCCC",
+        "CCCCCCCCCCCCCCCdddCCCCmmmdddddddCmmmdCCmmmmmmCCCCCCCCCCCCCCC",
+        "CCCCCCCCCCCCmmCdddCCCCmdddddGGGmdddddCCmmmmmmCdCCCCCCCCCCCCC",
+        "CCCCCCCCCCCmmmCdddmmmCmmGmdddddddddddmCmmdmmddddCCCCCCCCCCCC",
+        "CCCCCCmmmmmmmmCdmGGmmddmmGddGmGGdmmmddcmmGGGdGddCCCCCCmmmCCC",
+        "CCCCCCmmmmmmmmCdmmGGdddmmGdddddddmmmddcmmdddddddCCCCCCmmmCCC",
+        "CCCCCddddmmmmddddddddddmGGddddddddddddcddmGmdGddddddCCmmmddd",
+        "CmmmCddddddmmddddddddddmGGdddddddGGGddeddGGGdGddddddCdddmddd",
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeGmllGeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeRGGGGGReeeeeeeeeeeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeRggglgggReeeeeeeeeeeeeeeeeeeeeeeee",
+        "EEEEEEEEEEEEEEEEEEeEeEEEeRggggggggggqEeEeeeEEeeEeeEEEeEEEeeE",
+        "eeeeeeeeeeeeeeeeeeeeeeegRGGGGGWGGGGGRgeeeeeeeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeeeeeeeeegRGGGGGGGGGGGGGRReeeeeeeeeeeeeeeeeeeee",
+        "EEEEEEEEEEEEEEEEEEEEEWWgggggggggggggggWWEEEEEEEEEEEEEEEEEEEE",
+        "eeeeeeeeeeeeeeeeeeeqRRgggggggglggggggggRRqeeeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeeeeegRRGGGGGGGGGGGGGGGGGGGRRgeeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeeeeeeegRRGGGGGGGGGGlGGGGGGGGGGRRgeeeeeeeeeeeeeeee",
+        "EEEEEEEEEEEEEEEEWWWgggggggggggggggggggggggWWWEEEEEEEEEEEEEEE",
+        "eeeeeeeeeeeeeeqRRRgggggggggggglggggggggggggRRRqeeeeeeeeeeeee",
+        "eeeeeeeeeeeeegRRRGGGGGGGGGGGGGWGGGGGGGGGGGGGRRRgeeeeeeeeeeee",
+        "eeeeeeeeeeeegRRRGGGGGGGGGGGGGGGGGGGGGGGGGGGGGRRRgeeeeeeeeeee",
+        "EEEEEEEEEEEWWWWgggggggggggggggWgggggggggggggggWWWWEEEEEEEEEE",
+        "EEEEEEEEEeWWWlggggggggggggggggWgggggggggggggggglWWWeEEEEEEEE",
+        "EEEEEEEEgWWWmGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWgEEEEEEE",
+        "eeeeeeegRRRGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGRRRgeeeeee",
+        "eeeeeeRRRRgggggggggggggggggggggggggggggggggggggggggRRRReeeee",
+        "eeeeqRRRRgggggggggggggggggggggWgggggggggggggggggggggRRRRqeee",
+        "EEEgWWWWGGGGGGGGGGGGGGGGGGGGGGWGGGGGGGGGGGGGGGGGGGGGGWWWWgEE",
+        "EEgWWWWGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWWWgE",
+        "EWWWWWggggggggggggggggggggRRggllgggggBgggggggggggggggggWWWWW",
+        "RRRRRgggggggggggggggggggBBBllllWllgBBBggggggggggggggggggRRRR",
+        "RRRRGGGGGGGGGGGGGGGGGGGGBllllllllllllGGGGGGGGGGGGGGGGGGGGRRR",
+        "RRRGGGGGGGGGGGGGGGGGGGGGGBBBBBBBBBBBlGGGGGGGGGGGGGGGGGGGGGRR",
+        "WWgggggggggggggggggggBBBBBllRRRRRRgllBBBBggggggggggggggggggW",
+        "WggggggggggggggggggggBBBBRBBBBlWBqlRRBBBBGGGGGGGGGGGGGGGGGGg",
+        "GGGGGGGGGGGGGGGGGGGGGBBBBBBBllllBlBBGBBBBGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "ggggggggggggggggggggggggggggggmmgggggggggggggggggggggggggggg",
+        "ggggggggggggggggggggggggggggggWlgggggggggggggggggggggggggggg",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGWWGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+        "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(311, 575),
+        LevelColorRun(312, 700),
+        LevelColorRun(313, 50),
+        LevelColorRun(314, 120),
+        LevelColorRun(315, 175),
+        LevelColorRun(316, 475),
+        LevelColorRun(317, 170),
+        LevelColorRun(318, 10),
+        LevelColorRun(319, 55),
+        LevelColorRun(320, 100),
+        LevelColorRun(321, 95),
+        LevelColorRun(322, 840),
+        LevelColorRun(323, 235),
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+    );
+  }
+
+  static LevelDefinition _level72() {
+    return LevelDefinition(
+      name: 'Köprü',
+      rows: [],
+      cellRows: const [
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "...............RR...........................................",
+        "...............RRR.........................RRR..............",
+        "...............ROR.........................ROR..............",
+        "...............ROR.........................ROR..............",
+        "..............ROOO..........................O.R.............",
+        "..............R.O.R.......................R.O.R.............",
+        "..............R.O.R.......................R.O.R.............",
+        ".............RR.O.RR.....................RR.O.RR............",
+        "............RRR.O..RR...................RR..O.RRR...........",
+        "............RRR.O..RR...................RR..O.RRR...........",
+        "...........R.RR.O..R...................P.R..O.RR.R..........",
+        "..........PR.RR.O..R.RP...............PR.R..O.RR.RP.........",
+        ".........R.R.RR.O..R.P.R.............R.P.R..O.RR.R.R........",
+        "........RR.R.RR.O..R.P.RR...........RR.P.R..O.RR.R.RR.......",
+        ".......R.R.R.RR.O..R.P.R.R.........R.R.P.R..O.RR.R.R.R......",
+        "......R..R.R.RR.O..R.P.R..R.RR.RR.R..R.P.R..O.RR.R.R..R.....",
+        "......R..R.R.RR.O..R.P.R..R...R...R..R.P.R..O.RR.R.R..R.....",
+        "......R..R.R.RR.O..R.P.R..R...R...R..R.P.R..O.RR.R.R..R.....",
+        "......R..R.R.RRPOP.R.P.R..R...R...R..R.P.R.POPRR.R.R..R.....",
+        "......R..R.R.RPOOO.R.P.R..R...R...R..R.P.R.OOOPR.R.R..R.....",
+        "....PPPPPPPPPPOOROPPPPPPPPPPPPPPPPPPPPPPPPPOROOPPPPPPPPPP...",
+        ".....RRRRRRRRRORORORRRRRRRRRRRRRRRRRRRRRRRORORORRRRRRRRR....",
+        ".........R.....OOO.....R......R......R.....OOO.....R........",
+        "...............OOO.........................OOO..............",
+        "...............OOO.........................OOO..............",
+        "...............OOP.........................OOO..............",
+        "...............ROR.........................ROR..............",
+        "...............ROR.........................ROR..............",
+        "...............ROR.........................ROR..............",
+        "..............PROR.........................RORP.............",
+        "..............RRRRR.......................RRRRR.............",
+        "......cccccccccccccccccccccccccccccccccccccccc.CCCCCCcc.....",
+        ".......cccccCCCCCcccCCCCCcccccccccccCCCCCCCCCccccccccc......",
+        "..............cccccccccccccccccccccccccccCCCCCccc...........",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(330, 280),
+        LevelColorRun(331, 100),
+        LevelColorRun(332, 85),
+        LevelColorRun(333, 30),
+        LevelColorRun(334, 75),
+      ],
+      paintOrder: LevelPaintOrder.rowSnake,
+      hasChainDecoration: true,
+    );
+  }
+
+  static LevelDefinition _level73() {
+    return LevelDefinition( 
+      name: 'Para Torbası',
+      rows: [],
+      cellRows: const [
+        "yy..........................................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+        "................................yy.mm.......................",
+        ".............................O.Oyyym........................",
+        ".......................O.YYOYO..YyyYO.......................",
+        ".....................SOYYYYdOOYYssOOOO......................",
+        "...................SOSOsYYOydOsOOYOOOmOmO...................",
+        "...................SddYOYOOYyYYOOsssOOSddm..................",
+        "...................OOdymOYYsYYOSSmssSSsOOO..................",
+        "...................ymSSSdOOOOySSSmSssSmmd...................",
+        ".....................OsSdyssssSSSmSssmmd....................",
+        "......................ydSmsySsmSmmssdds.....................",
+        "......................OySmyysSSSdSmmmsO.....................",
+        ".......................OmmmmmmSmOmSOmO......................",
+        ".......................OOOOmmOOOOmOOOO......................",
+        ".......................OOdOOdOSdOddOOO......................",
+        ".......................OddmmmOddOddddO......................",
+        ".......................OmOmmOdOOdOmOmO......................",
+        "......................OsSsmOOmmmOmmmOmO.....................",
+        ".....................OsSSysdOsSmmdOsmmmO....................",
+        "....................OmmOsyOdmsSSsOOSSdddO...................",
+        "...................OysSysyOOsSyysmdOSsmmmO..................",
+        "..................OymsyyyymOySSsssdOssSmdSO.................",
+        ".................OyssSsyssdmyySyssOOmSSmmmSO................",
+        ".................mssyyyysymSSggysSsssssSmmmd................",
+        "................OysyyysyyyyyygegssssssSSSmmsO...............",
+        "...............dysysyysSyyyyggeggyssssmsmmmms...............",
+        "...............OysmyySyyyygyeeeeeegssssSSSdmSO..............",
+        "..............yyssyyyyyyygeeeeeeeeegsssssSmmmSs.............",
+        "..............OySyyyyyyygeeeggeggeeegssssSSmdSO.............",
+        "..............ysmmyyyyyygeeeygegyeeegssssSSddmS.............",
+        ".............OymssyyyyyygeeeggegyyssssssSSdmmdSO............",
+        ".............OysmssyyyyydeGGGeGgyssssssssSmmdmSO............",
+        ".............OsssyyyyyyyygGGGGGGeegsssSssSSmmmmO............",
+        ".............ysssSsyyyyyyyggeGGGGGGgsssssSSmmmmS............",
+        ".............ySsssSmyyyssyyyygGeGGGGgSSsSdmSmmmS............",
+        "............OysssssmySssyyyysgGggeGGessmsdSSmmmSO...........",
+        "............OySssSssysmseeegsgGgsgGGesmsSSSmmmmSO...........",
+        "............OySsssSSmsSseGGGsgGgsgGGGsmsdmmmmmmsO...........",
+        "............OySSdsssmmysgGGGegGgegGGgSsddSSmdmmSO...........",
+        "............OySSmsSssSsssgggggggggggsSsmSSdmmmdSO...........",
+        ".............ydSsddmssssssgGGgggGGgssSSSSdddddds............",
+        ".............smdSSdSsSsSsmsssgggsssmsSSmSmdmmdmS............",
+        ".............OSSSSSSSssssssssgGgsssSSSSSSmmmmmmO............",
+        "............OySSSSddSSSsmssssssssSSSmSSSmddmmmmSO...........",
+        "............ySSSSSSdmSSSmSSSSSdmSSSddSSmmdmmmmmms...........",
+        "...........OySSdmmSSdSddSSSSSSmdSSSSSddmdmmmmdmmSO..........",
+        "...........OmSSdmmmSdmSSSSSSSdSSSSSSmmmmdmmOOOdmmO..........",
+        "...........yOOsdOOdmmmdmmSSSSddmmmmmmmmdmdOdYYmssO..........",
+        ".........mydYyyYYdOOmmmmmmmmmmdmmmmmmdmmmOSSdyysYdY.........",
+        ".........OSYyyYYYsO.OSssyOOmmmmmmmmmddsdddOSsyYdYYdO........",
+        ".........OmOOOOddmOyYYyysYds..sy....OOYyysYdOYdYOOdd........",
+        "..........dOOOOO..OysdyYYdYS........OdyyYYYydO.OOOO.........",
+        "...................mdYdYmddO.........OYdYYddO...............",
+        ".....................OOOOy..................................",
+        "............................................................",
+        "............................................................",
+        "............................................................",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(340, 190),
+        LevelColorRun(341, 245),
+        LevelColorRun(342, 225),
+        LevelColorRun(343, 245),
+        LevelColorRun(344, 135),
+        LevelColorRun(345, 175),
+        LevelColorRun(346, 55),
+        LevelColorRun(347, 70),
+        LevelColorRun(348, 45),
+        LevelColorRun(349, 50),
+      ],
+      paintOrder: LevelPaintOrder.centerOut,
+    );
+  }
+
+  static LevelDefinition _level74() {
+    return LevelDefinition( 
+      name: 'Van Gogh',
+      rows: [],
+      cellRows: const [
+        "OOOOOOOOOOggOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OjjOGGOjjBBgBjjBGGOjjOjjOGGBGGgggBjjOggOggOggBGGBbbBggObbOgg",
+        "OjjOGGOjjBggBjjBGGOjjOjjOGGBGGgggBjjOggOggOggBGGBbbBggObbOgg",
+        "OBBOBBOOOOBBOBBOBBOBBOOOOOBOBBOOOOBBOBBOBBOBBOBBOBBOBBOBBOBB",
+        "OggOggOggOggBjjBjjOggOGGOggBggBGGBggOggOjjBjjJjjOggBggOGGOgb",
+        "OggOggOggOggBjjBjjOggOGGOggBggBGGOggOggOjjBjjJjjOggBggOGGObb",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OGGOggOGGOggBGGBggOggOggOggBggBBBOggOggOjjBggJggOggBgbOGGOjj",
+        "OGGOggOGGOggBGGBggObbOggOggBggBoBOoBOogOjjBggJggBggBbbOGGOjj",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OggOggOGGOggBGGJjjOggOggOgBBBBBooOBBOooOggBggJggOggBGGOggObb",
+        "OggOggOGGOggBGGJjjOggOggOBBOoBBooBoSOooOBBBggJggBggBGGOggObb",
+        "OBBOBBOBBOBBOBBOBBOBBOBBOOOOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBB",
+        "OGGOGGOggBggBggJggOggOgBOBoBooBssBssOooOBBOggJbgObbBjjOjjObb",
+        "OGGOGGOggOggBggJggOggOgBOJSBSSossBssOooOoBBGGJbbObbBjjOjjObb",
+        "OBBOBBOBBOBBOBBOBBOBBOBBOBBOBBBBBOBBOBBOBOOBBOBBOBBOBBOBBOBB",
+        "OGGOggOggOGGBbbJjjOggOBJOoSBSsossBjjOooOSBBBoJggOggBggObbOgg",
+        "OGGOggOggOGGBbbJjjOggOJJOSSBSsojjBjjOooOooOBBJggOggBggObbOgg",
+        "OBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOOBOBBOBBOBBOBBOBB",
+        "OggOggOggOjjBggJjjOggOSJOSSBsjojjBjjBjoOoBOoBJGGOGGBbbObbOgg",
+        "OggOggOggOjjBggJjjOggOoGOSGBoSBooOSjOjjOooOBoJGGOGGBbbObbOgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OggOjjOggOjjBggBggOjjOBBOBoBSGBJBBSjBjjOooBBoJggOGGBjgOggOgg",
+        "OggOjjOggOjjBggBggOjjOSBOJSBSSBBSBSSBjjOoBOsjJggOGGBggOggOgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OjjOggOggOggBjjBggOjjOSSOSjBSGBSjBjjBjSOsoBJSJggBggBggOGGOGg",
+        "OjjOggOggOggBjjBggOggOSGOSjBjSBSSBjSBSSOssBsjJggOggBggOGGOgg",
+        "OBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBBOBB",
+        "ObbOggOGGOjjBjjBggOggOoSOjjBjSBSSBSSOooOsjBSSJggOjjBggOGGOgg",
+        "ObbOggOGGOjjBjjBggOggOgGOSSBojBSSBooOooOBSBggJggOjjBggOGGOgg",
+        "OBBOBBOBBOJJOBBOBBOBBOBBOBBOBBBBBOBBOBBOoBOJJOBBOBBOBBOBBOJB",
+        "OggOjjOggOjjBjjBjgOggOgBOooBooBSSBoSOooOSoBjjJggObbBggObbObb",
+        "OggOjjOggOjjBjjBjgOggOgBOBSOSBBooOSSBoBOooBjjJggObbBggObbObb",
+        "OBBOBBOBBOBBOBBOBBOBBOBOOBBOBBOOBOBBOBBOBBOBBOBBOBBOBBOBBOBB",
+        "OggOjjOggOggBggJjjOggOggOooBoSBooBoBBSSOBjObbJGGBbbBggOggOgg",
+        "OggOjjOggOggBggJjjOjjOggOBBBooBooOBSBSSOjjOjJJGGObbBggOggOgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OggOGGOjjOjjBggJggOggOggOBoBooBoBOSSBJjOjgBjgJgBOjjBGGOggOgg",
+        "OggOGGOjjOjjBggBggOggOgBOJoOooBoSOSSOjjOggBjGJggOBjBGGOggOgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OggOggOggObbBggBjjOgjOBJOJgosSBSSOsGOjjOgBBjGBGGOGBBBgOggOgg",
+        "OggOggOggObbBggBjjOjjOJJOGgossBssOGGOjgOgGBjjBGGOGGBJBOggBgg",
+        "OBBOBBOBBOBBOBBOBOOBBOOOOOBOBBOBBOOOOBBOOBOBBOBBOBBOOOOOBOOB",
+        "OjjOggOjjBjjBggOGjOjGOJJOJsosjosBOGJOGgOGjBjGBjjOGGBGGOGgOGG",
+        "OjjOggOjjBjjBgGBjjOGGOGGOggojsosGOGjOggOGjBjJBjjBGGBJJOgGOGG",
+        "OBBOBBOBBOBBOBBOBBOBBOBBOBoBooBBBOBBOBBOBBOBBOBBOBBOBBOBBOBB",
+        "OjjOjjOggBggBGGBGjOGBOGjOBsossBGGOGGOGGOjjBJGJjjBggBGjOjjBgg",
+        "OjjOjjOggBggBGGBGjOBGOGjOGsosBBGGOGGOGGOjjBGjJjJOgGBjGOggBgg",
+        "OBBOBBOBBOBOOBBOOOOOBOOBOBBOOBOBOOBBOBBOBBOBBOBOOOBOBBOBBOBB",
+        "OjjOjjOggBgGBGGBGGOGGOjBOGBBGGBBGOgGOGGOjGBGjJJbOGGBGgOggOgg",
+        "OjjOjjOggBgGBGGBGGOGGOjBOGGOGBBGGOGGOGGOjJBjJOJgOGJBGGOggBgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OggOggObbBgGBGGBGGOGJOjJOGBOJJBggOGGOJjOGJBGJBggOGGBgGOggBgg",
+        "OggOggObbBGGOJGBGGOGJOBJOGGBJBBggOGGOGjOjGBGJBBGOJGBgGOggBgg",
+        "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+        "OjjOggObbBJGBBGBGGOGjOJGOGJBGGBGGOJGOBGOjjBjBBGJOgjBGgOJgBgg",
+        "OjjOggOgbBJGBGGBGGOGjOJJOGJBGGBGGOGGOJGOjjOGBBJjBGGBGgOggBgg",
+        "OBBOOOOOOOOOOOOOOOOOBOOOOOOOBBOOOOOOOOOOOBOOOOOOOOOOOOOBOOOO",
+        "ObbOggOggOGGBGBBJGOBjOGGOGGBjGBGGOGGOJJOGJBjGBJGOGGBGgOGgBgg",
+        "ObbOggOggOGGBGBBJGOJjOGGOGGBGGBGGOJGOGJOGGBjJJJGOGGBGgOggBgg",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(350, 1300),
+        LevelColorRun(351, 35),
+        LevelColorRun(352, 75),
+        LevelColorRun(353, 100),
+        LevelColorRun(354, 715),
+        LevelColorRun(355, 295),
+        LevelColorRun(356, 110),
+        LevelColorRun(357, 555),
+        LevelColorRun(358, 330),
+        LevelColorRun(359, 85),
+      ],
+      paintOrder: LevelPaintOrder.diagonal,
+    );
+  }
+
+  static LevelDefinition _level75() {
+    return LevelDefinition( 
+      name: 'Yıldızlı Kedi',
+      rows: [],
+      cellRows: const [
+        "ddddddddddddddddddddddddddddDDDDDDDDDDDDddddsssssDDDDDDDDDDD",
+        "ddddddddddddddddddddddddddddDDDDDDDDDDdddddsssssDDDDDDDDDDDD",
+        "dddddddddddddDddDDDddDSddddDDDDDDDDDDdddddsssssssDDDDDDDDDDD",
+        "dddddddddddddddDDDDDDDdddDDDDDdddDDddddssssssssDDDDDDDDDDDDD",
+        "ddddddddddddDDDDDDdddddddDDBDddddddddDssssDssssDDDDDDDDDDDDD",
+        "ddddddddddDDDDDDddddddddddddddddddddssssDDsssccDDDDDDDDDDDDD",
+        "ddddddddddddDDDDDDddddddddddddddddddsdDDDDDDDDDDDDDDDDDDDDDD",
+        "dddddddddddDDsssDDDdddddddddddddddddddDDDDDDDDDDDDDDDDDDDDDD",
+        "ddddddddddDDssCsssDddddddddddBdddDDdDDDDDDDDDDDDDDDDDDDDDDDD",
+        "dddddddddDDsttCttsDDdddddddddddDDddDDDDDDSDDDDDDDDDDDDDDDDDD",
+        "dddddddddDDstCCCCsstdddddddddDDddDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "ddddddddDsDCCwwwCCCtsddddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "ddddCddddDDstCCCtssDddddddBddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "ddddddddddDsstCttsDDdddddDDDDDDDDDDDDDDDDDDDDDDDDDwDDDDDDDDD",
+        "ddddddddddDDssCtssDddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+        "dddddddddddDDDsDDDDdDDDddsDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDs",
+        "dddddDDDDDDdDDDDdddddddDDDtDDDsDDDBDDDDDDDDDDDDDDwDDDsDDssst",
+        "dddDDDDDDDDdddddDDDdDDDDDDDDtcDDDDDDDDDDDDDDBDDDDDDDDDsssstt",
+        "ddDDDDDDDDDDDDDDDcDDDDDDDDDsBoBBoDDDDDDDDwoBBDDDDDDDsssCsttt",
+        "DDDDDDDDDDDDDDDDDDDDDDDDDDDoooBoBooooBDdccoBBDDDDDDssssssttt",
+        "DDDDDDDDDDDDDDDDDDDDDDDDSoSBoocddoBBooocoBBBBDDDDsssssssttts",
+        "DDDDDDDDDDDDDDDDDDDtDsDDcocBBSddSBoBBooocBcBBDDDssssssssttss",
+        "DDDDDDDDDDDDDDDDDwDDDDDcBoSBBBocccBBBBBBcBBSBDDsssssssstttss",
+        "DDDDDDwDDDDDDDDDDDDDSDcBBdBooBcBSSBSBBBSSBBBBDsssssstttttsss",
+        "DDDDDDDDDDDDDDDDDDDDCoccooBcoSBdSBSdBBSBSSooSsssssstttttsttt",
+        "DDwDDDDDDDdDDDDDwDwDDoccoBsdoBBSdSSdSBBSSooBDssstttttssstttt",
+        "sDDDDDDDDDDDDDDDDDDDDoccBSSBssBBdSodSBBooBBSssttttsssssstttt",
+        "sssDDDDDDDDDDDDDDDDdDSocBBSBSBBSdSBdSSBBBBddssttsssssssttsss",
+        "ssssDDDDDDDDDDDDDDDDoBoccBBBBBsoddBdSSSSSddSsssssssssstttssD",
+        "sssssDDDDDDDDDDDDDDDdBccoBBBBBsSSdSddSSSdSSSssssssssttttsDDD",
+        "ssssssDDDDDDDDDDDDDwoocoBBBBssSSBSSdSSSSdSSssssssttttttsDDDD",
+        "sssssssssDDDDDDDcDDDDcccoBBBsssSSSSSBSddDSSssssttttttsssDDDD",
+        "sssssssssssssssDDDDDDcccocBBBcSBBBBSBSddSSsssssttssssssDDDDD",
+        "sssssssssssssssssssssocoocBBBBcBBSoSSSddSssttttttssssDDDDDDD",
+        "ssssssssssscssSssssssocoooBBBBSSBBBSSddSsstStttttCDDDDDDDsDD",
+        "ttttsssssssssssssssssocccoBBBBBBBSSSDSSStttttttttDDDDDDsssss",
+        "DDtttssssstttssssssssoocoooBBBBSBSSddddttttttttttDDDDswsssss",
+        "ssssttssssstttttssssscocoooBBcBBBSSdDSSttttttDDDDDDDssstssDt",
+        "DDDDDtttttttttttttCoBoooocoBBBBSSSdSSddSttsDDDDsssssssssssCt",
+        "ssDDDttttttttttttttooooooooBBSBBSBBBBSSSSssssssssssssssstCtt",
+        "sDsDDDDsttttttttttBcooBBooBBBSBBSBBBSSSSSssssssssssCsCCCCttt",
+        "sDDDDDsDDDDtttDstcsBococooBBBBocBBBdSSSdsssssssCCCCCCCCtttts",
+        "sDDsDDDDDDDDsDDDsDoBBBBocBoBBBBSSSBBBBBSSsCCsCCCCCCCCtttttss",
+        "DsDDDsDsDssDDssDDoocoBooBBoBBBBBBBSBBddSBCCCCCCCCCCtttttssss",
+        "DDDDDssDssDDDssDsoDoooooBBBBBBSBSBSSSdDSBoCCCCCCttttttsssCss",
+        "DDDDsDsssDssDDDsBDooBBBBBooBBoSSSSBBddDSoBCCCCCttttsssssssss",
+        "DDDDDDsDssDDDDDttsooooBBBBBBBBBSSSSSSddSBBCCtttttsssssssssss",
+        "DDDDDDDDDDDDsttttooooBoBBBBBBBSSSSSSSdSBSBBBttsssssswssssssD",
+        "sDDsDDDDDDttttttttooBBBBBBBBSssSSBBSSdSSSSBBssssssssssssssDD",
+        "DsDDsDDsDDtttstttBsooBBSBoBBssBBdSddSddSBSBBBssssssssssDsDDD",
+        "DDDDsDsDDDtwDttDDDcoocBSBoBBSssDSBoBBdddSBSBSSssssssssDDDDDD",
+        "DDDDDDDDDDDDDDDDDDooBBSBBoBBsBBDsssSSddddSSSSBsBsscDDDDDDDDD",
+        "DDDDDDDDDDDDDDDDDDdBooBddBoBssBsdBSSddSSSSdSSBBDDDDDDDDDDDDD",
+        "DDDDDDDDDDDDtDDDDBooBoSBSsBoSBDoooBBBBBddSSdSSSBDDDDDDDDDDDD",
+        "DDDDDDDDDDDDDDDDDooooBBSDdBtssdooBBBSSSSddSdSSSBSDDDDDDDDDDD",
+        "DDDDDDDDDDDDDDDDooBBBBSSSdSsdoooooSSBSSSSSSddSSBBDDDDDDDDDDD",
+        "DDDDDDDDDDDDDDoooBBSBBSSSdddoBoBBBBSSSSSDSddddSBBDDDDDDDDDDD",
+        "DDDDDDDDDdDDDoooSSSSBSSSSddoooBBBBSSSSSSddddddSBoBDDDDDDDDDD",
+        "DDDDDDDDDDDDDoSSSSSSSSSSdddocoSSSSSSSSSdddSDddSSBSDDDDDDDDDD",
+        "dddddddddddddoddSSdSddddddooBBSSSSSSSddddddddddddddddddddddd",
+      ],
+      gridRows: 60,
+      gridCols: 60,
+      colorRuns: const [
+        LevelColorRun(360, 555),
+        LevelColorRun(361, 1275),
+        LevelColorRun(362, 560),
+        LevelColorRun(363, 250),
+        LevelColorRun(364, 285),
+        LevelColorRun(365, 345),
+        LevelColorRun(366, 180),
+        LevelColorRun(367, 65),
+        LevelColorRun(368, 70),
+        LevelColorRun(369, 15),
+      ],
+      paintOrder: LevelPaintOrder.diagonal,
     );
   }
 
