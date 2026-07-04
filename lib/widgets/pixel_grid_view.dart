@@ -340,6 +340,106 @@ class _PixelGridPainter extends CustomPainter {
       );
     }
 
+    // Draw custom wooden sign obstacles if any exist
+    final obstacleCells = cells.where((cell) => cell.isObstacle).toList();
+    if (obstacleCells.isNotEmpty) {
+      int minRow = obstacleCells.map((c) => c.row).reduce((a, b) => a < b ? a : b);
+      int maxRow = obstacleCells.map((c) => c.row).reduce((a, b) => a > b ? a : b);
+      final h = (maxRow - minRow + 1) * cellSize;
+      final y = origin.dy + minRow * cellSize;
+
+      // Group columns that contain obstacles
+      final obstacleCols = obstacleCells.map((c) => c.col).toSet().toList()..sort();
+      final segments = <List<int>>[];
+      if (obstacleCols.isNotEmpty) {
+        var currentSegment = <int>[obstacleCols.first];
+        for (int i = 1; i < obstacleCols.length; i++) {
+          final col = obstacleCols[i];
+          if (col == currentSegment.last + 1) {
+            currentSegment.add(col);
+          } else {
+            segments.add(currentSegment);
+            currentSegment = [col];
+          }
+        }
+        segments.add(currentSegment);
+      }
+
+      for (final segment in segments) {
+        final startCol = segment.first;
+        final endCol = segment.last;
+        final x = origin.dx + startCol * cellSize;
+        final w = (endCol - startCol + 1) * cellSize;
+
+        // 1. Draw 3D shadow below
+        final shadowPath = Path();
+        final shadowOffset = cellSize * 0.18;
+        final sx = x;
+        final sy = y + shadowOffset;
+        shadowPath.moveTo(sx, sy + h * 0.5);
+        shadowPath.lineTo(sx + h * 0.45, sy);
+        shadowPath.lineTo(sx + w - h * 0.45, sy);
+        shadowPath.lineTo(sx + w, sy + h * 0.5);
+        shadowPath.lineTo(sx + w - h * 0.45, sy + h);
+        shadowPath.lineTo(sx + h * 0.45, sy + h);
+        shadowPath.close();
+        canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.65));
+
+        // 2. Draw main wood sign
+        final signPath = Path();
+        signPath.moveTo(x, y + h * 0.5);
+        signPath.lineTo(x + h * 0.45, y);
+        signPath.lineTo(x + w - h * 0.45, y);
+        signPath.lineTo(x + w, y + h * 0.5);
+        signPath.lineTo(x + w - h * 0.45, y + h);
+        signPath.lineTo(x + h * 0.45, y + h);
+        signPath.close();
+
+        final woodPaint = Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              const Color(0xFFDCA06F),
+              const Color(0xFFB5703C),
+              const Color(0xFF8F4F24),
+            ],
+          ).createShader(Rect.fromLTWH(x, y, w, h));
+        canvas.drawPath(signPath, woodPaint);
+
+        // 3. Draw inner wood highlights/details
+        final detailPaint = Paint()
+          ..color = const Color(0xFFE5A670).withOpacity(0.3)
+          ..style = PaintingStyle.fill;
+        final lightStrip = Path()
+          ..moveTo(x + 2.0, y + h * 0.5)
+          ..lineTo(x + h * 0.45 + 1.0, y + 2.0)
+          ..lineTo(x + w - h * 0.45 - 2.0, y + 2.0)
+          ..lineTo(x + w - 4.0, y + h * 0.5)
+          ..lineTo(x + w - h * 0.45 - 2.0, y + h * 0.5 + 2.0)
+          ..lineTo(x + h * 0.45 + 1.0, y + h * 0.5 + 2.0)
+          ..close();
+        canvas.drawPath(lightStrip, detailPaint);
+
+        // 4. Draw bevel border outline
+        canvas.drawPath(
+          signPath,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.5
+            ..color = const Color(0xFF6E3613),
+        );
+
+        // 5. Draw horizontal wood planks lines
+        final plankPaint = Paint()
+          ..color = const Color(0xFF6E3613).withOpacity(0.4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
+        canvas.drawLine(Offset(x + h * 0.45 * 0.5, y + h * 0.35), Offset(x + w - h * 0.45 * 1.2, y + h * 0.35), plankPaint);
+        canvas.drawLine(Offset(x + h * 0.45 * 0.5, y + h * 0.65), Offset(x + w - h * 0.45 * 1.2, y + h * 0.65), plankPaint);
+      }
+    }
+
     // 7. Draw static orbit slots counter text (e.g. 5/5) at bottom-left corner of track
     final availableSlots = (5 - activeMotorsCount).clamp(0, 5);
     final pullText = '$availableSlots/5';

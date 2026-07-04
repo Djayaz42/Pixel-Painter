@@ -891,8 +891,14 @@ class _LevelGridState extends State<_LevelGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final categoryIndex = LevelSelectScreen._categories.indexOf(widget.category);
+    final isLastCategory = categoryIndex == LevelSelectScreen._categories.length - 1;
+    final categoryLength = isLastCategory
+        ? (LevelData.levels.length - widget.category.startIndex)
+        : (LevelSelectScreen._categories[categoryIndex + 1].startIndex - widget.category.startIndex);
+
     final levels = [
-      for (var offset = 24; offset >= 0; offset--)
+      for (var offset = categoryLength - 1; offset >= 0; offset--)
         if (widget.category.startIndex + offset < LevelData.levels.length)
           (
             index: widget.category.startIndex + offset,

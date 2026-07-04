@@ -133,8 +133,13 @@ class MotorPathEngine {
 
       for (final row in rowIndexes) {
         final cell = cellAt(row, col);
-        if (cell != null && cell.isTarget && !cell.isPainted) {
-          return cell;
+        if (cell != null) {
+          if (cell.isObstacle) {
+            return null; // Shot blocked by obstacle
+          }
+          if (cell.isTarget && !cell.isPainted) {
+            return cell;
+          }
         }
       }
 
@@ -152,8 +157,13 @@ class MotorPathEngine {
 
       for (final col in colIndexes) {
         final cell = cellAt(row, col);
-        if (cell != null && cell.isTarget && !cell.isPainted) {
-          return cell;
+        if (cell != null) {
+          if (cell.isObstacle) {
+            return null; // Shot blocked by obstacle
+          }
+          if (cell.isTarget && !cell.isPainted) {
+            return cell;
+          }
         }
       }
 
