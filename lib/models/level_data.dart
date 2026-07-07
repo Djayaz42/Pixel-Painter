@@ -10384,12 +10384,12 @@ static LevelDefinition _level86() {
   
   
   
-        static LevelDefinition _level89() {
+          static LevelDefinition _level89() {
     return LevelDefinition(
       name: 'Pembe Tilki',
       rows: [],
       cellRows: const [
-        "...eeepeeeeeeeeTeeeeTeTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
+        "...eeppeeeeeeeeeeeeeeeTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
         "ppeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeepTeeeeeeTpeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeeeeeeeeeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -10444,11 +10444,11 @@ static LevelDefinition _level86() {
         "eeeeeeeeeeeeeM§LL§§§§§§§§LMMMeTKMeM§§eMeM§MMMML§§§L§§MepeeeT",
         "eppeeeeeeeeeeMMMM§§§§§§§§§MMML§§§§LLLL§§§LMMML§§§MMMM[peeeee",
         "TeeeeeeeeeeeeepeeepeeMMMMMMMMMMMMMMMMMMMMMMMMepepepppeeeeeee",
-        "eeeeeeeeeee###eeeeeeppeTeeTee###eTeepepeepeTeee###eeeeeeeeee",
-        "eeeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeeT",
+        "eeeeeeeeeeeeeTeeeeeeppeTeeTeeeeeeTeepepeepeTeeeeeeeeeeeeeeee",
+        "eeeeeeeeeeeTpeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeeeeeT",
         "eeeeeeeeeee###eeeeepeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeep",
-        "peeeeeeeeeeeeeeeeeepeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        "eeeepeeepTepeeeTeeeeeeeeepepepeeepeeeeeeTpeepeeTeeTTepeeeeee",
+        "peeeeeeeeee###eeeeepeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeee",
+        "eeeepeeepTe###eTeeeeeeeeepepe###epeeeeeeTpeepee###TTepeeeeee",
       ],
       gridRows: 60,
       gridCols: 60,
