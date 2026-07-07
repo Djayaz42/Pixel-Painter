@@ -795,35 +795,67 @@ class _GameScreenState extends State<GameScreen>
       return false;
     }
     
-    final int startLinkIdx;
-    final int endLinkIdx;
-    switch (side) {
-      case MotorSide.bottom:
-        startLinkIdx = 0;
-        endLinkIdx = 18;
-        break;
-      case MotorSide.right:
-        startLinkIdx = 19;
-        endLinkIdx = 35;
-        break;
-      case MotorSide.top:
-        startLinkIdx = 36;
-        endLinkIdx = 54;
-        break;
-      case MotorSide.left:
-        startLinkIdx = 55;
-        endLinkIdx = 71;
-        break;
+    final List<int> activeIndices;
+    if (_levelIndex == 90) {
+      if (side == MotorSide.left) {
+        activeIndices = [for (int i = 0; i < 19; i++) i, for (int i = 55; i < 72; i++) i];
+      } else {
+        activeIndices = [for (int i = 19; i < 36; i++) i, for (int i = 36; i < 55; i++) i];
+      }
+    } else {
+      final int startLinkIdx;
+      final int endLinkIdx;
+      switch (side) {
+        case MotorSide.bottom:
+          startLinkIdx = 0;
+          endLinkIdx = 18;
+          break;
+        case MotorSide.right:
+          startLinkIdx = 19;
+          endLinkIdx = 35;
+          break;
+        case MotorSide.top:
+          startLinkIdx = 36;
+          endLinkIdx = 54;
+          break;
+        case MotorSide.left:
+          startLinkIdx = 55;
+          endLinkIdx = 71;
+          break;
+      }
+      activeIndices = [for (int i = startLinkIdx; i <= endLinkIdx; i++) i];
     }
 
     double getLinkPos(int i) {
+      if (_levelIndex == 90) {
+        final int linkIdx;
+        if (side == MotorSide.left) {
+          linkIdx = (i < 19) ? i : (i - 55 + 19);
+        } else {
+          linkIdx = (i < 36) ? (i - 19) : (i - 36 + 17);
+        }
+        return 3.5 + (linkIdx / 35.0) * 53.0;
+      }
+      
+      final int startLinkIdx;
+      switch (side) {
+        case MotorSide.bottom:
+          startLinkIdx = 0;
+          break;
+        case MotorSide.right:
+          startLinkIdx = 19;
+          break;
+        case MotorSide.top:
+          startLinkIdx = 36;
+          break;
+        case MotorSide.left:
+          startLinkIdx = 55;
+          break;
+      }
       final idx = i - startLinkIdx;
       if (side == MotorSide.bottom || side == MotorSide.top) {
         return 4.2 + (idx / 18.0) * (_gridCols - 8.4);
       } else {
-        if (_levelIndex == 90) {
-          return 3.5 + (idx / 16.0) * 52.0;
-        }
         final double base = 5.5 + (idx / 16.0) * 37.0;
         if (_levelIndex == 52 && side == MotorSide.left) {
           return base + 8.0; // shifted down by 8 cells
@@ -832,7 +864,7 @@ class _GameScreenState extends State<GameScreen>
       }
     }
 
-    for (var i = startLinkIdx; i <= endLinkIdx; i++) {
+    for (final i in activeIndices) {
       if (_chainLinkHits[i] < 20) {
         final double center = getLinkPos(i);
         if ((index - center).abs() <= 1.7) {

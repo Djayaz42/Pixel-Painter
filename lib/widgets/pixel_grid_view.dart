@@ -273,13 +273,11 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 1: Draw odd/vertical links (behind)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
-        if (levelIndex == 67 || levelIndex == 90) {
+        if (levelIndex == 67) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
-          if (levelIndex == 67) {
-            if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
-            if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
-          }
+          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
         }
         if (linkIdx % 2 != 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
@@ -291,13 +289,11 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 2: Draw even/horizontal links (on top)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
-        if (levelIndex == 67 || levelIndex == 90) {
+        if (levelIndex == 67) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
-          if (levelIndex == 67) {
-            if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
-            if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
-          }
+          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
         }
         if (linkIdx % 2 == 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
@@ -730,18 +726,28 @@ class _PixelGridPainter extends CustomPainter {
     final int sideIdx;
     final int linkIdx;
 
-    if (i < 19) {
-      sideIdx = 0;
-      linkIdx = i;
-    } else if (i < 36) {
-      sideIdx = 1;
-      linkIdx = i - 19;
-    } else if (i < 55) {
-      sideIdx = 2;
-      linkIdx = i - 36;
+    if (levelIndex == 90) {
+      if (i < 19 || i >= 55) {
+        sideIdx = 3; // Left
+        linkIdx = (i < 19) ? i : (i - 55 + 19);
+      } else {
+        sideIdx = 1; // Right
+        linkIdx = (i < 36) ? (i - 19) : (i - 36 + 17);
+      }
     } else {
-      sideIdx = 3;
-      linkIdx = i - 55;
+      if (i < 19) {
+        sideIdx = 0;
+        linkIdx = i;
+      } else if (i < 36) {
+        sideIdx = 1;
+        linkIdx = i - 19;
+      } else if (i < 55) {
+        sideIdx = 2;
+        linkIdx = i - 36;
+      } else {
+        sideIdx = 3;
+        linkIdx = i - 55;
+      }
     }
     
     final bool drawAsEven;
@@ -752,12 +758,12 @@ class _PixelGridPainter extends CustomPainter {
     }
 
     final double linkOffset;
-    if (sideIdx == 0 || sideIdx == 2) {
+    if (levelIndex == 90) {
+      linkOffset = 3.5 * cellSize + (linkIdx / 35.0) * 53.0 * cellSize;
+    } else if (sideIdx == 0 || sideIdx == 2) {
       linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
     } else {
-      if (levelIndex == 90) {
-        linkOffset = 3.5 * cellSize + (linkIdx / 16.0) * 52.0 * cellSize;
-      } else if (levelIndex == 65) {
+      if (levelIndex == 65) {
         linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (rows - 8.4) * cellSize;
       } else {
         linkOffset = 5.5 * cellSize + (linkIdx / 16.0) * 37.0 * cellSize;
@@ -814,7 +820,7 @@ class _PixelGridPainter extends CustomPainter {
     final double linkWidth;
     final double linkHeight;
 
-    final double scale = (levelIndex == 90) ? 1.45 : 1.0;
+    final double scale = 1.0;
     if (drawAsEven) {
       linkWidth = 3.4 * cellSize * scale;
       linkHeight = 1.7 * cellSize * scale;
