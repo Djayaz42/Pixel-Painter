@@ -3646,9 +3646,13 @@ class LevelData {
           }
           cells.add(PixelCell(row: r, col: c, targetColorId: colorId, isObstacle: isObstacle));
         } else {
-          if (_charToColor.containsKey(char)) {
+          bool isObstacle = char == '#';
+          if (isObstacle) {
+            cells.add(
+              PixelCell(row: r, col: c, targetColorId: 0, isObstacle: true),
+            );
+          } else if (_charToColor.containsKey(char)) {
             var colorId = _charToColor[char]!;
-
             cells.add(
               PixelCell(row: r, col: c, targetColorId: colorId),
             );
