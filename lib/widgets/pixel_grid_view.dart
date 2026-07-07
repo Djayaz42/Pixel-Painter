@@ -755,7 +755,9 @@ class _PixelGridPainter extends CustomPainter {
     if (sideIdx == 0 || sideIdx == 2) {
       linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
     } else {
-      if (levelIndex == 65) {
+      if (levelIndex == 90) {
+        linkOffset = 3.5 * cellSize + (linkIdx / 16.0) * 52.0 * cellSize;
+      } else if (levelIndex == 65) {
         linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (rows - 8.4) * cellSize;
       } else {
         linkOffset = 5.5 * cellSize + (linkIdx / 16.0) * 37.0 * cellSize;
@@ -771,7 +773,7 @@ class _PixelGridPainter extends CustomPainter {
         x = origin.dx + (cols - 2.0) * cellSize; // shifted right by 1 cell (from cols - 3.0 to cols - 2.0)
         y = origin.dy + linkOffset + 1.0 * cellSize; // shifted down by 1 cell
       } else if (levelIndex == 90) {
-        x = origin.dx + (cols - 1.0) * cellSize; // shifted 2 pixels right (to col 58 / offset 59)
+        x = origin.dx + (cols - 3.0) * cellSize; // shifted 1 pixel left (to col 57)
         y = origin.dy + linkOffset;
       } else if (levelIndex == 71) {
         x = origin.dx + (cols - 3.0) * cellSize;
@@ -793,7 +795,7 @@ class _PixelGridPainter extends CustomPainter {
         x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (from 3.0 to 2.0)
         y = origin.dy + linkOffset + 11.0 * cellSize; // shifted down by 11 cells (2 additional cells down)
       } else if (levelIndex == 90) {
-        x = origin.dx + 1.0 * cellSize; // shifted 2 pixels left (to col 1)
+        x = origin.dx + 2.0 * cellSize; // shifted 1 pixel right (to col 2)
         y = origin.dy + linkOffset;
       } else if (levelIndex == 71) {
         x = origin.dx + 3.0 * cellSize;
@@ -812,12 +814,13 @@ class _PixelGridPainter extends CustomPainter {
     final double linkWidth;
     final double linkHeight;
 
+    final double scale = (levelIndex == 90) ? 1.45 : 1.0;
     if (drawAsEven) {
-      linkWidth = 3.4 * cellSize;
-      linkHeight = 1.7 * cellSize;
+      linkWidth = 3.4 * cellSize * scale;
+      linkHeight = 1.7 * cellSize * scale;
     } else {
-      linkWidth = 1.4 * cellSize;
-      linkHeight = 2.2 * cellSize;
+      linkWidth = 1.4 * cellSize * scale;
+      linkHeight = 2.2 * cellSize * scale;
     }
 
     final outerRect = Rect.fromCenter(center: Offset.zero, width: linkWidth, height: linkHeight);

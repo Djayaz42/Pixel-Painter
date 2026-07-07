@@ -821,6 +821,9 @@ class _GameScreenState extends State<GameScreen>
       if (side == MotorSide.bottom || side == MotorSide.top) {
         return 4.2 + (idx / 18.0) * (_gridCols - 8.4);
       } else {
+        if (_levelIndex == 90) {
+          return 3.5 + (idx / 16.0) * 52.0;
+        }
         final double base = 5.5 + (idx / 16.0) * 37.0;
         if (_levelIndex == 52 && side == MotorSide.left) {
           return base + 8.0; // shifted down by 8 cells
