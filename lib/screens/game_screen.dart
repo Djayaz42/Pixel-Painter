@@ -193,11 +193,13 @@ class _GameScreenState extends State<GameScreen>
 
   LevelDefinition get _level => LevelData.levelAt(_levelIndex);
 
-  bool get _isStarLevel => _levelIndex == 84 || _levelIndex == 86;
+  bool get _isStarLevel => _levelIndex == 84 || _levelIndex == 86 || _levelIndex == 93;
 
   List<List<int>> get _starCenters {
     if (_levelIndex == 88) {
       return const [[56, 12], [56, 30], [56, 48]];
+    } else if (_levelIndex == 93) {
+      return const [[6, 6], [6, 52], [53, 6], [53, 52], [55, 29]];
     } else {
       return const [[7, 7], [7, 52], [52, 10], [52, 49]];
     }
