@@ -9,7 +9,7 @@ void main() {
   }
   
   final content = file.readAsStringSync();
-  final levelRegExp = RegExp(r'static LevelDefinition _level\d+\(\)\s*\{(.*?)\n  \}', dotAll: true);
+  final levelRegExp = RegExp(r'static LevelDefinition _level\d+\(\)\s*\{(.*?)\n\s*\}', dotAll: true);
   final colorRunRegExp = RegExp(r'LevelColorRun\((\d+),\s*(\d+)\)');
   final nameRegExp = RegExp(r"name:\s*'(.*?)'");
 

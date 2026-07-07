@@ -341,129 +341,229 @@ class _PixelGridPainter extends CustomPainter {
       );
     }
 
-    // Draw custom gold star obstacles if any exist
+    // Draw custom obstacles
     final obstacleCells = cells.where((cell) => cell.isObstacle).toList();
     if (obstacleCells.isNotEmpty) {
-      final processed = <String>{};
-      for (final cell in obstacleCells) {
-        final key = '${cell.row},${cell.col}';
-        if (processed.contains(key)) continue;
+      final isStarObstacle = (levelIndex == 84 || levelIndex == 86);
+      if (isStarObstacle) {
+        final processed = <String>{};
+        for (final cell in obstacleCells) {
+          final key = '${cell.row},${cell.col}';
+          if (processed.contains(key)) continue;
 
-        // BFS to find all connected cells in this obstacle component
-        final component = <PixelCell>[];
-        final queue = [cell];
-        processed.add(key);
+          // BFS to find all connected cells in this obstacle component
+          final component = <PixelCell>[];
+          final queue = [cell];
+          processed.add(key);
 
-        int head = 0;
-        while (head < queue.length) {
-          final curr = queue[head++];
-          component.add(curr);
+          int head = 0;
+          while (head < queue.length) {
+            final curr = queue[head++];
+            component.add(curr);
 
-          final neighbors = [
-            [curr.row - 1, curr.col],
-            [curr.row + 1, curr.col],
-            [curr.row, curr.col - 1],
-            [curr.row, curr.col + 1],
-          ];
-          for (final n in neighbors) {
-            final nKey = '${n[0]},${n[1]}';
-            if (!processed.contains(nKey)) {
-              final neighborCell = obstacleCells.firstWhere(
-                (c) => c.row == n[0] && c.col == n[1],
-                orElse: () => const PixelCell(row: -1, col: -1, targetColorId: 0),
-              );
-              if (neighborCell.row != -1) {
-                processed.add(nKey);
-                queue.add(neighborCell);
+            final neighbors = [
+              [curr.row - 1, curr.col],
+              [curr.row + 1, curr.col],
+              [curr.row, curr.col - 1],
+              [curr.row, curr.col + 1],
+            ];
+            for (final n in neighbors) {
+              final nKey = '${n[0]},${n[1]}';
+              if (!processed.contains(nKey)) {
+                final neighborCell = obstacleCells.firstWhere(
+                  (c) => c.row == n[0] && c.col == n[1],
+                  orElse: () => const PixelCell(row: -1, col: -1, targetColorId: 0),
+                );
+                if (neighborCell.row != -1) {
+                  processed.add(nKey);
+                  queue.add(neighborCell);
+                }
               }
             }
           }
-        }
 
-        // Bounding box of the component
-        int minRow = component.map((c) => c.row).reduce((a, b) => a < b ? a : b);
-        int maxRow = component.map((c) => c.row).reduce((a, b) => a > b ? a : b);
-        int minCol = component.map((c) => c.col).reduce((a, b) => a < b ? a : b);
-        int maxCol = component.map((c) => c.col).reduce((a, b) => a > b ? a : b);
+          // Bounding box of the component
+          int minRow = component.map((c) => c.row).reduce((a, b) => a < b ? a : b);
+          int maxRow = component.map((c) => c.row).reduce((a, b) => a > b ? a : b);
+          int minCol = component.map((c) => c.col).reduce((a, b) => a < b ? a : b);
+          int maxCol = component.map((c) => c.col).reduce((a, b) => a > b ? a : b);
 
-        final double x = origin.dx + minCol * cellSize;
-        final double y = origin.dy + minRow * cellSize;
-        final double w = (maxCol - minCol + 1) * cellSize;
-        final double h = (maxRow - minRow + 1) * cellSize;
+          final double x = origin.dx + minCol * cellSize;
+          final double y = origin.dy + minRow * cellSize;
+          final double w = (maxCol - minCol + 1) * cellSize;
+          final double h = (maxRow - minRow + 1) * cellSize;
 
-        final double cx = x + w / 2;
-        final double cy = y + h / 2;
-        final double size = min(w, h);
+          final double cx = x + w / 2;
+          final double cy = y + h / 2;
+          final double size = min(w, h);
 
-        final double R = size * 0.45;
-        final double r = size * 0.18;
+          final double R = size * 0.45;
+          final double r = size * 0.18;
 
-        // 1. Draw Star Shadow
-        final shadowPath = Path();
-        for (int i = 0; i < 10; i++) {
-          final double currRadius = (i % 2 == 0) ? R : r;
-          final double currAngle = -pi / 2 + i * (pi / 5);
-          final double sx = cx + currRadius * cos(currAngle);
-          final double sy = cy + cellSize * 0.12 + currRadius * sin(currAngle);
-          if (i == 0) {
-            shadowPath.moveTo(sx, sy);
-          } else {
-            shadowPath.lineTo(sx, sy);
+          // 1. Draw Star Shadow
+          final shadowPath = Path();
+          for (int i = 0; i < 10; i++) {
+            final double currRadius = (i % 2 == 0) ? R : r;
+            final double currAngle = -pi / 2 + i * (pi / 5);
+            final double sx = cx + currRadius * cos(currAngle);
+            final double sy = cy + cellSize * 0.12 + currRadius * sin(currAngle);
+            if (i == 0) {
+              shadowPath.moveTo(sx, sy);
+            } else {
+              shadowPath.lineTo(sx, sy);
+            }
           }
-        }
-        shadowPath.close();
-        canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.45));
+          shadowPath.close();
+          canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.45));
 
-        // 2. Draw outer outline first (to avoid gaps between facets)
-        final starPath = Path();
-        final vertices = <Offset>[];
-        for (int i = 0; i < 10; i++) {
-          final double currRadius = (i % 2 == 0) ? R : r;
-          final double currAngle = -pi / 2 + i * (pi / 5);
-          final double sx = cx + currRadius * cos(currAngle);
-          final double sy = cy + currRadius * sin(currAngle);
-          vertices.add(Offset(sx, sy));
-          if (i == 0) {
-            starPath.moveTo(sx, sy);
-          } else {
-            starPath.lineTo(sx, sy);
+          // 2. Draw outer outline first (to avoid gaps between facets)
+          final starPath = Path();
+          final vertices = <Offset>[];
+          for (int i = 0; i < 10; i++) {
+            final double currRadius = (i % 2 == 0) ? R : r;
+            final double currAngle = -pi / 2 + i * (pi / 5);
+            final double sx = cx + currRadius * cos(currAngle);
+            final double sy = cy + currRadius * sin(currAngle);
+            vertices.add(Offset(sx, sy));
+            if (i == 0) {
+              starPath.moveTo(sx, sy);
+            } else {
+              starPath.lineTo(sx, sy);
+            }
           }
+          starPath.close();
+          canvas.drawPath(starPath, Paint()..color = const Color(0xFF5A3E05));
+
+          // 3. Draw 10 beveled facets
+          final facetColors = [
+            const Color(0xFFFFEA00), // 0: Top-right tip
+            const Color(0xFFFBC02D), // 1: Top-right inner
+            const Color(0xFFF57F17), // 2: Right tip
+            const Color(0xFFE65100), // 3: Right inner
+            const Color(0xFFD84315), // 4: Bottom-right tip
+            const Color(0xFFBF360C), // 5: Bottom-left tip
+            const Color(0xFFF57C00), // 6: Left inner
+            const Color(0xFFFFB300), // 7: Left tip
+            const Color(0xFFFFD54F), // 8: Top-left inner
+            const Color(0xFFFFEE58), // 9: Top-left tip
+          ];
+
+          for (int i = 0; i < 10; i++) {
+            final next = (i + 1) % 10;
+            final p = Path()
+              ..moveTo(cx, cy)
+              ..lineTo(vertices[i].dx, vertices[i].dy)
+              ..lineTo(vertices[next].dx, vertices[next].dy)
+              ..close();
+            canvas.drawPath(p, Paint()..color = facetColors[i]);
+          }
+
+          // 4. Draw outer border stroke
+          canvas.drawPath(
+            starPath,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2.0
+              ..color = const Color(0xFF5A3E05),
+          );
         }
-        starPath.close();
-        canvas.drawPath(starPath, Paint()..color = const Color(0xFF5A3E05));
+      } else {
+        // Draw wood signs / spikes (çivi)...
+        int minRow = obstacleCells.map((c) => c.row).reduce((a, b) => a < b ? a : b);
+        int maxRow = obstacleCells.map((c) => c.row).reduce((a, b) => a > b ? a : b);
+        final h = (maxRow - minRow + 1) * cellSize;
+        final y = origin.dy + minRow * cellSize;
 
-        // 3. Draw 10 beveled facets
-        final facetColors = [
-          const Color(0xFFFFEA00), // 0: Top-right tip
-          const Color(0xFFFBC02D), // 1: Top-right inner
-          const Color(0xFFF57F17), // 2: Right tip
-          const Color(0xFFE65100), // 3: Right inner
-          const Color(0xFFD84315), // 4: Bottom-right tip
-          const Color(0xFFBF360C), // 5: Bottom-left tip
-          const Color(0xFFF57C00), // 6: Left inner
-          const Color(0xFFFFB300), // 7: Left tip
-          const Color(0xFFFFD54F), // 8: Top-left inner
-          const Color(0xFFFFEE58), // 9: Top-left tip
-        ];
+        // Group columns that contain obstacles
+        final obstacleCols = obstacleCells.map((c) => c.col).toSet().toList()..sort();
+        final segments = <List<int>>[];
+        if (obstacleCols.isNotEmpty) {
+          var currentSegment = <int>[obstacleCols.first];
+          for (int i = 1; i < obstacleCols.length; i++) {
+            final col = obstacleCols[i];
+            if (col == currentSegment.last + 1) {
+              currentSegment.add(col);
+            } else {
+              segments.add(currentSegment);
+              currentSegment = [col];
+            }
+          }
+          segments.add(currentSegment);
+        }
 
-        for (int i = 0; i < 10; i++) {
-          final next = (i + 1) % 10;
-          final p = Path()
-            ..moveTo(cx, cy)
-            ..lineTo(vertices[i].dx, vertices[i].dy)
-            ..lineTo(vertices[next].dx, vertices[next].dy)
+        for (final segment in segments) {
+          final startCol = segment.first;
+          final endCol = segment.last;
+          final x = origin.dx + startCol * cellSize;
+          final w = (endCol - startCol + 1) * cellSize;
+
+          // 1. Draw 3D shadow below
+          final shadowPath = Path();
+          final shadowOffset = cellSize * 0.18;
+          final sx = x;
+          final sy = y + shadowOffset;
+          shadowPath.moveTo(sx, sy + h * 0.5);
+          shadowPath.lineTo(sx + h * 0.45, sy);
+          shadowPath.lineTo(sx + w - h * 0.45, sy);
+          shadowPath.lineTo(sx + w, sy + h * 0.5);
+          shadowPath.lineTo(sx + w - h * 0.45, sy + h);
+          shadowPath.lineTo(sx + h * 0.45, sy + h);
+          shadowPath.close();
+          canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.65));
+
+          // 2. Draw main wood sign
+          final signPath = Path();
+          signPath.moveTo(x, y + h * 0.5);
+          signPath.lineTo(x + h * 0.45, y);
+          signPath.lineTo(x + w - h * 0.45, y);
+          signPath.lineTo(x + w, y + h * 0.5);
+          signPath.lineTo(x + w - h * 0.45, y + h);
+          signPath.lineTo(x + h * 0.45, y + h);
+          signPath.close();
+
+          final woodPaint = Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFFDCA06F),
+                const Color(0xFFB5703C),
+                const Color(0xFF8F4F24),
+              ],
+            ).createShader(Rect.fromLTWH(x, y, w, h));
+          canvas.drawPath(signPath, woodPaint);
+
+          // 3. Draw inner wood highlights/details
+          final detailPaint = Paint()
+            ..color = const Color(0xFFE5A670).withOpacity(0.3)
+            ..style = PaintingStyle.fill;
+          final lightStrip = Path()
+            ..moveTo(x + 2.0, y + h * 0.5)
+            ..lineTo(x + h * 0.45 + 1.0, y + 2.0)
+            ..lineTo(x + w - h * 0.45 - 2.0, y + 2.0)
+            ..lineTo(x + w - 4.0, y + h * 0.5)
+            ..lineTo(x + w - h * 0.45 - 2.0, y + h * 0.5 + 2.0)
+            ..lineTo(x + h * 0.45 + 1.0, y + h * 0.5 + 2.0)
             ..close();
-          canvas.drawPath(p, Paint()..color = facetColors[i]);
-        }
+          canvas.drawPath(lightStrip, detailPaint);
 
-        // 4. Draw outer border stroke
-        canvas.drawPath(
-          starPath,
-          Paint()
+          // 4. Draw bevel border outline
+          canvas.drawPath(
+            signPath,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2.5
+              ..color = const Color(0xFF6E3613),
+          );
+
+          // 5. Draw horizontal wood planks lines
+          final plankPaint = Paint()
+            ..color = const Color(0xFF6E3613).withOpacity(0.4)
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 2.0
-            ..color = const Color(0xFF5A3E05),
-        );
+            ..strokeWidth = 1.5;
+          canvas.drawLine(Offset(x + h * 0.45 * 0.5, y + h * 0.35), Offset(x + w - h * 0.45 * 1.2, y + h * 0.35), plankPaint);
+          canvas.drawLine(Offset(x + h * 0.45 * 0.5, y + h * 0.65), Offset(x + w - h * 0.45 * 1.2, y + h * 0.65), plankPaint);
+        }
       }
     }
 

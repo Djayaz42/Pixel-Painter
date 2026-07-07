@@ -10295,19 +10295,19 @@ static LevelDefinition _level86() {
   }
 
   static LevelDefinition _level88() {
-    return LevelDefinition(
-      name: 'Buzlu Çay',
-      rows: [],
-      cellRows: const [
+      return LevelDefinition(
+        name: 'Buzlu çay',
+        rows: [],
+        cellRows: const [
         "NNM.........................................................",
         "............................................................",
-        "............................................................",
-        ".....BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
+        ".....K......................................................",
+        ".....KKBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
         "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
         "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
-        "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
-        "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
-        "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
+        "...BBB###BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB###BBB...",
+        "...BBB###BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB###BBB...",
+        "...BBB###BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB###BBB...",
         "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
         "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB...",
         "...BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBMMMMMMMMBBBBBBBBBBB...",
@@ -10350,9 +10350,9 @@ static LevelDefinition _level86() {
         "...KKKKKKKKKKKKKKKKKKKKKKMMMMMMMMMMMKKKKKKKKKKKKKKKKKKKKK...",
         "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
         "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
-        "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
-        "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
-        "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
+        "...KKKKKK###KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK###KKKKKK...",
+        "...KKKKKK###KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK###KKKKKK...",
+        "...KKKKKK###KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK###KKKKKK...",
         "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
         "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
         "...KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK...",
@@ -10360,32 +10360,32 @@ static LevelDefinition _level86() {
         "............................................................",
         "............................................................",
       ],
-      gridRows: 60,
-      gridCols: 60,
-      colorRuns: const [
-        LevelColorRun(11, 680),
-        LevelColorRun(14, 75),
-        LevelColorRun(4, 25),
-        LevelColorRun(48, 90),
-        LevelColorRun(49, 260),
-        LevelColorRun(24, 490),
-        LevelColorRun(13, 200),
-        LevelColorRun(2, 645),
-        LevelColorRun(25, 455),
-      ],
-      paintOrder: LevelPaintOrder.diagonal,
-    );
-  }
+        gridRows: 60,
+        gridCols: 60,
+        colorRuns: const [
+          LevelColorRun(2, 625),
+          LevelColorRun(4, 25),
+          LevelColorRun(11, 665),
+          LevelColorRun(13, 200),
+          LevelColorRun(14, 75),
+          LevelColorRun(24, 490),
+          LevelColorRun(25, 455),
+          LevelColorRun(48, 90),
+          LevelColorRun(49, 260),
+        ],
+        paintOrder: LevelPaintOrder.diagonal,
+      );
+    }
 
   
   
   
-  static LevelDefinition _level89() {
+        static LevelDefinition _level89() {
     return LevelDefinition(
       name: 'Pembe Tilki',
       rows: [],
       cellRows: const [
-        "eeeeeepeeeeeeeeTeeeeTeTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
+        "...eeepeeeeeeeeTeeeeTeTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
         "ppeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeepTeeeeeeTpeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeeeeeeeeeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -10440,25 +10440,25 @@ static LevelDefinition _level86() {
         "eeeeeeeeeeeeeM§LL§§§§§§§§LMMMeTKMeM§§eMeM§MMMML§§§L§§MepeeeT",
         "eppeeeeeeeeeeMMMM§§§§§§§§§MMML§§§§LLLL§§§LMMML§§§MMMM[peeeee",
         "TeeeeeeeeeeeeepeeepeeMMMMMMMMMMMMMMMMMMMMMMMMepepepppeeeeeee",
-        "eeeeeeeeeeeeeeeeeeeeppeTeeTeeeeeeTeepepeepeTeeeeeeeeeeeeeeee",
-        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeT",
-        "eeeeeeeeeeeeeeeeeeepeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeep",
+        "eeeeeeeeeee###eeeeeeppeTeeTee###eTeepepeepeTeee###eeeeeeeeee",
+        "eeeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeeT",
+        "eeeeeeeeeee###eeeeepeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeep",
         "peeeeeeeeeeeeeeeeeepeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         "eeeepeeepTepeeeTeeeeeeeeepepepeeepeeeeeeTpeepeeTeeTTepeeeeee",
       ],
       gridRows: 60,
       gridCols: 60,
       colorRuns: const [
-          LevelColorRun(31, 1980),
-          LevelColorRun(13, 565),
-          LevelColorRun(94, 360),
-          LevelColorRun(70, 240),
-          LevelColorRun(20, 195),
-          LevelColorRun(42, 145),
-          LevelColorRun(12, 40),
           LevelColorRun(11, 30),
-          LevelColorRun(78, 25),
+          LevelColorRun(12, 40),
+          LevelColorRun(13, 565),
+          LevelColorRun(20, 195),
+          LevelColorRun(31, 1950),
+          LevelColorRun(42, 145),
           LevelColorRun(61, 20),
+          LevelColorRun(70, 240),
+          LevelColorRun(78, 25),
+          LevelColorRun(94, 360),
       ],
       paintOrder: LevelPaintOrder.diagonal,
     );
