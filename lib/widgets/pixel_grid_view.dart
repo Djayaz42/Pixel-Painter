@@ -770,6 +770,9 @@ class _PixelGridPainter extends CustomPainter {
       if (levelIndex == 67) {
         x = origin.dx + (cols - 2.0) * cellSize; // shifted right by 1 cell (from cols - 3.0 to cols - 2.0)
         y = origin.dy + linkOffset + 1.0 * cellSize; // shifted down by 1 cell
+      } else if (levelIndex == 90) {
+        x = origin.dx + (cols - 1.0) * cellSize; // shifted 2 pixels right (to col 58 / offset 59)
+        y = origin.dy + linkOffset;
       } else if (levelIndex == 71) {
         x = origin.dx + (cols - 3.0) * cellSize;
         y = origin.dy + linkOffset + 6.0 * cellSize;
@@ -789,6 +792,9 @@ class _PixelGridPainter extends CustomPainter {
       } else if (levelIndex == 67) {
         x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (from 3.0 to 2.0)
         y = origin.dy + linkOffset + 11.0 * cellSize; // shifted down by 11 cells (2 additional cells down)
+      } else if (levelIndex == 90) {
+        x = origin.dx + 1.0 * cellSize; // shifted 2 pixels left (to col 1)
+        y = origin.dy + linkOffset;
       } else if (levelIndex == 71) {
         x = origin.dx + 3.0 * cellSize;
         y = origin.dy + linkOffset + 6.0 * cellSize;
