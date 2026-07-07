@@ -366,7 +366,7 @@ class _PixelGridPainter extends CustomPainter {
     // Draw custom obstacles
     final obstacleCells = cells.where((cell) => cell.isObstacle).toList();
     if (obstacleCells.isNotEmpty) {
-      final isStarObstacle = (levelIndex == 84 || levelIndex == 86);
+      final isStarObstacle = (levelIndex == 84 || levelIndex == 86 || levelIndex == 93);
       if (isStarObstacle) {
         final processed = <String>{};
         for (final cell in obstacleCells) {
