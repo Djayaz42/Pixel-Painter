@@ -798,9 +798,9 @@ class _GameScreenState extends State<GameScreen>
     final List<int> activeIndices;
     if (_levelIndex == 90) {
       if (side == MotorSide.left) {
-        activeIndices = [for (int i = 0; i < 24; i++) i];
+        activeIndices = [for (int i = 0; i < 25; i++) i];
       } else {
-        activeIndices = [for (int i = 24; i < 48; i++) i];
+        activeIndices = [for (int i = 25; i < 50; i++) i];
       }
     } else {
       final int startLinkIdx;
@@ -828,8 +828,8 @@ class _GameScreenState extends State<GameScreen>
 
     double getLinkPos(int i) {
       if (_levelIndex == 90) {
-        final int linkIdx = (side == MotorSide.left) ? i : (i - 24);
-        return 3.5 + (linkIdx / 23.0) * 53.0;
+        final int linkIdx = (side == MotorSide.left) ? i : (i - 25);
+        return 3.5 + (linkIdx / 24.0) * 53.0;
       }
       
       final int startLinkIdx;
@@ -3123,9 +3123,9 @@ class _GameScreenState extends State<GameScreen>
       }
     }
     else if (_levelIndex == 90) {
-      // Level 91 (NASCAR Pixel): Active chains: Left (0..23) and Right (24..47) sides, pre-break remaining 24 links (48..71).
+      // Level 91 (NASCAR Pixel): Active chains: Left (0..24) and Right (25..49) sides, pre-break remaining 22 links (50..71).
       for (int i = 0; i < 72; i++) {
-        if (i >= 48) {
+        if (i >= 50) {
           _chainLinkHits[i] = 20;
           _brokenLinks.add(i);
         }

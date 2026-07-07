@@ -272,7 +272,18 @@ class _PixelGridPainter extends CustomPainter {
 
       // Pass 1: Draw odd/vertical links (behind)
       for (int i = 0; i < 72; i++) {
-        final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        final int linkIdx;
+        if (levelIndex == 90) {
+          if (i < 25) {
+            linkIdx = i;
+          } else if (i < 50) {
+            linkIdx = i - 25;
+          } else {
+            linkIdx = 0;
+          }
+        } else {
+          linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        }
         if (levelIndex == 67) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
@@ -288,7 +299,18 @@ class _PixelGridPainter extends CustomPainter {
 
       // Pass 2: Draw even/horizontal links (on top)
       for (int i = 0; i < 72; i++) {
-        final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        final int linkIdx;
+        if (levelIndex == 90) {
+          if (i < 25) {
+            linkIdx = i;
+          } else if (i < 50) {
+            linkIdx = i - 25;
+          } else {
+            linkIdx = 0;
+          }
+        } else {
+          linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
+        }
         if (levelIndex == 67) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
@@ -727,12 +749,12 @@ class _PixelGridPainter extends CustomPainter {
     final int linkIdx;
 
     if (levelIndex == 90) {
-      if (i < 24) {
+      if (i < 25) {
         sideIdx = 3; // Left
         linkIdx = i;
-      } else if (i < 48) {
+      } else if (i < 50) {
         sideIdx = 1; // Right
-        linkIdx = i - 24;
+        linkIdx = i - 25;
       } else {
         sideIdx = 0; // Unused
         linkIdx = 0;
@@ -762,7 +784,7 @@ class _PixelGridPainter extends CustomPainter {
 
     final double linkOffset;
     if (levelIndex == 90) {
-      linkOffset = 3.5 * cellSize + (linkIdx / 23.0) * 53.0 * cellSize;
+      linkOffset = 3.5 * cellSize + (linkIdx / 24.0) * 53.0 * cellSize;
     } else if (sideIdx == 0 || sideIdx == 2) {
       linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
     } else {
