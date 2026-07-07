@@ -469,104 +469,199 @@ class _PixelGridPainter extends CustomPainter {
         }
       } else {
         // Draw wood signs / spikes (çivi)...
-        int minRow = obstacleCells.map((c) => c.row).reduce((a, b) => a < b ? a : b);
-        int maxRow = obstacleCells.map((c) => c.row).reduce((a, b) => a > b ? a : b);
-        final h = (maxRow - minRow + 1) * cellSize;
-        final y = origin.dy + minRow * cellSize;
+        final processed = <String>{};
+        for (final cell in obstacleCells) {
+          final key = '${cell.row},${cell.col}';
+          if (processed.contains(key)) continue;
 
-        // Group columns that contain obstacles
-        final obstacleCols = obstacleCells.map((c) => c.col).toSet().toList()..sort();
-        final segments = <List<int>>[];
-        if (obstacleCols.isNotEmpty) {
-          var currentSegment = <int>[obstacleCols.first];
-          for (int i = 1; i < obstacleCols.length; i++) {
-            final col = obstacleCols[i];
-            if (col == currentSegment.last + 1) {
-              currentSegment.add(col);
-            } else {
-              segments.add(currentSegment);
-              currentSegment = [col];
+          // BFS to find all connected cells in this obstacle component
+          final component = <PixelCell>[];
+          final queue = [cell];
+          processed.add(key);
+
+          int head = 0;
+          while (head < queue.length) {
+            final curr = queue[head++];
+            component.add(curr);
+
+            final neighbors = [
+              [curr.row - 1, curr.col],
+              [curr.row + 1, curr.col],
+              [curr.row, curr.col - 1],
+              [curr.row, curr.col + 1],
+            ];
+            for (final n in neighbors) {
+              final nKey = '${n[0]},${n[1]}';
+              if (!processed.contains(nKey)) {
+                final neighborCell = obstacleCells.firstWhere(
+                  (c) => c.row == n[0] && c.col == n[1],
+                  orElse: () => const PixelCell(row: -1, col: -1, targetColorId: 0),
+                );
+                if (neighborCell.row != -1) {
+                  processed.add(nKey);
+                  queue.add(neighborCell);
+                }
+              }
             }
           }
-          segments.add(currentSegment);
-        }
 
-        for (final segment in segments) {
-          final startCol = segment.first;
-          final endCol = segment.last;
-          final x = origin.dx + startCol * cellSize;
-          final w = (endCol - startCol + 1) * cellSize;
+          // Bounding box of the component
+          int minRow = component.map((c) => c.row).reduce((a, b) => a < b ? a : b);
+          int maxRow = component.map((c) => c.row).reduce((a, b) => a > b ? a : b);
+          int minCol = component.map((c) => c.col).reduce((a, b) => a < b ? a : b);
+          int maxCol = component.map((c) => c.col).reduce((a, b) => a > b ? a : b);
 
-          final double tipOffset = h * 0.5;
+          final double x = origin.dx + minCol * cellSize;
+          final double y = origin.dy + minRow * cellSize;
+          final double w = (maxCol - minCol + 1) * cellSize;
+          final double h = (maxRow - minRow + 1) * cellSize;
 
-          // 1. Draw 3D shadow below
-          final shadowPath = Path();
-          final shadowOffset = cellSize * 0.18;
-          final sx = x;
-          final sy = y + shadowOffset;
-          shadowPath.moveTo(sx, sy + h * 0.5);
-          shadowPath.lineTo(sx + tipOffset, sy);
-          shadowPath.lineTo(sx + w - tipOffset, sy);
-          shadowPath.lineTo(sx + w, sy + h * 0.5);
-          shadowPath.lineTo(sx + w - tipOffset, sy + h);
-          shadowPath.lineTo(sx + tipOffset, sy + h);
-          shadowPath.close();
-          canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.55));
+          final bool isHorizontal = w >= h;
 
-          // 2. Draw main wood sign
-          final signPath = Path();
-          signPath.moveTo(x, y + h * 0.5);
-          signPath.lineTo(x + tipOffset, y);
-          signPath.lineTo(x + w - tipOffset, y);
-          signPath.lineTo(x + w, y + h * 0.5);
-          signPath.lineTo(x + w - tipOffset, y + h);
-          signPath.lineTo(x + tipOffset, y + h);
-          signPath.close();
+          if (isHorizontal) {
+            final double tipOffset = h * 0.5;
 
-          final woodPaint = Paint()
-            ..shader = LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                const Color(0xFFE5A670), // Light warm wood
-                const Color(0xFFC7834C), // Medium warm wood
-                const Color(0xFF9E572B), // Dark warm wood
-              ],
-            ).createShader(Rect.fromLTWH(x, y, w, h));
-          canvas.drawPath(signPath, woodPaint);
+            // 1. Draw 3D shadow below
+            final shadowPath = Path();
+            final shadowOffset = cellSize * 0.18;
+            final sx = x;
+            final sy = y + shadowOffset;
+            shadowPath.moveTo(sx, sy + h * 0.5);
+            shadowPath.lineTo(sx + tipOffset, sy);
+            shadowPath.lineTo(sx + w - tipOffset, sy);
+            shadowPath.lineTo(sx + w, sy + h * 0.5);
+            shadowPath.lineTo(sx + w - tipOffset, sy + h);
+            shadowPath.lineTo(sx + tipOffset, sy + h);
+            shadowPath.close();
+            canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.55));
 
-          // 3. Draw inner wood highlights/details (bevel highlight)
-          final highlightPaint = Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.5
-            ..color = const Color(0xFFFFE0BD).withOpacity(0.5);
-          final highlightPath = Path()
-            ..moveTo(x + 1.5, y + h * 0.5)
-            ..lineTo(x + tipOffset + 1.0, y + 1.5)
-            ..lineTo(x + w - tipOffset - 1.0, y + 1.5)
-            ..lineTo(x + w - 1.5, y + h * 0.5);
-          canvas.drawPath(highlightPath, highlightPaint);
+            // 2. Draw main wood sign
+            final signPath = Path();
+            signPath.moveTo(x, y + h * 0.5);
+            signPath.lineTo(x + tipOffset, y);
+            signPath.lineTo(x + w - tipOffset, y);
+            signPath.lineTo(x + w, y + h * 0.5);
+            signPath.lineTo(x + w - tipOffset, y + h);
+            signPath.lineTo(x + tipOffset, y + h);
+            signPath.close();
 
-          // 4. Draw inner wood shadows (bevel shadow)
-          final shadowHighlightPaint = Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 1.5
-            ..color = const Color(0xFF4A250B).withOpacity(0.4);
-          final shadowHighlightPath = Path()
-            ..moveTo(x + 1.5, y + h * 0.5)
-            ..lineTo(x + tipOffset + 1.0, y + h - 1.5)
-            ..lineTo(x + w - tipOffset - 1.0, y + h - 1.5)
-            ..lineTo(x + w - 1.5, y + h * 0.5);
-          canvas.drawPath(shadowHighlightPath, shadowHighlightPaint);
+            final woodPaint = Paint()
+              ..shader = LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  const Color(0xFFE5A670), // Light warm wood
+                  const Color(0xFFC7834C), // Medium warm wood
+                  const Color(0xFF9E572B), // Dark warm wood
+                ],
+              ).createShader(Rect.fromLTWH(x, y, w, h));
+            canvas.drawPath(signPath, woodPaint);
 
-          // 5. Draw bevel border outline
-          canvas.drawPath(
-            signPath,
-            Paint()
+            // 3. Draw inner wood highlights (bevel highlight)
+            final highlightPaint = Paint()
               ..style = PaintingStyle.stroke
-              ..strokeWidth = 2.5
-              ..color = const Color(0xFF5D3A1A),
-          );
+              ..strokeWidth = 1.5
+              ..color = const Color(0xFFFFE0BD).withOpacity(0.5);
+            final highlightPath = Path()
+              ..moveTo(x + 1.5, y + h * 0.5)
+              ..lineTo(x + tipOffset + 1.0, y + 1.5)
+              ..lineTo(x + w - tipOffset - 1.0, y + 1.5)
+              ..lineTo(x + w - 1.5, y + h * 0.5);
+            canvas.drawPath(highlightPath, highlightPaint);
+
+            // 4. Draw inner wood shadows (bevel shadow)
+            final shadowHighlightPaint = Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.5
+              ..color = const Color(0xFF4A250B).withOpacity(0.4);
+            final shadowHighlightPath = Path()
+              ..moveTo(x + 1.5, y + h * 0.5)
+              ..lineTo(x + tipOffset + 1.0, y + h - 1.5)
+              ..lineTo(x + w - tipOffset - 1.0, y + h - 1.5)
+              ..lineTo(x + w - 1.5, y + h * 0.5);
+            canvas.drawPath(shadowHighlightPath, shadowHighlightPaint);
+
+            // 5. Draw bevel border outline
+            canvas.drawPath(
+              signPath,
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 2.5
+                ..color = const Color(0xFF5D3A1A),
+            );
+          } else {
+            // Vertical spike
+            final double tipOffset = w * 0.5;
+
+            // 1. Draw 3D shadow below
+            final shadowPath = Path();
+            final shadowOffset = cellSize * 0.18;
+            final sx = x;
+            final sy = y + shadowOffset;
+            shadowPath.moveTo(sx + w * 0.5, sy);
+            shadowPath.lineTo(sx + w, sy + tipOffset);
+            shadowPath.lineTo(sx + w, sy + h - tipOffset);
+            shadowPath.lineTo(sx + w * 0.5, sy + h);
+            shadowPath.lineTo(sx, sy + h - tipOffset);
+            shadowPath.lineTo(sx, sy + tipOffset);
+            shadowPath.close();
+            canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.55));
+
+            // 2. Draw main wood sign
+            final signPath = Path();
+            signPath.moveTo(x + w * 0.5, y);
+            signPath.lineTo(x + w, y + tipOffset);
+            signPath.lineTo(x + w, y + h - tipOffset);
+            signPath.lineTo(x + w * 0.5, y + h);
+            signPath.lineTo(x, y + h - tipOffset);
+            signPath.lineTo(x, y + tipOffset);
+            signPath.close();
+
+            final woodPaint = Paint()
+              ..shader = LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  const Color(0xFFE5A670), // Light warm wood
+                  const Color(0xFFC7834C), // Medium warm wood
+                  const Color(0xFF9E572B), // Dark warm wood
+                ],
+              ).createShader(Rect.fromLTWH(x, y, w, h));
+            canvas.drawPath(signPath, woodPaint);
+
+            // 3. Draw inner wood highlights (bevel highlight)
+            final highlightPaint = Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.5
+              ..color = const Color(0xFFFFE0BD).withOpacity(0.5);
+            final highlightPath = Path()
+              ..moveTo(x + 1.5, y + h - tipOffset - 1.0)
+              ..lineTo(x + 1.5, y + tipOffset + 1.0)
+              ..lineTo(x + w * 0.5, y + 1.5)
+              ..lineTo(x + w - 1.5, y + tipOffset + 1.0);
+            canvas.drawPath(highlightPath, highlightPaint);
+
+            // 4. Draw inner wood shadows (bevel shadow)
+            final shadowHighlightPaint = Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.5
+              ..color = const Color(0xFF4A250B).withOpacity(0.4);
+            final shadowHighlightPath = Path()
+              ..moveTo(x + w - 1.5, y + tipOffset + 1.0)
+              ..lineTo(x + w - 1.5, y + h - tipOffset - 1.0)
+              ..lineTo(x + w * 0.5, y + h - 1.5)
+              ..lineTo(x + 1.5, y + h - tipOffset - 1.0);
+            canvas.drawPath(shadowHighlightPath, shadowHighlightPaint);
+
+            // 5. Draw bevel border outline
+            canvas.drawPath(
+              signPath,
+              Paint()
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 2.5
+                ..color = const Color(0xFF5D3A1A),
+            );
+          }
         }
       }
     }
