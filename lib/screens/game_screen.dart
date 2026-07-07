@@ -165,6 +165,8 @@ class _GameScreenState extends State<GameScreen>
   int _nextRunId = 1;
   int _generatedFortyCount = 0;
   late int _levelIndex;
+  List<bool> _level85UnlockedStars = [true, true, true, true];
+  List<bool> _level85UnlockingStars = [false, false, false, false];
 
   @override
   void initState() {
@@ -190,6 +192,8 @@ class _GameScreenState extends State<GameScreen>
   int get _targetCount => _cells.where((cell) => cell.isTarget).length;
 
   LevelDefinition get _level => LevelData.levelAt(_levelIndex);
+
+  bool get _isStarLevel => _levelIndex == 84 || _levelIndex == 85;
 
   int get _gridRows => _level.gridRows;
 
@@ -254,6 +258,7 @@ class _GameScreenState extends State<GameScreen>
   }
 
   void _selectCartridge(PaintCartridge cartridge) {
+    if (cartridge.colorId == -888) return;
     final currentCartridge = _cartridges.firstWhere(
       (item) => item.id == cartridge.id,
       orElse: () => cartridge,
@@ -482,7 +487,7 @@ class _GameScreenState extends State<GameScreen>
           _slots = [
             for (final slot in _slots)
               if (slot.cartridge?.colorId == selectedColorId)
-                WaitingSlot(index: slot.index)
+                WaitingSlot(index: slot.index, isLocked: slot.isLocked)
               else
                 slot
           ];
@@ -564,7 +569,7 @@ class _GameScreenState extends State<GameScreen>
   void _handleSlotTap(int slotIndex) {
     final slot = _slots[slotIndex];
     final cartridge = slot.cartridge;
-    if (_isGameOver || cartridge == null) {
+    if (_isGameOver || cartridge == null || slot.isLocked) {
       return;
     }
 
@@ -756,6 +761,10 @@ class _GameScreenState extends State<GameScreen>
       _ticker.stop();
     }
 
+    if (_isStarLevel) {
+      _checkLevel85StarUnlock();
+    }
+
     if (changed ||
         _movingMotors.isNotEmpty ||
         _firingMotors.isNotEmpty ||
@@ -831,7 +840,7 @@ class _GameScreenState extends State<GameScreen>
     _cartridges.removeWhere((c) => c.colorId == -999);
     _slots = [
       for (final slot in _slots)
-        if (slot.cartridge?.colorId == -999) WaitingSlot(index: slot.index) else slot,
+        if (slot.cartridge?.colorId == -999) WaitingSlot(index: slot.index, isLocked: slot.isLocked) else slot,
     ];
     _movingMotors.removeWhere((m) => m.cartridge.colorId == -999);
     _firingMotors.removeWhere((m) => m.cartridge.colorId == -999);
@@ -1019,6 +1028,8 @@ class _GameScreenState extends State<GameScreen>
         changed = true;
         continue;
       }
+
+
 
       final target = MotorPathEngine.findShotTarget(
         motor: motor,
@@ -1231,6 +1242,8 @@ class _GameScreenState extends State<GameScreen>
         continue;
       }
 
+
+
       final target = MotorPathEngine.findShotTarget(
         motor: motor,
         cells: _cells,
@@ -1297,9 +1310,9 @@ class _GameScreenState extends State<GameScreen>
   Duration get _currentLapDuration =>
       _isLastWeaponPhase ? _lapDuration ~/ 3 : _lapDuration;
 
-  bool _hasEmptySlot() => _slots.any((slot) => !slot.isFilled);
+  bool _hasEmptySlot() => _slots.any((slot) => !slot.isFilled && !slot.isLocked);
 
-  int _firstEmptySlotIndex() => _slots.indexWhere((slot) => !slot.isFilled);
+  int _firstEmptySlotIndex() => _slots.indexWhere((slot) => !slot.isFilled && !slot.isLocked);
 
   int get _remainingWeaponCount {
     var count = 0;
@@ -2785,6 +2798,9 @@ class _GameScreenState extends State<GameScreen>
       for (final cell in _cells)
         if (cell.key == target.key) cell.copyWith(isPainted: true) else cell,
     ];
+    if (_isStarLevel) {
+      _checkLevel85StarUnlock();
+    }
   }
 
   void _decreaseMovingMotorAmount(_MovingMotor motor) {
@@ -2860,14 +2876,22 @@ class _GameScreenState extends State<GameScreen>
   void _removeSlotCartridgeAndCompact(int slotIndex) {
     final cartridges = [
       for (final slot in _slots)
-        if (slot.index != slotIndex && slot.cartridge != null) slot.cartridge!,
+        if (slot.index != slotIndex && !slot.isLocked && slot.cartridge != null)
+          slot.cartridge!,
     ];
+    var cartridgeIdx = 0;
     _slots = [
       for (var index = 0; index < _slots.length; index++)
-        if (index < cartridges.length)
-          WaitingSlot(index: index).fill(cartridges[index])
+        if (_slots[index].isLocked)
+          _slots[index]
+        else if (cartridgeIdx < cartridges.length)
+          WaitingSlot(
+            index: index,
+            isLocked: false,
+            status: WaitingSlotStatus.waiting,
+          ).fill(cartridges[cartridgeIdx++])
         else
-          WaitingSlot(index: index),
+          WaitingSlot(index: index, isLocked: false),
     ];
   }
 
@@ -2883,7 +2907,8 @@ class _GameScreenState extends State<GameScreen>
     _movingMotors.clear();
     _firingMotors.clear();
     _isGameOver = false;
-    _slots = List.generate(5, (index) => WaitingSlot(index: index));
+    _level85UnlockedStars = [true, true, true, true];
+    _level85UnlockingStars = [false, false, false, false];
     _cartridges = [
       for (final cartridge in _cartridges)
         cartridge.copyWith(amount: 0, isSelected: false),
@@ -2954,7 +2979,38 @@ class _GameScreenState extends State<GameScreen>
     _cells = LevelData.createCells(levelIndex: _levelIndex);
     _generatedFortyCount = 0;
     _cartridges = _buildCartridgeQueue();
-    _slots = List.generate(5, (index) => WaitingSlot(index: index));
+    if (_isStarLevel) {
+      _level85UnlockedStars = [false, false, false, false];
+      _level85UnlockingStars = [false, false, false, false];
+      _slots = List.generate(
+        5,
+        (index) => WaitingSlot(
+          index: index,
+          isLocked: index == 4,
+          lockCount: index == 4 ? 4 : null,
+        ),
+      );
+      // Initialize the star cells as obstacles!
+      final centers = const [
+        [7, 7],      // Star 0
+        [7, 52],     // Star 1
+        [52, 10],    // Star 2
+        [52, 49]     // Star 3
+      ];
+      _cells = [
+        for (final cell in _cells)
+          if (centers.any((center) =>
+              cell.row >= center[0] - 1 && cell.row <= center[0] + 1 &&
+              cell.col >= center[1] - 1 && cell.col <= center[1] + 1))
+            cell.copyWith(isObstacle: true)
+          else
+            cell
+      ];
+    } else {
+      _level85UnlockedStars = [true, true, true, true];
+      _level85UnlockingStars = [false, false, false, false];
+      _slots = List.generate(5, (index) => WaitingSlot(index: index));
+    }
     _movingMotors.clear();
     _firingMotors.clear();
     _shotEvents.clear();
@@ -3034,6 +3090,99 @@ class _GameScreenState extends State<GameScreen>
     _continueCount = 0;
     _nextRunId = 1;
   }
+
+  void _unlockStar(int index) {
+    Future.delayed(const Duration(milliseconds: 550), () {
+      if (!mounted) return;
+      setState(() {
+        _level85UnlockedStars[index] = true;
+        _level85UnlockingStars[index] = false;
+
+        final remainingStars = _level85UnlockedStars.where((unlocked) => !unlocked).length;
+        if (remainingStars > 0) {
+          _slots[4] = _slots[4].copyWith(isLocked: true, lockCount: remainingStars);
+        } else {
+          _slots[4] = _slots[4].copyWith(isLocked: false, lockCount: null);
+        }
+
+        final center = [
+          [7, 7],
+          [7, 52],
+          [52, 10],
+          [52, 49]
+        ][index];
+
+        int cy = center[0];
+        int cx = center[1];
+
+        _cells = [
+          for (final cell in _cells)
+            if (cell.row >= cy - 1 && cell.row <= cy + 1 && cell.col >= cx - 1 && cell.col <= cx + 1)
+              cell.copyWith(isObstacle: false)
+            else
+              cell,
+        ];
+      });
+
+      final remainingStars = _level85UnlockedStars.where((unlocked) => !unlocked).length;
+      final message = remainingStars > 0
+          ? '${index + 1}. Yıldız açıldı! 5. silah slotunu açmak için kalan yıldız: $remainingStars'
+          : 'Tebrikler! Tüm yıldızlar açıldı ve 5. silah slotu aktif edildi!';
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: const Color(0xFF42E88A),
+        ),
+      );
+    });
+  }
+
+  void _checkLevel85StarUnlock() {
+    if (!_isStarLevel) return;
+
+    final centers = const [
+      [7, 7],      // Star 0
+      [7, 52],     // Star 1
+      [52, 10],    // Star 2
+      [52, 49]     // Star 3
+    ];
+
+    for (int i = 0; i < 4; i++) {
+      if (!_level85UnlockedStars[i] && !_level85UnlockingStars[i]) {
+        final cy = centers[i][0];
+        final cx = centers[i][1];
+
+        final bottomSide = _cells.where((c) => c.row == cy + 2 && c.col >= cx - 1 && c.col <= cx + 1).toList();
+        final topSide = _cells.where((c) => c.row == cy - 2 && c.col >= cx - 1 && c.col <= cx + 1).toList();
+        final leftSide = _cells.where((c) => c.col == cx - 2 && c.row >= cy - 1 && c.row <= cy + 1).toList();
+        final rightSide = _cells.where((c) => c.col == cx + 2 && c.row >= cy - 1 && c.row <= cy + 1).toList();
+
+        bool bottomCleared = bottomSide.isNotEmpty && bottomSide.every((c) => !c.isTarget || c.isPainted);
+        bool topCleared = topSide.isNotEmpty && topSide.every((c) => !c.isTarget || c.isPainted);
+        bool leftCleared = leftSide.isNotEmpty && leftSide.every((c) => !c.isTarget || c.isPainted);
+        bool rightCleared = rightSide.isNotEmpty && rightSide.every((c) => !c.isTarget || c.isPainted);
+
+        print('DEBUG: Star $i at [$cy, $cx]');
+        print('DEBUG: bottomSide = ${bottomSide.map((c) => '(${c.row},${c.col}: targetColorId=${c.targetColorId}, isTarget=${c.isTarget}, isPainted=${c.isPainted})').toList()}');
+        print('DEBUG: topSide = ${topSide.map((c) => '(${c.row},${c.col}: targetColorId=${c.targetColorId}, isTarget=${c.isTarget}, isPainted=${c.isPainted})').toList()}');
+        print('DEBUG: leftSide = ${leftSide.map((c) => '(${c.row},${c.col}: targetColorId=${c.targetColorId}, isTarget=${c.isTarget}, isPainted=${c.isPainted})').toList()}');
+        print('DEBUG: rightSide = ${rightSide.map((c) => '(${c.row},${c.col}: targetColorId=${c.targetColorId}, isTarget=${c.isTarget}, isPainted=${c.isPainted})').toList()}');
+        print('DEBUG: bottomCleared = $bottomCleared, topCleared = $topCleared, leftCleared = $leftCleared, rightCleared = $rightCleared');
+
+        if (bottomCleared || topCleared || leftCleared || rightCleared) {
+          _level85UnlockingStars[i] = true;
+          _unlockStar(i);
+        }
+      }
+    }
+  }
+
+
 
   void _advanceLevel() {
     _levelIndex = (_levelIndex + 1) % LevelData.levels.length;
@@ -3118,7 +3267,20 @@ class _GameScreenState extends State<GameScreen>
         ...returnedCartridges,
       ];
 
-      _slots = List.generate(5, (index) => WaitingSlot(index: index));
+      _slots = List.generate(
+        5,
+        (index) {
+          if (_isStarLevel && index == 4) {
+            final remainingStars = _level85UnlockedStars.where((unlocked) => !unlocked).length;
+            return WaitingSlot(
+              index: index,
+              isLocked: remainingStars > 0,
+              lockCount: remainingStars > 0 ? remainingStars : null,
+            );
+          }
+          return WaitingSlot(index: index);
+        },
+      );
       _isGameOver = false;
 
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -3205,7 +3367,7 @@ class _GameScreenState extends State<GameScreen>
                                 maxSide: boardSide,
                                 isCompact: isCompact,
                                 backgroundColors: _backgroundColors,
-                                onCellTap: (_isMagnetModeActive || _isHookModeActive || _isChainWeaponActive)
+                                onCellTap: (_isStarLevel || _isMagnetModeActive || _isHookModeActive || _isChainWeaponActive)
                                     ? _onBoardCellTapped
                                     : null,
                                 hasChainDecoration: _level.hasChainDecoration,

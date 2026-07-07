@@ -17,6 +17,71 @@ class WaitingSlotWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (slot.isLocked) {
+      return GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          height: isCompact ? 52 : 76,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF2E3440),
+                Color(0xFF1E222A),
+              ],
+            ),
+            border: Border.all(
+              color: const Color(0xFFCE9E4F), // Gold border
+              width: 3.0,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0xFF1E222A),
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: Icon(
+                  Icons.star_rounded,
+                  size: isCompact ? 28 : 38,
+                  color: const Color(0xFFFFD700), // Bright Gold Star
+                ),
+              ),
+              if (slot.lockCount != null)
+                Positioned(
+                  bottom: isCompact ? 2 : 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCE9E4F),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white, width: 1.0),
+                    ),
+                    child: Text(
+                      '${slot.lockCount}',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        color: Colors.white,
+                        fontSize: isCompact ? 9 : 12,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final isDone = slot.isCompleted || (slot.cartridge?.amount ?? 1) <= 0;
     final borderColor = switch (slot.status) {
       WaitingSlotStatus.empty => const Color(0xFF4C566A),

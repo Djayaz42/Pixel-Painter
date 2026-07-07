@@ -20,6 +20,82 @@ class CartridgeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (cartridge.colorId == -888) {
+      final height = isCompact ? 50.0 : 96.0;
+      final width = isCompact ? 58.0 : 90.0;
+      return SizedBox(
+        height: height,
+        width: width,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(isCompact ? 13 : 18),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFCE9E4F), // Gold trim top
+                Color(0xFF8F6829), // Gold trim bottom
+              ],
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x33000000),
+                blurRadius: 8,
+                offset: Offset(0, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.black, width: 2.0),
+          ),
+          child: Stack(
+            children: [
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: isCompact ? 12 : 20),
+                  child: Icon(
+                    Icons.star_rounded,
+                    size: isCompact ? 28 : 48,
+                    color: const Color(0xFFFFDF00), // Bright Gold Star
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: isCompact ? 4 : 7,
+                child: Center(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: isCompact ? 25 : 34,
+                      minHeight: isCompact ? 18 : 23,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isCompact ? 6 : 8,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(color: Colors.black, width: 2.0),
+                    ),
+                    child: Text(
+                      '${cartridge.amount}',
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF2C2A29),
+                        fontSize: isCompact ? 11 : 16,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (!isCompact && cartridge.amount <= 0) {
       return const SizedBox.shrink();
     }
@@ -64,6 +140,32 @@ class CartridgeWidget extends StatelessWidget {
             ),
             child: Stack(
               children: [
+                if (!isHidden)
+                  Positioned(
+                    top: isCompact ? 3 : 5,
+                    left: 2,
+                    right: 2,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.48),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          cartridge.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            color: Colors.white,
+                            fontSize: isCompact ? 7 : 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 if (!isHidden)
                   Positioned(
                     left: 0,
