@@ -791,6 +791,9 @@ class _GameScreenState extends State<GameScreen>
     if (!_level.hasChainDecoration) {
       return false;
     }
+    if ((_levelIndex == 67 || _levelIndex == 90) && (side == MotorSide.top || side == MotorSide.bottom)) {
+      return false;
+    }
     
     final int startLinkIdx;
     final int endLinkIdx;
@@ -3083,6 +3086,16 @@ class _GameScreenState extends State<GameScreen>
       // Level 66 (Radyatör): Active chains: Left centered (58..68), Right centered (22..32), Top centered (40..50).
       for (int i = 0; i < 72; i++) {
         bool isActive = (i >= 58 && i <= 68) || (i >= 22 && i <= 32) || (i >= 40 && i <= 50);
+        if (!isActive) {
+          _chainLinkHits[i] = 20;
+          _brokenLinks.add(i);
+        }
+      }
+    }
+    else if (_levelIndex == 90) {
+      // Level 91 (NASCAR Pixel): Active chains: Left (55..71) and Right (19..35) sides, pre-break top and bottom sides.
+      for (int i = 0; i < 72; i++) {
+        final bool isActive = (i >= 19 && i < 36) || (i >= 55 && i < 72);
         if (!isActive) {
           _chainLinkHits[i] = 20;
           _brokenLinks.add(i);

@@ -10790,6 +10790,7 @@ static LevelDefinition _level86() {
           LevelColorRun(362, 10),
           LevelColorRun(368, 10),
       ],
+      hasChainDecoration: true,
       paintOrder: LevelPaintOrder.diagonal,
     );
   }

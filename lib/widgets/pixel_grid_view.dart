@@ -273,11 +273,13 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 1: Draw odd/vertical links (behind)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
-        if (levelIndex == 67) {
+        if (levelIndex == 67 || levelIndex == 90) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
-          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
-          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+          if (levelIndex == 67) {
+            if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+            if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+          }
         }
         if (linkIdx % 2 != 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
@@ -289,11 +291,13 @@ class _PixelGridPainter extends CustomPainter {
       // Pass 2: Draw even/horizontal links (on top)
       for (int i = 0; i < 72; i++) {
         final int linkIdx = (i < 19) ? i : (i < 36) ? (i - 19) : (i < 55) ? (i - 36) : (i - 55);
-        if (levelIndex == 67) {
+        if (levelIndex == 67 || levelIndex == 90) {
           final int sideIdx = (i < 19) ? 0 : (i < 36) ? 1 : (i < 55) ? 2 : 3;
           if (sideIdx == 0 || sideIdx == 2) continue;
-          if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
-          if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+          if (levelIndex == 67) {
+            if (sideIdx == 1 && linkIdx < 12) continue; // Right side: 3 big, 2 small under tail
+            if (sideIdx == 3 && (linkIdx < 6 || linkIdx > 12)) continue; // Left side: 4 big, 3 small under scarf
+          }
         }
         if (linkIdx % 2 == 0) {
           final hits = chainLinkHits.length > i ? chainLinkHits[i] : 0;
