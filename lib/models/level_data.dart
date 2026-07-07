@@ -3858,7 +3858,6 @@ class LevelData {
     _level88(),
     _level89(),
     _level90(),
-    _level90(),
   ];
 
   static LevelDefinition levelAt(int index) {
