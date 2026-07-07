@@ -497,8 +497,7 @@ class _PixelGridPainter extends CustomPainter {
           final x = origin.dx + startCol * cellSize;
           final w = (endCol - startCol + 1) * cellSize;
 
-          final double tipOffset = h * 0.35;
-          final double shoulderDepth = h * 0.12;
+          final double tipOffset = h * 0.5;
 
           // 1. Draw 3D shadow below
           final shadowPath = Path();
@@ -507,13 +506,9 @@ class _PixelGridPainter extends CustomPainter {
           final sy = y + shadowOffset;
           shadowPath.moveTo(sx, sy + h * 0.5);
           shadowPath.lineTo(sx + tipOffset, sy);
-          shadowPath.lineTo(sx + tipOffset, sy + shoulderDepth);
-          shadowPath.lineTo(sx + w - tipOffset, sy + shoulderDepth);
           shadowPath.lineTo(sx + w - tipOffset, sy);
           shadowPath.lineTo(sx + w, sy + h * 0.5);
           shadowPath.lineTo(sx + w - tipOffset, sy + h);
-          shadowPath.lineTo(sx + w - tipOffset, sy + h - shoulderDepth);
-          shadowPath.lineTo(sx + tipOffset, sy + h - shoulderDepth);
           shadowPath.lineTo(sx + tipOffset, sy + h);
           shadowPath.close();
           canvas.drawPath(shadowPath, Paint()..color = const Color(0xFF15181E).withOpacity(0.55));
@@ -522,13 +517,9 @@ class _PixelGridPainter extends CustomPainter {
           final signPath = Path();
           signPath.moveTo(x, y + h * 0.5);
           signPath.lineTo(x + tipOffset, y);
-          signPath.lineTo(x + tipOffset, y + shoulderDepth);
-          signPath.lineTo(x + w - tipOffset, y + shoulderDepth);
           signPath.lineTo(x + w - tipOffset, y);
           signPath.lineTo(x + w, y + h * 0.5);
           signPath.lineTo(x + w - tipOffset, y + h);
-          signPath.lineTo(x + w - tipOffset, y + h - shoulderDepth);
-          signPath.lineTo(x + tipOffset, y + h - shoulderDepth);
           signPath.lineTo(x + tipOffset, y + h);
           signPath.close();
 
@@ -552,8 +543,6 @@ class _PixelGridPainter extends CustomPainter {
           final highlightPath = Path()
             ..moveTo(x + 1.5, y + h * 0.5)
             ..lineTo(x + tipOffset + 1.0, y + 1.5)
-            ..lineTo(x + tipOffset + 1.0, y + shoulderDepth + 1.0)
-            ..lineTo(x + w - tipOffset - 1.0, y + shoulderDepth + 1.0)
             ..lineTo(x + w - tipOffset - 1.0, y + 1.5)
             ..lineTo(x + w - 1.5, y + h * 0.5);
           canvas.drawPath(highlightPath, highlightPaint);
@@ -566,8 +555,6 @@ class _PixelGridPainter extends CustomPainter {
           final shadowHighlightPath = Path()
             ..moveTo(x + 1.5, y + h * 0.5)
             ..lineTo(x + tipOffset + 1.0, y + h - 1.5)
-            ..lineTo(x + tipOffset + 1.0, y + h - shoulderDepth - 1.0)
-            ..lineTo(x + w - tipOffset - 1.0, y + h - shoulderDepth - 1.0)
             ..lineTo(x + w - tipOffset - 1.0, y + h - 1.5)
             ..lineTo(x + w - 1.5, y + h * 0.5);
           canvas.drawPath(shadowHighlightPath, shadowHighlightPaint);
