@@ -10384,12 +10384,12 @@ static LevelDefinition _level86() {
   
   
   
-          static LevelDefinition _level89() {
+            static LevelDefinition _level89() {
     return LevelDefinition(
       name: 'Pembe Tilki',
       rows: [],
       cellRows: const [
-        "...eeppeeeeeeeeeeeeeeeTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
+        ".....ppeeeeeeeeeeeeeeTTTpepeeeeeeeeeeeeeeeeeeeTeeeeeTeTeTeee",
         "ppeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeepTeeeeeeTpeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTTeeeeeeeeeeeeee",
         "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -10446,9 +10446,9 @@ static LevelDefinition _level86() {
         "TeeeeeeeeeeeeepeeepeeMMMMMMMMMMMMMMMMMMMMMMMMepepepppeeeeeee",
         "eeeeeeeeeeeeeTeeeeeeppeTeeTeeeeeeTeepepeepeTeeeeeeeeeeeeeeee",
         "eeeeeeeeeeeTpeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeTeeeeeeeeeT",
-        "eeeeeeeeeee###eeeeepeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeep",
-        "peeeeeeeeee###eeeeepeeeeeeeee###eeeeeeeeeeeeeee###eeeeeeeeee",
-        "eeeepeeepTe###eTeeeeeeeeepepe###epeeeeeeTpeepee###TTepeeeeee",
+        "eeeeeeeeee#####eeeepeeeeeeee#####eeeeeeeeeeeee#####eeeeeeeep",
+        "peeeeeeeee#####eeeepeeeeeeee#####eeeeeeeeeeeee#####eeeeeeeee",
+        "eeeepeeepT#####Teeeeeeeeepep#####peeeeeeTpeepe#####Tepeeeeee",
       ],
       gridRows: 60,
       gridCols: 60,
@@ -10457,7 +10457,7 @@ static LevelDefinition _level86() {
           LevelColorRun(12, 40),
           LevelColorRun(13, 565),
           LevelColorRun(20, 195),
-          LevelColorRun(31, 1950),
+          LevelColorRun(31, 1930),
           LevelColorRun(42, 145),
           LevelColorRun(61, 20),
           LevelColorRun(70, 240),
