@@ -826,7 +826,7 @@ class _PixelGridPainter extends CustomPainter {
         x = origin.dx + 2.0 * cellSize; // shifted left by 1 cell (from 3.0 to 2.0)
         y = origin.dy + linkOffset + 11.0 * cellSize; // shifted down by 11 cells (2 additional cells down)
       } else if (levelIndex == 90) {
-        x = origin.dx + 2.0 * cellSize; // shifted 1 pixel right (to col 2)
+        x = origin.dx + 3.0 * cellSize; // shifted 1 pixel right (to col 3)
         y = origin.dy + linkOffset;
       } else if (levelIndex == 71) {
         x = origin.dx + 3.0 * cellSize;
