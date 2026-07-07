@@ -165,8 +165,8 @@ class _GameScreenState extends State<GameScreen>
   int _nextRunId = 1;
   int _generatedFortyCount = 0;
   late int _levelIndex;
-  List<bool> _level85UnlockedStars = [true, true, true, true];
-  List<bool> _level85UnlockingStars = [false, false, false, false];
+  List<bool> _level85UnlockedStars = [];
+  List<bool> _level85UnlockingStars = [];
 
   @override
   void initState() {
@@ -193,7 +193,15 @@ class _GameScreenState extends State<GameScreen>
 
   LevelDefinition get _level => LevelData.levelAt(_levelIndex);
 
-  bool get _isStarLevel => _levelIndex == 84 || _levelIndex == 85 || _levelIndex == 87;
+  bool get _isStarLevel => _levelIndex == 84 || _levelIndex == 85 || _levelIndex == 87 || _levelIndex == 88;
+
+  List<List<int>> get _starCenters {
+    if (_levelIndex == 88) {
+      return const [[56, 12], [56, 30], [56, 48]];
+    } else {
+      return const [[7, 7], [7, 52], [52, 10], [52, 49]];
+    }
+  }
 
   int get _gridRows => _level.gridRows;
 
@@ -2907,8 +2915,8 @@ class _GameScreenState extends State<GameScreen>
     _movingMotors.clear();
     _firingMotors.clear();
     _isGameOver = false;
-    _level85UnlockedStars = [true, true, true, true];
-    _level85UnlockingStars = [false, false, false, false];
+    _level85UnlockedStars = List.generate(_starCenters.length, (_) => true);
+    _level85UnlockingStars = List.generate(_starCenters.length, (_) => false);
     _cartridges = [
       for (final cartridge in _cartridges)
         cartridge.copyWith(amount: 0, isSelected: false),
@@ -2980,23 +2988,19 @@ class _GameScreenState extends State<GameScreen>
     _generatedFortyCount = 0;
     _cartridges = _buildCartridgeQueue();
     if (_isStarLevel) {
-      _level85UnlockedStars = [false, false, false, false];
-      _level85UnlockingStars = [false, false, false, false];
+      final centers = _starCenters;
+      final starCount = centers.length;
+      _level85UnlockedStars = List.generate(starCount, (_) => false);
+      _level85UnlockingStars = List.generate(starCount, (_) => false);
       _slots = List.generate(
         5,
         (index) => WaitingSlot(
           index: index,
           isLocked: index == 4,
-          lockCount: index == 4 ? 4 : null,
+          lockCount: index == 4 ? starCount : null,
         ),
       );
       // Initialize the star cells as obstacles!
-      final centers = const [
-        [7, 7],      // Star 0
-        [7, 52],     // Star 1
-        [52, 10],    // Star 2
-        [52, 49]     // Star 3
-      ];
       _cells = [
         for (final cell in _cells)
           if (centers.any((center) =>
@@ -3007,8 +3011,8 @@ class _GameScreenState extends State<GameScreen>
             cell
       ];
     } else {
-      _level85UnlockedStars = [true, true, true, true];
-      _level85UnlockingStars = [false, false, false, false];
+      _level85UnlockedStars = List.generate(_starCenters.length, (_) => true);
+      _level85UnlockingStars = List.generate(_starCenters.length, (_) => false);
       _slots = List.generate(5, (index) => WaitingSlot(index: index));
     }
     _movingMotors.clear();
@@ -3105,12 +3109,7 @@ class _GameScreenState extends State<GameScreen>
           _slots[4] = _slots[4].copyWith(isLocked: false, lockCount: null);
         }
 
-        final center = [
-          [7, 7],
-          [7, 52],
-          [52, 10],
-          [52, 49]
-        ][index];
+        final center = _starCenters[index];
 
         int cy = center[0];
         int cx = center[1];
@@ -3145,14 +3144,9 @@ class _GameScreenState extends State<GameScreen>
   void _checkLevel85StarUnlock() {
     if (!_isStarLevel) return;
 
-    final centers = const [
-      [7, 7],      // Star 0
-      [7, 52],     // Star 1
-      [52, 10],    // Star 2
-      [52, 49]     // Star 3
-    ];
+    final centers = _starCenters;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < centers.length; i++) {
       if (!_level85UnlockedStars[i] && !_level85UnlockingStars[i]) {
         final cy = centers[i][0];
         final cx = centers[i][1];
