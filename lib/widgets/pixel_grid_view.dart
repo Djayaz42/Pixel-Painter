@@ -727,12 +727,15 @@ class _PixelGridPainter extends CustomPainter {
     final int linkIdx;
 
     if (levelIndex == 90) {
-      if (i < 19 || i >= 55) {
+      if (i < 24) {
         sideIdx = 3; // Left
-        linkIdx = (i < 19) ? i : (i - 55 + 19);
-      } else {
+        linkIdx = i;
+      } else if (i < 48) {
         sideIdx = 1; // Right
-        linkIdx = (i < 36) ? (i - 19) : (i - 36 + 17);
+        linkIdx = i - 24;
+      } else {
+        sideIdx = 0; // Unused
+        linkIdx = 0;
       }
     } else {
       if (i < 19) {
@@ -759,7 +762,7 @@ class _PixelGridPainter extends CustomPainter {
 
     final double linkOffset;
     if (levelIndex == 90) {
-      linkOffset = 3.5 * cellSize + (linkIdx / 35.0) * 53.0 * cellSize;
+      linkOffset = 3.5 * cellSize + (linkIdx / 23.0) * 53.0 * cellSize;
     } else if (sideIdx == 0 || sideIdx == 2) {
       linkOffset = 4.2 * cellSize + (linkIdx / 18.0) * (cols - 8.4) * cellSize;
     } else {
